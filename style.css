@@ -167,3 +167,8 @@ p{line-height:1.57}
 .warning-text{color:var(--orange);font-size:12px}
 @media(min-width:760px){#app{padding-top:30px}.hero{padding:34px}.day-pill{padding:15px 7px}.exercise-card{padding:28px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+.band-select{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 13px;padding:11px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.band-select>span:first-child{font-size:12px;color:var(--muted);margin-right:auto}
+.band-choice{padding:9px 11px;border-radius:11px;background:#243329;border:1px solid #3b5340;font-size:12px;font-weight:800}
+.band-choice.selected{color:#12220d;background:var(--green);border-color:var(--green)}

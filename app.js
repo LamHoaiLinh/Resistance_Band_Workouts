@@ -111,7 +111,7 @@
       ["oblique","sidePlank",["standingKnee","pallof","sideReach"],2,40,"seconds"]
     ]
   };
-  function defaultData(){return {onboarded:false,schedule:[2,4,6],settings:{restSec:90,workSec:45,sound:true,vibration:false},logs:[],targets:{},swaps:{},active:null};}
+  function defaultData(){return {onboarded:false,schedule:[2,4,6],settings:{restSec:90,workSec:45,sound:true,vibration:false},logs:[],targets:{},swaps:{},bands:{},active:null};}
   function load(){
     let data=defaultData();
     try{let saved=JSON.parse(localStorage.getItem(KEY)||"null");if(saved&&typeof saved==="object"){data=Object.assign(data,saved);data.settings=Object.assign(defaultData().settings,saved.settings||{});}}
@@ -120,6 +120,7 @@
     if(!Array.isArray(data.logs))data.logs=[];
     if(!data.targets||typeof data.targets!=="object")data.targets={};
     if(!data.swaps||typeof data.swaps!=="object")data.swaps={};
+    if(!data.bands||typeof data.bands!=="object")data.bands={};
     if(data.active&&data.active.phase==="work"){data.active.phase="paused";data.active.remaining=Math.max(1,Number(data.active.remaining)||15);}
     return data;
   }
@@ -131,9 +132,17 @@
   const getTemplate=mode=>TEMPLATES[mode]||TEMPLATES.strength;
   const slotId=(mode,slot)=>mode+":"+slot[0];
   const getExercise=(mode,slot,act)=>EX[(act&&act.swaps&&act.swaps[slot[0]])||S.swaps[slotId(mode,slot)]||slot[1]]||EX[slot[1]];
+  const getBand=(mode,slot,act)=>{
+    const ex=getExercise(mode,slot,act);
+    if(ex.need==="Không cần dụng cụ")return "none";
+    const saved=(act&&act.bands&&act.bands[slot[0]])||S.bands[slotId(mode,slot)];
+    if(saved==="heavy"||saved==="light")return saved;
+    return mode==="strength"&&["Chân & mông","Ngực","Lưng","Hông & lưng dưới"].includes(ex.group)?"heavy":"light";
+  };
+  const BAND_LABEL={heavy:"Dây nặng",light:"Dây nhẹ",none:"Không dây"};
   const TIMED_EXERCISES=new Set(["sidePlank","plank","wallSit"]);
   const getMetric=(mode,slot,act)=>TIMED_EXERCISES.has(getExercise(mode,slot,act).id)?"seconds":"reps";
-  const targetKey=(mode,slot,act)=>slotId(mode,slot)+":"+getExercise(mode,slot,act).id+":"+getMetric(mode,slot,act);
+  const targetKey=(mode,slot,act)=>slotId(mode,slot)+":"+getExercise(mode,slot,act).id+":"+getMetric(mode,slot,act)+":"+getBand(mode,slot,act);
   const getTarget=(mode,slot,act)=>Math.max(1,Number(S.targets[targetKey(mode,slot,act)])||(slot[5]===getMetric(mode,slot,act)?slot[4]:(getMetric(mode,slot,act)==="seconds"?40:10)));
   const esc=v=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const minmax=(n,min,max)=>Math.min(max,Math.max(min,Number(n)||min));
@@ -221,7 +230,7 @@
   }
   function renderWorkout(){
     const v=current();if(!v)return '<div class="card"><h2>Không có buổi tập đang mở</h2><button class="primary-btn mt20" data-action="go-home">Về tổng quan</button></div>';
-    const a=v.a,s=v.slot,ex=getExercise(a.mode,s,a),m=MODES[a.mode],st=workoutStats(a),target=getTarget(a.mode,s);
+    const a=v.a,s=v.slot,ex=getExercise(a.mode,s,a),m=MODES[a.mode],st=workoutStats(a),target=getTarget(a.mode,s,a),band=getBand(a.mode,s,a);
     const unit=getMetric(a.mode,s,a)==="seconds"?"giây":"lần";
     const unilateralRep=["split","lunge","singleRow","woodChop","pallof","birdDog","deadBug","externalRot","standingKnee","sideReach","altCurl"].includes(ex.id);const repUnit=unit==="lần"&&unilateralRep?"lần mỗi bên":unit;
     const exerciseTimer=workSeconds(a,s);
@@ -236,7 +245,7 @@
     } else {
       body='<div class="exercise-card"><div class="set-meta"><span>ĐỘNG TÁC '+(a.index+1)+' / '+getTemplate(a.mode).length+'</span><strong>HIỆP '+(a.setIndex+1)+' / '+s[3]+'</strong></div>'+
         '<div class="exercise-name">'+esc(ex.en)+'</div><div class="exercise-vn">'+esc(ex.vi)+'</div><div class="ex-tags"><span class="pill">'+esc(ex.group)+'</span><span class="pill muted">'+esc(ex.need)+'</span></div>'+
-        '<ol class="exercise-instructions">'+ex.steps.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ol>'+
+        '<div class="band-select"><span>Loại dây đang dùng:</span>'+(band==="none"?'<span class="pill muted">Không cần dây</span>':['light','heavy'].map(b=>'<button class="band-choice '+(band===b?'selected':'')+'" data-action="set-band" data-band="'+b+'">'+BAND_LABEL[b]+'</button>').join(''))+'</div>'+        '<ol class="exercise-instructions">'+ex.steps.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ol>'+
         '<div class="tips">Lưu ý: '+esc(ex.tip)+'</div>'+
         '<div class="exercise-tool-row"><button class="ghost-btn" data-action="swap">⇄ Đổi bài tương tự</button><button class="ghost-btn" data-action="skip-exercise">Bỏ qua bài</button></div>'+
         '<div class="timer-wrap"><div class="timer-ring" id="timerRing" style="--pct:'+pct+'"><div class="timer-inner"><div class="timer-number" id="timerNum">'+formatTime(remaining)+'</div><div class="timer-label">'+(a.phase==="ready"?"SẴN SÀNG":a.phase==="paused"?"TẠM DỪNG":"ĐANG TẬP")+'</div></div></div></div>'+
@@ -276,7 +285,7 @@
     let html=list.map(l=>{
       const fmt=l.mode==="strength"?"Sức mạnh":MODES[l.mode].title;
       return '<details class="history-item"><summary><span class="pill">'+esc(fmt)+'</span><strong>'+isoDay(l.date)+' · '+l.records.length+' hiệp</strong><p>'+l.ratio+'% mục tiêu · '+l.minutes+' phút · '+(l.adjustments||[]).length+' bài được điều chỉnh</p></summary>'+
-      '<div class="mt12">'+l.records.map(r=>'<div class="tiny muted" style="padding:5px 0">'+esc(EX[r.exerciseId]?EX[r.exerciseId].en:r.exerciseId)+' · hiệp '+r.set+' · '+r.actual+'/'+r.target+' '+(r.metric==="seconds"?"giây":"lần")+'</div>').join("")+'</div></details>';
+      '<div class="mt12">'+l.records.map(r=>'<div class="tiny muted" style="padding:5px 0">'+esc(EX[r.exerciseId]?EX[r.exerciseId].en:r.exerciseId)+' · hiệp '+r.set+' · '+r.actual+'/'+r.target+' '+(r.metric==="seconds"?"giây":"lần")+' · '+(BAND_LABEL[r.band]||'Không rõ dây')+'</div>').join("")+'</div></details>';
     }).join("");
     return '<div class="page-head"><div><div class="eyebrow">PROGRESS LOG</div><h1>Lịch sử tập luyện</h1><p>Dữ liệu lưu tại trình duyệt này. Xóa dữ liệu trang web sẽ xóa lịch sử.</p></div></div>'+
       (list.length?'<div class="card">'+html+'</div>':'<div class="card"><h2>Chưa có buổi tập</h2><p class="muted mt12">Sau khi hoàn thành buổi đầu tiên, lịch sử và điều chỉnh rep sẽ xuất hiện ở đây.</p></div>')+
@@ -288,7 +297,7 @@
   function startWorkout(mode,day){
     if(S.active){page="workout";render();return;}
     if(!TEMPLATES[mode])return;
-    const a={mode:mode,day:day,index:0,setIndex:0,phase:"ready",records:[],startedAt:stamp(),swaps:{},input:null,effort:"medium",remaining:0,deadline:0,restTotal:0};
+    const a={mode:mode,day:day,index:0,setIndex:0,phase:"ready",records:[],startedAt:stamp(),swaps:{},bands:{},input:null,effort:"medium",remaining:0,deadline:0,restTotal:0};
     S.active=a;initSet(a);persist();page="workout";render();window.scrollTo(0,0);
   }
   function initSet(a){const slot=getTemplate(a.mode)[a.index];a.input=getTarget(a.mode,slot);a.effort="medium";a.remaining=workSeconds(a,slot);a.phase="ready";a.deadline=0;}
@@ -317,7 +326,7 @@
     const a=S.active;if(!a||a.phase==="rest")return;
     const slot=getTemplate(a.mode)[a.index],ex=getExercise(a.mode,slot,a);
     const raw=Number(a.input),target=getTarget(a.mode,slot),actual=Number.isFinite(raw)?Math.max(0,Math.min(999,Math.round(raw))):target;
-    a.records.push({slot:slot[0],exerciseId:ex.id,set:a.setIndex+1,target:target,actual:actual,metric:getMetric(a.mode,slot,a),effort:a.effort,auto:!!auto});
+    a.records.push({slot:slot[0],exerciseId:ex.id,set:a.setIndex+1,target:target,actual:actual,metric:getMetric(a.mode,slot,a),band:getBand(a.mode,slot,a),effort:a.effort,auto:!!auto});
     if(a.index===getTemplate(a.mode).length-1 && a.setIndex===slot[3]-1){finishWorkout();return;}
     a.phase="rest";a.restTotal=minmax(S.settings.restSec,15,300);a.deadline=Date.now()+a.restTotal*1000;a.remaining=a.restTotal;lastRestBeep=false;persist();render();
     if(auto)toast("Hết giờ hiệp · Bắt đầu nghỉ");
@@ -413,7 +422,7 @@
     }else refreshTickDisplay();
   }
   function exportData(){
-    const blob=new Blob([JSON.stringify({app:"BandFit",version:1,exportedAt:stamp(),data:{onboarded:S.onboarded,schedule:S.schedule,settings:S.settings,logs:S.logs,targets:S.targets,swaps:S.swaps}},null,2)],{type:"application/json"});
+    const blob=new Blob([JSON.stringify({app:"BandFit",version:1,exportedAt:stamp(),data:{onboarded:S.onboarded,schedule:S.schedule,settings:S.settings,logs:S.logs,targets:S.targets,swaps:S.swaps,bands:S.bands}},null,2)],{type:"application/json"});
     const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="bandfit-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
   }
   async function importData(file){
@@ -422,7 +431,7 @@
       if(!obj||obj.app!=="BandFit"||!obj.data||!Array.isArray(obj.data.logs)||!Array.isArray(obj.data.schedule))throw Error("Sai định dạng bản sao lưu BandFit");
       if(!confirm("Nhập dữ liệu sẽ thay lịch sử, số rep đã học và cài đặt hiện tại. Tiếp tục?"))return;
       const x=obj.data;
-      S={onboarded:!!x.onboarded,schedule:sortDays(x.schedule.filter(d=>ORDER.includes(d))).slice(0,4),settings:Object.assign(defaultData().settings,x.settings||{}),logs:x.logs.slice(-250),targets:x.targets||{},swaps:x.swaps||{},active:null};
+      S={onboarded:!!x.onboarded,schedule:sortDays(x.schedule.filter(d=>ORDER.includes(d))).slice(0,4),settings:Object.assign(defaultData().settings,x.settings||{}),logs:x.logs.slice(-250),targets:x.targets||{},swaps:x.swaps||{},bands:x.bands||{},active:null};
       if(S.schedule.length<3)S.schedule=[2,4,6];
       persist();goHome();toast("Đã khôi phục bản sao lưu");
     }catch(e){toast("Không nhập được: "+e.message);}
@@ -450,6 +459,13 @@
       const a=S.active;if(a&&a.phase==="rest"){let now=Date.now();a.deadline=Math.max(now,a.deadline)+15000;a.restTotal=Math.max(15,Math.ceil((a.deadline-now)/1000));lastRestBeep=false;persist();refreshTickDisplay();toast("Đã cộng thêm 15 giây");}
     }else if(action==="swap")openSwap();
     else if(action==="choose-swap")chooseSwap(target.dataset.id);
+    else if(action==="set-band"){
+      const a=S.active;if(!a)return;
+      if(a.phase==="work"||a.setIndex>0){toast("Hãy đổi dây trước hiệp đầu tiên của bài");return;}
+      const b=target.dataset.band;if(!["light","heavy"].includes(b))return;
+      const slot=getTemplate(a.mode)[a.index];a.bands[slot[0]]=b;S.bands[slotId(a.mode,slot)]=b;
+      initSet(a);persist();render();toast("Đã chọn "+BAND_LABEL[b]);
+    }
     else if(action==="effort"){const a=S.active;if(a){a.effort=target.dataset.value;persist();document.querySelectorAll(".effort-choice").forEach(b=>b.classList.toggle("selected",b.dataset.value===a.effort));}}
     else if(action==="skip-exercise")skipExercise();
     else if(action==="exit-workout"){if(S.active&&S.active.phase==="work")pauseSet();page="home";render();}

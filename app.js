@@ -212,7 +212,7 @@
   function workSeconds(a,slot){
     if(getMetric(a.mode,slot,a)==="seconds")return getTarget(a.mode,slot,a);
     if(a.mode==="power" && (slot[0]==="jump"||slot[0]==="speedPush"||slot[0]==="speedPull"))return 25;
-    const unilateral=["split","lunge","singleRow","woodChop","pallof","birdDog","deadBug","externalRot","standingKnee","sideReach"].includes(getExercise(a.mode,slot,a).id);
+    const unilateral=["split","lunge","singleRow","woodChop","pallof","birdDog","deadBug","externalRot","standingKnee","sideReach","altCurl"].includes(getExercise(a.mode,slot,a).id);
     return minmax(S.settings.workSec,15,180)*(unilateral?2:1);
   }
   function current(){
@@ -223,6 +223,7 @@
     const v=current();if(!v)return '<div class="card"><h2>Không có buổi tập đang mở</h2><button class="primary-btn mt20" data-action="go-home">Về tổng quan</button></div>';
     const a=v.a,s=v.slot,ex=getExercise(a.mode,s,a),m=MODES[a.mode],st=workoutStats(a),target=getTarget(a.mode,s);
     const unit=getMetric(a.mode,s,a)==="seconds"?"giây":"lần";
+    const unilateralRep=["split","lunge","singleRow","woodChop","pallof","birdDog","deadBug","externalRot","standingKnee","sideReach","altCurl"].includes(ex.id);const repUnit=unit==="lần"&&unilateralRep?"lần mỗi bên":unit;
     const exerciseTimer=workSeconds(a,s);
     let remaining=a.phase==="ready"?exerciseTimer:(a.phase==="paused"?a.remaining:(a.phase==="work"?Math.max(0,Math.ceil((a.deadline-Date.now())/1000)):exerciseTimer));
     let pct=a.phase==="ready"?100:Math.min(100,Math.max(0,100*remaining/exerciseTimer));
@@ -239,7 +240,7 @@
         '<div class="tips">Lưu ý: '+esc(ex.tip)+'</div>'+
         '<div class="exercise-tool-row"><button class="ghost-btn" data-action="swap">⇄ Đổi bài tương tự</button><button class="ghost-btn" data-action="skip-exercise">Bỏ qua bài</button></div>'+
         '<div class="timer-wrap"><div class="timer-ring" id="timerRing" style="--pct:'+pct+'"><div class="timer-inner"><div class="timer-number" id="timerNum">'+formatTime(remaining)+'</div><div class="timer-label">'+(a.phase==="ready"?"SẴN SÀNG":a.phase==="paused"?"TẠM DỪNG":"ĐANG TẬP")+'</div></div></div></div>'+
-        '<div class="rep-row"><label><strong>Thực hiện được bao nhiêu '+unit+'?</strong>Gợi ý: '+target+' '+unit+(["sidePlank","sideReach"].includes(ex.id)&&s[5]==="seconds"?" (chia đều 2 bên)":"")+'. Có thể sửa số thực tế.</label><input id="repInput" class="rep-input" type="number" inputmode="numeric" min="0" max="999" value="'+esc(a.input==null?target:a.input)+'" aria-label="Số '+unit+' thực tế"></div>'+
+        '<div class="rep-row"><label><strong>Thực hiện được bao nhiêu '+unit+'?</strong>Gợi ý: '+target+' '+repUnit+(["sidePlank","sideReach"].includes(ex.id)&&s[5]==="seconds"?" (chia đều 2 bên)":"")+'. Có thể sửa số thực tế.</label><input id="repInput" class="rep-input" type="number" inputmode="numeric" min="0" max="999" value="'+esc(a.input==null?target:a.input)+'" aria-label="Số '+unit+' thực tế"></div>'+
         '<div class="effort-row"><span>Cảm giác sau hiệp:</span>'+[["easy","Dễ"],["medium","Vừa"],["hard","Khó"]].map(x=>'<button class="effort-choice '+(a.effort===x[0]?"selected":"")+'" data-action="effort" data-value="'+x[0]+'">'+x[1]+'</button>').join("")+'</div>'+
         '<div class="timer-button-row">'+(a.phase==="ready"?'<button class="primary-btn" data-action="start-set">▶ Bắt đầu đếm giờ</button>':a.phase==="paused"?'<button class="primary-btn" data-action="resume-set">▶ Tiếp tục</button>':'<button class="secondary-btn" data-action="pause-set">Ⅱ Tạm dừng</button>')+
         '<button class="ghost-btn" data-action="reset-set">↺ Đếm lại</button><button class="primary-btn" data-action="finish-set">✓ Hoàn thành hiệp / Nghỉ</button></div></div>';
@@ -251,7 +252,7 @@
     if(!lastSummary){return '<div class="card"><h2>Chưa có kết quả mới</h2><button class="primary-btn mt20" data-action="go-home">Về trang chủ</button></div>';}
     const l=lastSummary,adj=l.adjustments||[],items=adj.slice(0,8).map(a=>'<div class="history-item"><strong>'+esc(a.name)+'</strong><p>'+a.previous+' → '+a.next+' '+(a.metric==="seconds"?"giây":"lần")+'/hiệp · '+esc(a.reason)+'</p></div>').join("");
     return '<div class="eyebrow">WORKOUT SAVED</div><h1 style="font-size:34px;margin:11px 0">Hoàn thành buổi tập.</h1><p class="muted">Kết quả được lưu trên thiết bị này, không cần tài khoản.</p>'+
-      '<div class="summary-grid"><div class="stat"><strong>'+l.records.length+'</strong><small>Hiệp đã ghi</small></div><div class="stat"><strong>'+l.volume+'</strong><small>Tổng lần/giây đã ghi*</small></div><div class="stat"><strong>'+l.ratio+'%</strong><small>Đạt mục tiêu đã đặt</small></div><div class="stat"><strong>'+l.minutes+' phút</strong><small>Thời gian phiên</small></div></div>'+
+      '<div class="summary-grid"><div class="stat"><strong>'+l.records.length+' / '+l.plannedSets+'</strong><small>Hiệp hoàn thành</small></div><div class="stat"><strong>'+l.volume+'</strong><small>Tổng lần/giây đã ghi*</small></div><div class="stat"><strong>'+l.ratio+'%</strong><small>Số lần/giây đạt trên hiệp đã làm</small></div><div class="stat"><strong>'+l.minutes+' phút</strong><small>Thời gian phiên</small></div></div>'+
       '<div class="card"><h2 style="font-size:19px">Cá nhân hóa buổi sau</h2><p class="muted tiny mt12">Hệ thống so sánh số lần thực tế với mục tiêu của từng bài, đồng thời xét mức hoàn thành toàn buổi và cảm giác nặng/nhẹ. Thay đổi từng bước nhỏ, không tự tăng số hiệp.</p>'+
       (adj.length?'<div class="mt12">'+items+'</div>':'<div class="inline-note">Giữ nguyên mức hiện tại: phù hợp với số lần bạn vừa thực hiện.</div>')+
       '<p class="muted tiny mt12">* Tổng khối lượng chỉ là số đếm để theo dõi, không phải năng lượng tiêu hao; không cộng giây và lần thành cùng một đơn vị sinh lý.</p></div>'+
@@ -283,7 +284,7 @@
       '<button class="secondary-btn wide" data-action="export">Xuất lịch sử và cài đặt (JSON)</button>'+
       '<label class="secondary-btn wide mt12" style="display:flex;cursor:pointer">Nhập dữ liệu đã sao lưu<input type="file" id="importFile" accept="application/json,.json" style="display:none"></label>';
   }
-  function goHome(){page="home";render();window.scrollTo(0,0);}
+  function goHome(){if(S.active&&S.active.phase==="work")pauseSet();page="home";render();window.scrollTo(0,0);}
   function startWorkout(mode,day){
     if(S.active){page="workout";render();return;}
     if(!TEMPLATES[mode])return;
@@ -371,7 +372,8 @@
     const a=S.active;if(!a)return;
     const upd=updateTargets(a);
     const minutes=Math.max(1,Math.round((Date.now()-new Date(a.startedAt).getTime())/60000));
-    const log={date:stamp(),mode:a.mode,day:a.day,records:a.records.slice(),minutes:minutes,ratio:Math.round(upd.overall*100),volume:upd.totalActual,adjustments:upd.changes};
+    const plannedSets=getTemplate(a.mode).reduce((n,s)=>n+s[3],0);
+    const log={date:stamp(),mode:a.mode,day:a.day,records:a.records.slice(),plannedSets:plannedSets,minutes:minutes,ratio:Math.round(upd.overall*100),volume:upd.totalActual,adjustments:upd.changes};
     S.logs.push(log);if(S.logs.length>250)S.logs=S.logs.slice(-250);
     lastSummary=log;S.active=null;persist();page="summary";render();alertEnd();window.scrollTo(0,0);
   }

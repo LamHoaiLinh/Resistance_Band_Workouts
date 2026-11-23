@@ -5,9 +5,9 @@
 ## Sử dụng ngay
 
 1. Vào **Settings → Pages** trong repository GitHub này.
-2. Ở mục **Build and deployment**, chọn **Deploy from a branch**.
-3. Chọn nhánh **main**, thư mục **/(root)** rồi **Save**.
-4. Sau khi GitHub Pages triển khai thành công, truy cập: **https://lamhoailinh.github.io/Resistance_Band_Workouts/**
+2. Ở **Build and deployment → Source**, chọn **GitHub Actions** (ứng dụng đã có workflow tự xuất bản khi cập nhật nhánh main).
+3. Xem tiến độ ở tab **Actions**, workflow **Publish BandFit to GitHub Pages**. Nếu chưa chạy, chọn **Run workflow**.
+4. Sau khi workflow hoàn thành thành công, truy cập: **https://lamhoailinh.github.io/Resistance_Band_Workouts/**
 5. Trên iPhone: mở bằng Safari → **Share → Add to Home Screen** để thêm vào màn hình chính.
 
 Không cần npm, máy chủ hay API key. Mở index.html để xem giao diện, nhưng PWA/offline chỉ hoạt động đúng khi chạy từ HTTPS/localhost.

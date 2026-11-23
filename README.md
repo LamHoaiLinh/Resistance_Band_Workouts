@@ -22,6 +22,7 @@ Không cần npm, máy chủ hay API key. Mở index.html để xem giao diện,
 - Bộ đếm nghỉ có **Đã nghỉ xong** và **+15 giây** (bấm nhiều lần). Hết giờ nghỉ không tự ép bắt đầu hiệp kế tiếp.
 - **Cài đặt (⚙)** luôn ở trên cùng: thời gian nghỉ, thời gian đếm hiệp, tiếng chuông, rung.
 - Nhập số **rep thực hiện thực tế** (hoặc số giây của bài giữ tư thế); đánh giá cảm giác **Dễ/Vừa/Khó**.
+- Chọn **Dây nhẹ / Dây nặng** theo từng bài. App ghi nhận mức dây và học số rep **riêng cho từng bài + từng mức dây** để không đánh đồng việc đổi sang dây nặng với việc yếu đi.
 - **Cá nhân hóa**: cuối buổi, ứng dụng so sánh số thực hiện với mục tiêu từng bài (80% trọng số) và mức hoàn thành tổng (20%). Nếu thấp hơn mục tiêu, giảm nhẹ lần sau; nếu vượt rõ và không quá khó, tăng nhẹ. Không tự tăng số hiệp, và không khuyến khích rep quá cao ở bài bộc phát.
 - Lưu lịch sử, lịch tập, bài thay thế, mức rep đề xuất trong **localStorage**.
 - **Xuất/Nhập JSON** để sao lưu và chuyển thiết bị. Không tự đồng bộ.
@@ -29,6 +30,7 @@ Không cần npm, máy chủ hay API key. Mở index.html để xem giao diện,
 
 ## Lưu ý quan trọng
 
+- Với các bài sức mạnh, chỉ chọn dây nặng khi vẫn kiểm soát tốt từng lần; có thể bắt đầu bằng dây nhẹ.
 - Dây phải nguyên vẹn, không rách/nứt; vị trí neo chắc chắn. Không để dây bật vào mặt.
 - Nếu đau khớp, đau nhói hoặc chóng mặt: ngừng tập. Những bài bật nhảy chỉ nên tập khi khớp chịu lực tốt.
 - Bài bộc phát ưu tiên tốc độ và kiểm soát; không tập đến kiệt sức. Đừng xem cảm giác mỏi là thước đo sức mạnh.

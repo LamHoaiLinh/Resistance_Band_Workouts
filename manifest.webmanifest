@@ -1,0 +1,18 @@
+{
+  "name": "BandFit - Resistance Band Workouts",
+  "short_name": "BandFit",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#090f0d",
+  "theme_color": "#090f0d",
+  "description": "Lịch tập dây kháng lực cá nhân hóa 3-4 buổi/tuần",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

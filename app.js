@@ -131,7 +131,10 @@
   const getTemplate=mode=>TEMPLATES[mode]||TEMPLATES.strength;
   const slotId=(mode,slot)=>mode+":"+slot[0];
   const getExercise=(mode,slot,act)=>EX[(act&&act.swaps&&act.swaps[slot[0]])||S.swaps[slotId(mode,slot)]||slot[1]]||EX[slot[1]];
-  const getTarget=(mode,slot)=>Math.max(1,Number(S.targets[slotId(mode,slot)])||slot[4]);
+  const TIMED_EXERCISES=new Set(["sidePlank","plank","wallSit"]);
+  const getMetric=(mode,slot,act)=>TIMED_EXERCISES.has(getExercise(mode,slot,act).id)?"seconds":"reps";
+  const targetKey=(mode,slot,act)=>slotId(mode,slot)+":"+getExercise(mode,slot,act).id+":"+getMetric(mode,slot,act);
+  const getTarget=(mode,slot,act)=>Math.max(1,Number(S.targets[targetKey(mode,slot,act)])||(slot[5]===getMetric(mode,slot,act)?slot[4]:(getMetric(mode,slot,act)==="seconds"?40:10)));
   const esc=v=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const minmax=(n,min,max)=>Math.min(max,Math.max(min,Number(n)||min));
   const formatTime=s=>{s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");};
@@ -171,7 +174,7 @@
     else if(page==="history")app.innerHTML=renderHistory();
     refreshTickDisplay();
   }
-  function navigate(p){if(S.active && p!=="workout" && p!=="home" && !confirm("Bạn đang tập dở. Rời màn hình không làm mất tiến độ, nhưng bộ đếm sẽ vẫn chạy. Tiếp tục?"))return;page=p;render();window.scrollTo(0,0);}
+  function navigate(p){if(S.active && p!=="workout" && p!=="home" && !confirm("Bạn đang tập dở. Tiến độ được giữ lại, bộ đếm sẽ tạm dừng. Tiếp tục?"))return;if(S.active&&S.active.phase==="work"&&p!=="workout")pauseSet();page=p;render();window.scrollTo(0,0);}
   function renderSetup(){
     const selected=draftDays.join(",");
     let opts=PRESETS.map(p=>{
@@ -207,7 +210,7 @@
     return {done:recordCount(a),total:total,pct:total?Math.round(recordCount(a)*100/total):0};
   }
   function workSeconds(a,slot){
-    if(slot[5]==="seconds")return getTarget(a.mode,slot);
+    if(getMetric(a.mode,slot,a)==="seconds")return getTarget(a.mode,slot,a);
     if(a.mode==="power" && (slot[0]==="jump"||slot[0]==="speedPush"||slot[0]==="speedPull"))return 25;
     const unilateral=["split","lunge","singleRow","woodChop","pallof","birdDog","deadBug","externalRot","standingKnee","sideReach"].includes(getExercise(a.mode,slot,a).id);
     return minmax(S.settings.workSec,15,180)*(unilateral?2:1);
@@ -219,7 +222,7 @@
   function renderWorkout(){
     const v=current();if(!v)return '<div class="card"><h2>Không có buổi tập đang mở</h2><button class="primary-btn mt20" data-action="go-home">Về tổng quan</button></div>';
     const a=v.a,s=v.slot,ex=getExercise(a.mode,s,a),m=MODES[a.mode],st=workoutStats(a),target=getTarget(a.mode,s);
-    const unit=s[5]==="seconds"?"giây":(ex.id==="sidePlank"?"giây":"lần");
+    const unit=getMetric(a.mode,s,a)==="seconds"?"giây":"lần";
     const exerciseTimer=workSeconds(a,s);
     let remaining=a.phase==="ready"?exerciseTimer:(a.phase==="paused"?a.remaining:(a.phase==="work"?Math.max(0,Math.ceil((a.deadline-Date.now())/1000)):exerciseTimer));
     let pct=a.phase==="ready"?100:Math.min(100,Math.max(0,100*remaining/exerciseTimer));
@@ -313,7 +316,7 @@
     const a=S.active;if(!a||a.phase==="rest")return;
     const slot=getTemplate(a.mode)[a.index],ex=getExercise(a.mode,slot,a);
     const raw=Number(a.input),target=getTarget(a.mode,slot),actual=Number.isFinite(raw)?Math.max(0,Math.min(999,Math.round(raw))):target;
-    a.records.push({slot:slot[0],exerciseId:ex.id,set:a.setIndex+1,target:target,actual:actual,metric:slot[5],effort:a.effort,auto:!!auto});
+    a.records.push({slot:slot[0],exerciseId:ex.id,set:a.setIndex+1,target:target,actual:actual,metric:getMetric(a.mode,slot,a),effort:a.effort,auto:!!auto});
     if(a.index===getTemplate(a.mode).length-1 && a.setIndex===slot[3]-1){finishWorkout();return;}
     a.phase="rest";a.restTotal=minmax(S.settings.restSec,15,300);a.deadline=Date.now()+a.restTotal*1000;a.remaining=a.restTotal;lastRestBeep=false;persist();render();
     if(auto)toast("Hết giờ hiệp · Bắt đầu nghỉ");
@@ -348,7 +351,7 @@
       const local=actual/expected,combined=local*.8+overall*.2;
       const hard=rs.filter(r=>r.effort==="hard").length/rs.length;
       const easy=rs.filter(r=>r.effort==="easy").length/rs.length;
-      const before=getTarget(a.mode,slot),isSeconds=slot[5]==="seconds";
+      const before=getTarget(a.mode,slot,a),isSeconds=rs[0].metric==="seconds";
       let next=before,reason="";
       if(combined<.74){next=before-(isSeconds?10:2);reason="Số lần thực tế thấp hơn mục tiêu";}
       else if(combined<.90){next=before-(isSeconds?5:1);reason="Giảm nhẹ để phù hợp khả năng";}
@@ -358,8 +361,8 @@
       const cap=isSeconds?120:(a.mode==="power"?16:25),floor=isSeconds?15:3;
       next=Math.round(minmax(next,floor,cap));
       if(next!==before){
-        S.targets[slotId(a.mode,slot)]=next;
-        changes.push({name:getExercise(a.mode,slot,a).en,previous:before,next:next,metric:slot[5],reason:reason});
+        S.targets[targetKey(a.mode,slot,a)]=next;
+        changes.push({name:getExercise(a.mode,slot,a).en,previous:before,next:next,metric:rs[0].metric,reason:reason});
       }
     });
     return {changes:changes,overall:overall,totalActual:totalActual};
@@ -374,6 +377,7 @@
   }
   function openSwap(){
     const a=S.active;if(!a||a.phase==="rest")return;
+    if(a.phase==="work"){toast("Hãy tạm dừng hiệp trước khi đổi bài");return;}
     if(a.setIndex>0){toast("Đổi bài trước hiệp đầu tiên của động tác");return;}
     const slot=getTemplate(a.mode)[a.index],ids=[slot[1],...slot[2]].slice(0,4),selected=getExercise(a.mode,slot,a).id;
     document.getElementById("swapList").innerHTML=ids.map(id=>{
@@ -446,7 +450,7 @@
     else if(action==="choose-swap")chooseSwap(target.dataset.id);
     else if(action==="effort"){const a=S.active;if(a){a.effort=target.dataset.value;persist();document.querySelectorAll(".effort-choice").forEach(b=>b.classList.toggle("selected",b.dataset.value===a.effort));}}
     else if(action==="skip-exercise")skipExercise();
-    else if(action==="exit-workout"){page="home";render();}
+    else if(action==="exit-workout"){if(S.active&&S.active.phase==="work")pauseSet();page="home";render();}
     else if(action==="go-home")goHome();
     else if(action==="filter"){libraryFilter=target.dataset.cat;detailId=null;render();}
     else if(action==="toggle-detail"){detailId=detailId===target.dataset.id?null:target.dataset.id;document.getElementById("libraryList").innerHTML=renderLibraryList();}
@@ -478,6 +482,7 @@
   window.addEventListener("offline",()=>{document.getElementById("onlineStatus").classList.add("offline");});
   if(!navigator.onLine)document.getElementById("onlineStatus").classList.add("offline");
   if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
+  document.addEventListener("visibilitychange",()=>{if(document.hidden&&S.active&&S.active.phase==="work"){const a=S.active;a.remaining=Math.max(1,Math.ceil((a.deadline-Date.now())/1000));a.phase="paused";a.deadline=0;persist();}else if(!document.hidden&&page==="workout"){render();}});
   timerInterval=setInterval(tick,250);
   render();
 })();

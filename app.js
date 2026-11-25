@@ -14,7 +14,7 @@
   const MODES={
     strength:{title:"Sức mạnh",tag:"STRENGTH DAY",subtitle:"Tải vừa đến nặng · Tập chậm, chắc · 1–2 lần dự trữ",icon:"◆",time:"45–55 phút"},
     power:{title:"Bộc phát",tag:"POWER DAY",subtitle:"Phát lực nhanh có kiểm soát · Không tập đến kiệt sức",icon:"↗",time:"35–45 phút"},
-    balance:{title:"Cân bằng cơ thể",tag:"BALANCE DAY",subtitle:"Lưng · Vai sau · Chân · Bụng chéo · Ổn định toàn thân",icon:"◎",time:"45–55 phút"},
+    balance:{title:"Sức bền & cân bằng",tag:"ENDURANCE / BALANCE DAY",subtitle:"Sức bền cơ · Lưng · Vai sau · Chân · Bụng chéo",icon:"◎",time:"45–55 phút"},
     recovery:{title:"Phục hồi chủ động",tag:"RECOVERY DAY",subtitle:"Buổi thứ tư nhẹ: kỹ thuật, kiểm soát và linh hoạt",icon:"◌",time:"20–30 phút"}
   };
   const EX={};
@@ -68,6 +68,49 @@
   E("plank","Forearm Plank","Giữ thân thẳng chống khuỷu","Core",["Chống hai khuỷu dưới vai, duỗi chân.","Giữ bụng và mông vừa căng, thân thẳng.","Thở đều trong suốt thời gian giữ."],"Hạ gối xuống nếu lưng võng.","Không cần dụng cụ");
   E("shoulderTap","Plank Shoulder Tap","Plank chạm vai luân phiên","Core",["Chống hai tay thẳng dưới vai.","Dùng một tay chạm nhẹ vai đối diện.","Đặt tay xuống rồi đổi bên, hạn chế lắc hông."],"Có thể chống tay lên bàn chắc để dễ hơn.","Không cần dụng cụ");
   E("march","Glute Bridge March","Nâng mông nhấc chân luân phiên","Core",["Nằm ngửa co gối rồi nâng mông.","Giữ hông cân, nhấc nhẹ một chân khỏi sàn.","Đặt xuống và đổi chân, không lắc hông."],"Nếu khó, tập Glute Bridge thường.","Không cần dụng cụ");
+  E("pushup","Standard Push-Up","Hít đất chuẩn","Ngực",["Chống tay dưới vai","Hạ ngực có kiểm soát","Đẩy lên giữ thân thẳng"],"Giữ đủ biên độ, không võng lưng","Không cần dụng cụ");
+  E("fastPush","Fast Push-Up","Hít đất nhanh liên tục","Ngực",["Hạ và đẩy nhịp nhanh đều","Giữ đủ biên độ","Dừng khi kỹ thuật giảm"],"Nhiều lần để rèn sức bền, không khóa khuỷu mạnh","Không cần dụng cụ");
+  E("tempoPush","Tempo Push-Up","Hít đất chậm có giữ","Ngực",["Hạ 2 giây","Giữ dưới 1–2 giây rồi đẩy lên 2 giây","Giữ trên 1 giây"],"Giữ thân thẳng, chọn số lần vừa sức","Không cần dụng cụ");
+  E("bandPush","Resistance Band Push-Up","Hít đất tăng tải bằng dây","Ngực",["Vòng dây qua lưng trên, giữ chắc hai đầu dưới tay","Hạ ngực có kiểm soát","Đẩy lên giữ thân thẳng"],"Kiểm tra dây không tuột, còn 1–3 lần dự trữ","Dây kháng lực");
+  E("closePush","Close-Grip Push-Up","Hít đất tay hẹp","Tay",["Đặt tay gần nhau dưới ngực","Hạ người, khuỷu sát thân vừa phải","Đẩy lên"],"Không cần chạm ngón tay, dừng nếu đau cổ tay","Không cần dụng cụ");
+  E("declinePush","Decline Push-Up","Hít đất kê chân cao","Ngực",["Kê chân lên bục thấp chắc","Hạ ngực chậm","Đẩy lên giữ thân thẳng"],"Không dùng bục trơn hoặc quá cao","Bục chắc chắn");
+  E("explosivePush","Explosive Push-Up","Hít đất đẩy nhanh","Ngực",["Hạ có kiểm soát","Đẩy nhanh nhất có thể, tay không bắt buộc rời sàn","Ổn định trước lần tiếp"],"Dừng khi tốc độ giảm","Không cần dụng cụ");
+  E("clapPush","Clapping Push-Up","Hít đất bộc phá vỗ tay","Ngực",["Khởi động cổ tay và vai, hạ người","Đẩy mạnh để tay rời sàn, vỗ nếu đủ độ cao","Tiếp đất khuỷu hơi chùng rồi ổn định"],"Chỉ chọn khi đã làm Explosive Push-Up an toàn","Không cần dụng cụ");
+  E("pullup","Pull-Up (Overhand Grip)","Hít xà úp tay","Lưng",["Nắm xà lòng tay hướng ra trước","Kéo khuỷu xuống, nâng cằm qua xà nếu đủ sức","Hạ chậm"],"Không đung đưa, dùng trợ lực nếu cần","Xà đơn chắc chắn");
+  E("chinup","Chin-Up (Underhand Grip)","Hít xà ngửa tay","Lưng",["Nắm xà lòng tay hướng về mặt","Kéo ngực về xà","Hạ có kiểm soát"],"Dừng nếu đau khuỷu hoặc cổ tay","Xà đơn chắc chắn");
+  E("neutralPull","Neutral-Grip Pull-Up","Hít xà tay trung tính","Lưng",["Nắm tay cầm song song","Kéo ngực lên, khuỷu hướng xuống","Hạ chậm"],"Chỉ dùng tay cầm phù hợp","Xà đơn tay cầm song song");
+  E("assistPull","Band-Assisted Pull-Up","Hít xà úp tay có trợ lực","Lưng",["Gắn dây vòng nguyên vẹn chắc vào xà, dùng bục vững đặt chân hoặc gối vào dây","Kéo lên bằng lưng","Hạ chậm và tháo dây khi đứng vững"],"Dây mạnh hơn giúp bài dễ hơn, tránh dây bật vào mặt","Xà đơn + dây vòng trợ lực");
+  E("assistChin","Band-Assisted Chin-Up","Hít xà ngửa tay có trợ lực","Lưng",["Gắn dây vòng chắc vào xà, dùng bục vững đặt chân hoặc gối vào dây","Nắm ngửa tay và kéo lên","Hạ chậm rồi tháo dây an toàn"],"Dây mạnh hơn trợ lực nhiều hơn","Xà đơn + dây vòng trợ lực");
+  E("negativePull","Negative Pull-Up","Hít xà âm hạ chậm","Lưng",["Dùng bục chắc vào vị trí cằm ngang xà","Hạ người 3–5 giây","Đặt chân lên bục rồi lặp"],"Không nhảy lên xà, chỉ 2–4 lần sạch","Xà đơn + bục chắc chắn");
+  E("scapPull","Scapular Pull-Up","Kéo bả vai khi treo xà","Lưng",["Treo xà khuỷu gần thẳng","Kéo vai xuống để thân nhích lên","Thả chậm"],"Không gập khuỷu, giảm biên độ nếu khó chịu","Xà đơn chắc chắn");
+  E("deadHang","Dead Hang","Treo xà rèn lực nắm","Cẳng tay",["Nắm xà chắc, chân có thể chạm bục","Giữ vai thoải mái, thở đều","Xuống bục có kiểm soát"],"Không treo đến tuột tay","Xà đơn chắc chắn");
+  E("latPulldown","Resistance Band Lat Pulldown","Kéo dây từ trên xuống tập xô","Lưng",["Neo dây chắc phía trên đầu","Kéo khuỷu xuống hai bên","Trả tay chậm"],"Không ngửa người, kiểm tra neo","Cần điểm neo chắc chắn");
+  E("bandPullover","Resistance Band Straight-Arm Pulldown","Kéo dây tay thẳng tập xô","Lưng",["Neo dây cao chắc chắn","Giữ tay hơi chùng, kéo xuống ngang hông","Trả tay chậm"],"Không ưỡn lưng","Cần điểm neo chắc chắn");
+  E("crunch","Crunch","Gập bụng ngắn","Core",["Nằm ngửa co gối","Cuộn vai lên khỏi sàn, thở ra","Hạ chậm"],"Không kéo cổ","Không cần dụng cụ");
+  E("hollow","Hollow Body Hold","Giữ bụng dạng thân cong","Core",["Nằm ngửa ép nhẹ lưng dưới xuống sàn","Nâng vai và chân vừa sức","Giữ và thở đều"],"Co gối nếu khó, dừng nếu lưng đau","Không cần dụng cụ");
+  E("legRaise","Lying Leg Raise","Nằm nâng chân","Core",["Nằm ngửa co nhẹ gối","Nâng chân","Hạ chậm đến mức lưng còn ổn định"],"Không lấy đà hoặc võng lưng","Không cần dụng cụ");
+  E("hangingKnee","Hanging Knee Raise","Treo xà nâng gối","Core",["Treo xà chắc vai ổn định","Cuộn nhẹ hông nâng gối","Hạ chậm"],"Không đung đưa, đổi Reverse Crunch nếu tay mỏi","Xà đơn chắc chắn");
+  E("bicycle","Bicycle Crunch","Gập bụng đạp xe chéo","Core",["Nằm ngửa nâng nhẹ vai","Đưa khuỷu về gối đối diện","Đổi bên chậm"],"Không kéo cổ, đếm mỗi bên","Không cần dụng cụ");
+  E("sideDip","Side Plank Hip Dip","Plank nghiêng nâng hạ hông","Core",["Chống khuỷu dưới vai","Hạ hông nhẹ rồi nâng thẳng","Đổi bên"],"Không sụp vai, có thể co gối","Không cần dụng cụ");
+  E("suitcase","Band Suitcase Hold","Giữ dây một bên chống nghiêng","Core",["Đứng lên dây, cầm một tay","Giữ thân thẳng chống lực kéo lệch","Đổi bên, thở đều"],"Không cố nghiêng lưng","Dây kháng lực");
+  E("backExtension","Prone Back Extension","Nằm sấp nâng ngực nhẹ","Hông & lưng dưới",["Nằm sấp tay cạnh thân","Nâng ngực nhẹ khỏi sàn","Hạ chậm"],"Không ưỡn lưng mạnh, dừng nếu đau","Không cần dụng cụ");
+  E("proneYT","Prone Y-T Raise","Nằm sấp nâng tay chữ Y và T","Lưng",["Nằm sấp trán tựa khăn","Nâng tay nhẹ theo chữ Y rồi T","Hạ chậm"],"Mỗi cặp Y-T tính một lần","Không cần dụng cụ");
+  E("singleRdl","Single-Leg Band RDL","Gập hông một chân với dây","Hông & lưng dưới",["Đạp dây bằng chân trụ","Gập hông chân kia ra sau","Đứng lên bằng mông rồi đổi bên"],"Vịn tường nếu chưa vững","Dây kháng lực");
+  E("hamCurl","Sliding Hamstring Curl","Co gót trượt tập đùi sau","Chân & mông",["Nằm ngửa đặt gót lên khăn","Nâng nhẹ hông rồi kéo gót về mông","Duỗi chân có kiểm soát"],"Giảm biên độ nếu chuột rút","Khăn trên sàn phù hợp");
+  E("singleCalf","Single-Leg Calf Raise","Nhón gót một chân","Bắp chân",["Đứng một chân vịn tường","Nhón gót","Hạ chậm rồi đổi bên"],"Không nảy gót","Không cần dụng cụ");
+  E("bentCalf","Bent-Knee Calf Raise","Nhón gót gối chùng","Bắp chân",["Vịn tường khuỵu gối nhẹ","Giữ góc gối nâng gót","Hạ chậm"],"Tập cơ dép, dừng nếu đau gân","Không cần dụng cụ");
+  E("tibRaise","Tibialis Raise","Nâng mũi chân tập mặt trước ống quyển","Bắp chân",["Tựa lưng vào tường, gót đặt sàn","Nâng mũi chân","Hạ từ từ"],"Dừng nếu đau xương ống quyển","Không cần dụng cụ");
+  E("tuckJump","Tuck Jump","Bật nhảy co gối","Chân & mông",["Khởi động và hạ nhẹ người","Bật nhanh, co gối vừa sức","Tiếp đất êm rồi ổn định"],"Chỉ tập khi Squat Jump đã vững","Không cần dụng cụ");
+  E("pogo","Pogo Jump","Bật nhẹ bằng cổ chân","Bắp chân",["Đứng gối hơi chùng","Bật thấp bằng cổ chân","Tiếp đất nhẹ"],"Dừng nếu tốc độ giảm hoặc gân đau","Không cần dụng cụ");
+  E("broadJump","Standing Broad Jump","Bật xa tại chỗ","Chân & mông",["Chọn sàn không trơn, khoảng trống","Gập hông rồi bật ra trước","Tiếp đất hai chân gối chùng"],"Không cố đạt cự ly tối đa lúc mới tập","Không cần dụng cụ");
+  E("speedPunch","Resistance Band Speed Punch","Đấm nhanh với dây nhẹ","Ngực",["Vòng dây nhẹ qua lưng trên","Đứng thế thủ đấm nhanh có kiểm soát","Thu tay về rồi đổi bên"],"Không khóa khuỷu hay dùng dây nặng","Dây kháng lực nhẹ");
+  E("speedChop","Resistance Band Speed Wood Chop","Kéo chéo phát lực nhanh","Core",["Neo dây nhẹ chắc bên thân","Xoay hông và thân vừa tầm kéo chéo nhanh","Trả chậm rồi đổi bên"],"Không vặn lưng quá mức","Cần điểm neo chắc chắn");
+  E("grip","Hand Gripper","Bóp tay rèn lực nắm","Cẳng tay",["Giữ dụng cụ vừa tay","Bóp chắc giữ cổ tay thẳng","Thả chậm đổi bên"],"Không tập khi đau khuỷu","Dụng cụ bóp tay");
+  E("pikePush","Pike Push-Up","Hít đất chữ V tập vai","Vai",["Chống tay nâng hông thành chữ V","Gập khuỷu để đầu tiến gần sàn","Đẩy lên"],"Không dồn lực vào cổ, giảm độ dốc nếu yếu","Không cần dụng cụ");
+  E("bandLateral","Resistance Band Lateral Lunge","Chùng chân ngang với dây","Chân & mông",["Đứng chân rộng giữ dây chắc hoặc bỏ dây","Dồn hông sang một bên","Đẩy về giữa đổi bên"],"Giữ gối cùng hướng bàn chân","Dây kháng lực");
+  E("bandWrist","Resistance Band Wrist Curl","Gập cổ tay với dây","Cẳng tay",["Ngồi tựa cẳng tay lên đùi","Giữ dây dưới chân và gập cổ tay","Hạ chậm đổi bên"],"Dây nhẹ, không cố khi đau","Dây kháng lực nhẹ");
+  E("speedPulldown","Resistance Band Speed Lat Pulldown","Kéo xô nhanh bằng dây nhẹ","Lưng",["Neo dây nhẹ chắc trên đầu","Kéo khuỷu xuống nhanh","Trả tay chậm nghỉ một nhịp"],"Không giật vai hay dùng dây nặng","Cần điểm neo chắc chắn");
+  E("skater","Skater Jump","Bật ngang đổi chân","Chân & mông",["Bật ngang đoạn ngắn","Tiếp đất một chân gối hơi chùng","Ổn định rồi đổi bên"],"Bắt đầu bước ngang nếu chưa vững","Không cần dụng cụ");
   const TEMPLATES={
     strength:[
       ["leg","squat",["split","lunge","wallSit"],3,8,"reps"],
@@ -111,6 +154,16 @@
       ["oblique","sidePlank",["standingKnee","pallof","sideReach"],2,40,"seconds"]
     ]
   };
+  const EXTRA_OPTIONS={"strength":{"leg":"bandLateral","push":"bandPush tempoPush declinePush pushup closePush","pull":"pullup chinup neutralPull assistPull assistChin negativePull latPulldown bandPullover","shoulder":"pikePush","hip":"singleRdl hamCurl backExtension","biceps":"chinup assistChin grip bandWrist","triceps":"closePush bandPush","oblique":"sideDip suitcase woodChop bicycle","core":"crunch hollow legRaise hangingKnee backExtension"},"power":{"jump":"tuckJump broadJump skater pogo","speedPush":"explosivePush clapPush speedPunch","speedPull":"speedPulldown","leg":"bandLateral","hip":"singleRdl hamCurl backExtension","upperBack":"proneYT scapPull","oblique":"speedChop sideDip suitcase","backCore":"hollow backExtension crunch","calf":"pogo singleCalf bentCalf tibRaise"},"balance":{"leg":"bandLateral","pull":"pullup chinup neutralPull assistPull assistChin scapPull latPulldown bandPullover","push":"fastPush tempoPush pushup closePush declinePush","shoulder":"pikePush","hip":"singleRdl hamCurl backExtension","upperBack":"proneYT scapPull deadHang","oblique":"bicycle sideDip suitcase","abs":"crunch hollow legRaise hangingKnee bicycle","rotator":"proneYT bandWrist grip"},"recovery":{"leg":"tibRaise bentCalf","upperBack":"proneYT scapPull","hip":"backExtension","backCore":"backExtension","core":"crunch hollow","oblique":"sideDip suitcase"}};
+  for(const [mode,slots] of Object.entries(EXTRA_OPTIONS))for(const slot of TEMPLATES[mode])slot[2]=[...new Set([...slot[2],...(slots[slot[0]]||"").split(" ").filter(Boolean)])].filter(id=>id!==slot[1]);
+  const EXTRA_SLOTS={"strength":[["verticalPull","latPulldown",["bandPullover","pullup","chinup","neutralPull","assistPull","assistChin","negativePull","row"],2,8,"reps"]],"balance":[["calf","singleCalf",["bentCalf","tibRaise","calf"],2,12,"reps"],["grip","grip",["deadHang","bandWrist","hammerCurl"],1,12,"reps"]]};
+  for(const [mode,slots] of Object.entries(EXTRA_SLOTS))TEMPLATES[mode].push(...slots);
+  const POWER_SLOTS=new Set(["jump","speedPush","speedPull"]);
+  const EXPLOSIVE=new Set("squatJump tuckJump broadJump skater pogo speedPress wallPush explosivePush clapPush speedPunch speedRow speedPulldown speedChop".split(" "));
+  const PULL_IDS=new Set("pullup chinup neutralPull assistPull assistChin negativePull scapPull".split(" "));
+  const UNILATERAL=new Set("split lunge singleRow woodChop pallof birdDog deadBug externalRot standingKnee sideReach altCurl bicycle sideDip singleRdl singleCalf speedPunch speedChop grip bandLateral bandWrist skater heelTouch shoulderTap march lateralWalk".split(" "));
+  const MODE_FILTERS={all:"Mọi mục tiêu",strength:"Sức mạnh",power:"Bộc phát",balance:"Sức bền / Cân bằng",recovery:"Phục hồi"};
+  function exerciseModes(id){return Object.keys(TEMPLATES).filter(mode=>TEMPLATES[mode].some(slot=>[slot[1],...slot[2]].includes(id)));}
   function defaultData(){return {onboarded:false,schedule:[2,4,6],settings:{restSec:90,workSec:45,sound:true,vibration:false},logs:[],targets:{},swaps:{},bands:{},active:null};}
   function load(){
     let data=defaultData();
@@ -125,25 +178,40 @@
     return data;
   }
   let S=load(),page=S.active?"workout":(S.onboarded?"home":"setup"),draftDays=S.schedule.slice(),presetCustom=false;
-  let libraryQuery="",libraryFilter="Tất cả",detailId=null,lastSummary=null,toastTimer=null,timerInterval=null,lastRestBeep=false;
+  let libraryQuery="",libraryFilter="Tất cả",libraryMode="all",detailId=null,lastSummary=null,toastTimer=null,timerInterval=null,lastRestBeep=false;
   const app=document.getElementById("app");
   const dayOrder=(a,b)=>ORDER.indexOf(a)-ORDER.indexOf(b);
   const sortDays=arr=>Array.from(new Set(arr)).sort(dayOrder);
-  const getTemplate=mode=>TEMPLATES[mode]||TEMPLATES.strength;
+  const getTemplate=mode=>{const slots=TEMPLATES[mode]||TEMPLATES.strength;return S.active&&S.active.mode===mode&&!S.active.templateVersion?slots.slice(0,slots.length-(EXTRA_SLOTS[mode]||[]).length):slots;};
   const slotId=(mode,slot)=>mode+":"+slot[0];
   const getExercise=(mode,slot,act)=>EX[(act&&act.swaps&&act.swaps[slot[0]])||S.swaps[slotId(mode,slot)]||slot[1]]||EX[slot[1]];
   const getBand=(mode,slot,act)=>{
     const ex=getExercise(mode,slot,act);
-    if(ex.need==="Không cần dụng cụ")return "none";
+    if(!/dây|neo/i.test(ex.need))return "none";
+    if(/nhẹ/i.test(ex.need)||EXPLOSIVE.has(ex.id))return "light";
     const saved=(act&&act.bands&&act.bands[slot[0]])||S.bands[slotId(mode,slot)];
     if(saved==="heavy"||saved==="light")return saved;
+    if(ex.id==="assistPull"||ex.id==="assistChin")return "heavy";
     return mode==="strength"&&["Chân & mông","Ngực","Lưng","Hông & lưng dưới"].includes(ex.group)?"heavy":"light";
   };
   const BAND_LABEL={heavy:"Dây nặng",light:"Dây nhẹ",none:"Không dây"};
-  const TIMED_EXERCISES=new Set(["sidePlank","plank","wallSit"]);
+  const TIMED_EXERCISES=new Set(["sidePlank","plank","wallSit","hollow","deadHang","suitcase"]);
   const getMetric=(mode,slot,act)=>TIMED_EXERCISES.has(getExercise(mode,slot,act).id)?"seconds":"reps";
   const targetKey=(mode,slot,act)=>slotId(mode,slot)+":"+getExercise(mode,slot,act).id+":"+getMetric(mode,slot,act)+":"+getBand(mode,slot,act);
-  const getTarget=(mode,slot,act)=>Math.max(1,Number(S.targets[targetKey(mode,slot,act)])||(slot[5]===getMetric(mode,slot,act)?slot[4]:(getMetric(mode,slot,act)==="seconds"?40:10)));
+  const getTarget=(mode,slot,act)=>{
+    const ex=getExercise(mode,slot,act),metric=getMetric(mode,slot,act);let base=slot[5]===metric?slot[4]:metric==="seconds"?40:10;
+    if(metric==="seconds"&&["hollow","deadHang","suitcase"].includes(ex.id))base=20;
+    if(metric==="reps"){
+      if(PULL_IDS.has(ex.id))base=ex.id==="scapPull"?6:3;
+      else if(EXPLOSIVE.has(ex.id))base=4;
+      else if(ex.id==="tempoPush")base=mode==="strength"?6:10;
+      else if(["bandPush","declinePush","pikePush"].includes(ex.id))base=6;
+      else if(ex.id==="fastPush")base=18;
+      else if(mode==="balance"&&"pushup inclinePush row singleRow seatedRow squat split lunge calf singleCalf bentCalf tibRaise crunch bicycle".split(" ").includes(ex.id))base=15;
+    }
+    const value=Math.max(1,Number(S.targets[targetKey(mode,slot,act)])||base);
+    return metric==="reps"&&EXPLOSIVE.has(ex.id)?Math.min(5,value):value;
+  };
   const esc=v=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const minmax=(n,min,max)=>Math.min(max,Math.max(min,Number(n)||min));
   const formatTime=s=>{s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");};
@@ -206,12 +274,12 @@
       const m=MODES[x.mode],count=getTemplate(x.mode).length,mark=today===x.day?' <span class="pill">Hôm nay</span>':'';
       return '<button class="session-row" data-action="start" data-mode="'+x.mode+'" data-day="'+x.day+'"><span class="session-num">'+m.icon+'</span><span class="session-info"><strong>'+DAYNAME[x.day]+' · '+m.title+mark+'</strong><small>'+count+' động tác · '+m.time+' · '+m.subtitle+'</small></span><span class="session-arrow">›</span></button>';
     }).join("");
-    let banner=S.active?'<div class="inline-note">Buổi tập đang tạm lưu: '+MODES[S.active.mode].title+'. <button class="link-btn" data-action="resume">Tiếp tục →</button></div>':'';
+    let banner=S.active?'<div class="inline-note">Buổi tập đang tạm lưu: '+MODES[S.active.mode].title+'. <button class="link-btn" data-action="resume">Tiếp tục →</button> <button class="link-btn" data-action="reset-workout">↺ Reset</button></div>':'';
     return '<section class="hero card"><div class="eyebrow">BUILD STRENGTH. MOVE BETTER.</div><h1>Khỏe hơn.<br>Không cần tập quá sức.</h1><p>Bài tập bằng dây kháng lực, đo thời gian từng hiệp và tăng số rep theo tiến bộ thực tế của bạn.</p><div class="hero-actions"><button class="primary-btn" data-action="'+(S.active?"resume":"start")+'" data-mode="'+(todayMode?todayMode.mode:up.mode)+'" data-day="'+(todayMode?todayMode.day:up.day)+'">'+(S.active?"▶ Tiếp tục buổi tập":todayMode?"▶ Tập hôm nay":"▶ Bắt đầu buổi kế tiếp")+'</button></div></section>'+
     banner+'<div class="stats"><div class="stat"><strong>'+S.logs.length+'</strong><small>Buổi đã lưu</small></div><div class="stat"><strong>'+last7.length+'</strong><small>Buổi / 7 ngày</small></div><div class="stat"><strong>'+Object.keys(EX).length+'</strong><small>Bài trong thư viện</small></div></div>'+
     '<div class="section-head"><h2>Lịch của bạn</h2><button class="link-btn" data-action="edit-schedule">Chỉnh lịch ↗</button></div>'+weekly+
     '<div class="section-head"><h2>Chọn một buổi để tập</h2></div><div class="workout-list">'+rows+'</div>'+
-    '<div class="inline-note mt20">Mỗi động tác có 2–3 phương án thay thế. Nếu bài khiến bạn đau khớp, hãy dừng bài đó và đổi sang động tác phù hợp hơn.</div>';
+    '<div class="inline-note mt20">Mỗi động tác có nhiều phương án thay thế theo mục tiêu. Bài bổ trợ cuối buổi có thể bỏ qua nếu chưa hồi phục. Nếu bài khiến bạn đau khớp, hãy dừng bài đó và đổi sang động tác phù hợp hơn.</div>';
   }
   function recordCount(a){return Array.isArray(a.records)?a.records.length:0;}
   function workoutStats(a){
@@ -220,9 +288,10 @@
   }
   function workSeconds(a,slot){
     if(getMetric(a.mode,slot,a)==="seconds")return getTarget(a.mode,slot,a);
-    if(a.mode==="power" && (slot[0]==="jump"||slot[0]==="speedPush"||slot[0]==="speedPull"))return 25;
-    const unilateral=["split","lunge","singleRow","woodChop","pallof","birdDog","deadBug","externalRot","standingKnee","sideReach","altCurl"].includes(getExercise(a.mode,slot,a).id);
-    return minmax(S.settings.workSec,15,180)*(unilateral?2:1);
+    
+    const id=getExercise(a.mode,slot,a).id,unilateral=UNILATERAL.has(id);
+    if(EXPLOSIVE.has(id))return 25*(unilateral?2:1);
+    return Math.max(minmax(S.settings.workSec,15,180),id==="tempoPush"?getTarget(a.mode,slot,a)*7:15)*(unilateral?2:1);
   }
   function current(){
     const a=S.active;if(!a)return null;
@@ -232,7 +301,7 @@
     const v=current();if(!v)return '<div class="card"><h2>Không có buổi tập đang mở</h2><button class="primary-btn mt20" data-action="go-home">Về tổng quan</button></div>';
     const a=v.a,s=v.slot,ex=getExercise(a.mode,s,a),m=MODES[a.mode],st=workoutStats(a),target=getTarget(a.mode,s,a),band=getBand(a.mode,s,a);
     const unit=getMetric(a.mode,s,a)==="seconds"?"giây":"lần";
-    const unilateralRep=["split","lunge","singleRow","woodChop","pallof","birdDog","deadBug","externalRot","standingKnee","sideReach","altCurl"].includes(ex.id);const repUnit=unit==="lần"&&unilateralRep?"lần mỗi bên":unit;
+    const unilateralRep=UNILATERAL.has(ex.id);const repUnit=unit==="lần"&&unilateralRep?"lần mỗi bên":unit;
     const exerciseTimer=workSeconds(a,s);
     let remaining=a.phase==="ready"?exerciseTimer:(a.phase==="paused"?a.remaining:(a.phase==="work"?Math.max(0,Math.ceil((a.deadline-Date.now())/1000)):exerciseTimer));
     let pct=a.phase==="ready"?100:Math.min(100,Math.max(0,100*remaining/exerciseTimer));
@@ -245,16 +314,16 @@
     } else {
       body='<div class="exercise-card"><div class="set-meta"><span>ĐỘNG TÁC '+(a.index+1)+' / '+getTemplate(a.mode).length+'</span><strong>HIỆP '+(a.setIndex+1)+' / '+s[3]+'</strong></div>'+
         '<div class="exercise-name">'+esc(ex.en)+'</div><div class="exercise-vn">'+esc(ex.vi)+'</div><div class="ex-tags"><span class="pill">'+esc(ex.group)+'</span><span class="pill muted">'+esc(ex.need)+'</span></div>'+
-        '<div class="band-select"><span>Loại dây đang dùng:</span>'+(band==="none"?'<span class="pill muted">Không cần dây</span>':['light','heavy'].map(b=>'<button class="band-choice '+(band===b?'selected':'')+'" data-action="set-band" data-band="'+b+'">'+BAND_LABEL[b]+'</button>').join(''))+'</div>'+        '<ol class="exercise-instructions">'+ex.steps.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ol>'+
+        '<div class="band-select"><span>'+(ex.id==="assistPull"||ex.id==="assistChin"?"Dây trợ lực (dây mạnh hơn = dễ hơn):":"Loại dây đang dùng:")+'</span>'+(band==="none"?'<span class="pill muted">Không cần dây</span>':['light','heavy'].map(b=>'<button class="band-choice '+(band===b?'selected':'')+'" data-action="set-band" data-band="'+b+'">'+BAND_LABEL[b]+'</button>').join(''))+'</div>'+        '<ol class="exercise-instructions">'+ex.steps.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ol>'+
         '<div class="tips">Lưu ý: '+esc(ex.tip)+'</div>'+
         '<div class="exercise-tool-row"><button class="ghost-btn" data-action="swap">⇄ Đổi bài tương tự</button><button class="ghost-btn" data-action="skip-exercise">Bỏ qua bài</button></div>'+
         '<div class="timer-wrap"><div class="timer-ring" id="timerRing" style="--pct:'+pct+'"><div class="timer-inner"><div class="timer-number" id="timerNum">'+formatTime(remaining)+'</div><div class="timer-label">'+(a.phase==="ready"?"SẴN SÀNG":a.phase==="paused"?"TẠM DỪNG":"ĐANG TẬP")+'</div></div></div></div>'+
-        '<div class="rep-row"><label><strong>Thực hiện được bao nhiêu '+unit+'?</strong>Gợi ý: '+target+' '+repUnit+(["sidePlank","sideReach"].includes(ex.id)&&s[5]==="seconds"?" (chia đều 2 bên)":"")+'. Có thể sửa số thực tế.</label><input id="repInput" class="rep-input" type="number" inputmode="numeric" min="0" max="999" value="'+esc(a.input==null?target:a.input)+'" aria-label="Số '+unit+' thực tế"></div>'+
+        '<div class="rep-row"><label><strong>Thực hiện được bao nhiêu '+unit+'?</strong>Gợi ý: '+target+' '+repUnit+(["sidePlank","suitcase"].includes(ex.id)&&unit==="giây"?" (chia đều 2 bên)":"")+'. Có thể sửa số thực tế.</label><input id="repInput" class="rep-input" type="number" inputmode="numeric" min="0" max="999" value="'+esc(a.input==null?target:a.input)+'" aria-label="Số '+unit+' thực tế"></div>'+
         '<div class="effort-row"><span>Cảm giác sau hiệp:</span>'+[["easy","Dễ"],["medium","Vừa"],["hard","Khó"]].map(x=>'<button class="effort-choice '+(a.effort===x[0]?"selected":"")+'" data-action="effort" data-value="'+x[0]+'">'+x[1]+'</button>').join("")+'</div>'+
         '<div class="timer-button-row">'+(a.phase==="ready"?'<button class="primary-btn" data-action="start-set">▶ Bắt đầu đếm giờ</button>':a.phase==="paused"?'<button class="primary-btn" data-action="resume-set">▶ Tiếp tục</button>':'<button class="secondary-btn" data-action="pause-set">Ⅱ Tạm dừng</button>')+
         '<button class="ghost-btn" data-action="reset-set">↺ Đếm lại</button><button class="primary-btn" data-action="finish-set">✓ Hoàn thành hiệp / Nghỉ</button></div></div>';
     }
-    return '<div class="workout-top"><div><div class="eyebrow">'+m.tag+' · '+DAYNAME[a.day]+'</div><h2 style="font-size:23px;margin:6px 0">'+m.title+'</h2></div><button class="ghost-btn" data-action="exit-workout">Thoát tạm</button></div>'+
+    return '<div class="workout-top"><div><div class="eyebrow">'+m.tag+' · '+DAYNAME[a.day]+'</div><h2 style="font-size:23px;margin:6px 0">'+m.title+'</h2></div><button class="ghost-btn" data-action="exit-workout">Thoát tạm</button></div><button class="secondary-btn wide" data-action="reset-workout">↺ Reset buổi tập</button>'+
       '<div class="set-meta"><span>ĐÃ HOÀN THÀNH '+st.done+' / '+st.total+' HIỆP</span><span>'+st.pct+'%</span></div><div class="progress-track"><div class="progress-fill" style="width:'+st.pct+'%"></div></div>'+body;
   }
   function renderSummary(){
@@ -268,7 +337,7 @@
       '<button class="primary-btn wide mt20" data-action="go-home">Về tổng quan →</button>';
   }
   function renderLibraryList(){
-    let q=libraryQuery.toLocaleLowerCase("vi"),list=Object.values(EX).filter(ex=>(libraryFilter==="Tất cả"||ex.group===libraryFilter)&&(!q||[ex.en,ex.vi,ex.group].join(" ").toLocaleLowerCase("vi").includes(q)));
+    let q=libraryQuery.toLocaleLowerCase("vi"),list=Object.values(EX).filter(ex=>(libraryFilter==="Tất cả"||ex.group===libraryFilter)&&(libraryMode==="all"||(libraryMode==="power"?EXPLOSIVE.has(ex.id):exerciseModes(ex.id).includes(libraryMode)))&&(!q||[ex.en,ex.vi,ex.group,ex.need].join(" ").toLocaleLowerCase("vi").includes(q)));
     if(!list.length)return '<div class="card muted center">Không có bài phù hợp.</div>';
     return list.map(ex=>'<div class="exercise-list-item" data-action="toggle-detail" data-id="'+ex.id+'" role="button" tabindex="0"><span><strong>'+esc(ex.en)+'</strong><small>'+esc(ex.vi)+' · '+esc(ex.group)+'</small></span><span class="session-arrow">'+(detailId===ex.id?"⌃":"›")+'</span></div>'+
     (detailId===ex.id?'<div class="exercise-detail"><span class="pill muted">'+esc(ex.need)+'</span><ol class="exercise-instructions">'+ex.steps.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ol><p>Ghi nhớ: '+esc(ex.tip)+'</p></div>':"")).join("");
@@ -277,8 +346,9 @@
     const cats=["Tất cả",...new Set(Object.values(EX).map(x=>x.group))];
     return '<div class="page-head"><div><div class="eyebrow">EXERCISE LIBRARY</div><h1>Thư viện bài tập</h1><p>Ưu tiên dây kháng lực · Tên tiếng Anh dễ tìm video hướng dẫn.</p></div><span class="pill">'+Object.keys(EX).length+' bài</span></div>'+
     '<div class="library-toolbar"><input id="searchExercise" class="search-input" type="search" placeholder="Tìm bài hoặc nhóm cơ..." value="'+esc(libraryQuery)+'" aria-label="Tìm bài tập">'+
+    '<div class="filter-row" aria-label="Mục tiêu">'+Object.entries(MODE_FILTERS).map(([k,v])=>'<button class="filter-btn '+(k===libraryMode?"active":"")+'" data-action="filter-mode" data-mode="'+k+'">'+esc(v)+'</button>').join("")+'</div>'+
     '<div class="filter-row">'+cats.map(c=>'<button class="filter-btn '+(c===libraryFilter?"active":"")+'" data-action="filter" data-cat="'+esc(c)+'">'+esc(c)+'</button>').join("")+'</div></div>'+
-    '<div id="libraryList" class="exercise-list">'+renderLibraryList()+'</div>';
+    '<p class="tiny muted">Sức mạnh: tăng tải, còn 1–3 lần dự trữ. Bộc phát: ít lần nhanh, nghỉ đủ. Sức bền: nhiều lần có kiểm soát. Bài có thể phục vụ nhiều mục tiêu tùy cách tập.</p><div id="libraryList" class="exercise-list">'+renderLibraryList()+'</div>';
   }
   function renderHistory(){
     const list=S.logs.slice().reverse();
@@ -297,8 +367,13 @@
   function startWorkout(mode,day){
     if(S.active){page="workout";render();return;}
     if(!TEMPLATES[mode])return;
-    const a={mode:mode,day:day,index:0,setIndex:0,phase:"ready",records:[],startedAt:stamp(),swaps:{},bands:{},input:null,effort:"medium",remaining:0,deadline:0,restTotal:0};
+    const a={templateVersion:2,mode:mode,day:day,index:0,setIndex:0,phase:"ready",records:[],startedAt:stamp(),swaps:{},bands:{},input:null,effort:"medium",remaining:0,deadline:0,restTotal:0};
     S.active=a;initSet(a);persist();page="workout";render();window.scrollTo(0,0);
+  }
+  function resetWorkout(){
+    const a=S.active;if(!a)return;
+    if(!confirm("Bắt đầu lại từ động tác 1, hiệp 1? Các hiệp chưa lưu của buổi này sẽ bị bỏ. Lịch sử, cài đặt và bài đã chọn vẫn được giữ."))return;
+    const mode=a.mode,day=a.day;S.active=null;lastRestBeep=false;lastSummary=null;startWorkout(mode,day);toast("Đã reset buổi tập");
   }
   function initSet(a){const slot=getTemplate(a.mode)[a.index];a.input=getTarget(a.mode,slot);a.effort="medium";a.remaining=workSeconds(a,slot);a.phase="ready";a.deadline=0;}
   function startSet(){
@@ -328,7 +403,7 @@
     const raw=Number(a.input),target=getTarget(a.mode,slot),actual=Number.isFinite(raw)?Math.max(0,Math.min(999,Math.round(raw))):target;
     a.records.push({slot:slot[0],exerciseId:ex.id,set:a.setIndex+1,target:target,actual:actual,metric:getMetric(a.mode,slot,a),band:getBand(a.mode,slot,a),effort:a.effort,auto:!!auto});
     if(a.index===getTemplate(a.mode).length-1 && a.setIndex===slot[3]-1){finishWorkout();return;}
-    a.phase="rest";a.restTotal=minmax(S.settings.restSec,15,300);a.deadline=Date.now()+a.restTotal*1000;a.remaining=a.restTotal;lastRestBeep=false;persist();render();
+    a.phase="rest";a.restTotal=Math.max(minmax(S.settings.restSec,15,300),(EXPLOSIVE.has(ex.id)||(a.mode==="strength"&&["leg","push","pull","verticalPull","shoulder","hip"].includes(slot[0])))?120:15);a.deadline=Date.now()+a.restTotal*1000;a.remaining=a.restTotal;lastRestBeep=false;persist();render();
     if(auto)toast("Hết giờ hiệp · Bắt đầu nghỉ");
   }
   function advance(){
@@ -368,7 +443,7 @@
       else if(combined>1.14&&hard<.5){next=before+(isSeconds?5:1);reason="Hoàn thành vượt mục tiêu, tăng nhẹ";}
       else if(combined>=1.06&&easy>.7){next=before+(isSeconds?5:1);reason="Bạn đánh giá bài khá dễ";}
       if(a.mode==="power"&&!isSeconds&&before>=6&&next>before){next=before;reason="Giữ ít lần để tập nhanh; có thể tăng lực dây nhẹ";}
-      const cap=isSeconds?120:(a.mode==="power"?16:25),floor=isSeconds?15:3;
+      const ex=getExercise(a.mode,slot,a);const cap=isSeconds?120:EXPLOSIVE.has(ex.id)?5:(a.mode==="power"?16:30),floor=isSeconds?15:EXPLOSIVE.has(ex.id)?2:3;
       next=Math.round(minmax(next,floor,cap));
       if(next!==before){
         S.targets[targetKey(a.mode,slot,a)]=next;
@@ -390,9 +465,9 @@
     const a=S.active;if(!a||a.phase==="rest")return;
     if(a.phase==="work"){toast("Hãy tạm dừng hiệp trước khi đổi bài");return;}
     if(a.setIndex>0){toast("Đổi bài trước hiệp đầu tiên của động tác");return;}
-    const slot=getTemplate(a.mode)[a.index],ids=[slot[1],...slot[2]].slice(0,4),selected=getExercise(a.mode,slot,a).id;
+    const slot=getTemplate(a.mode)[a.index],ids=[...new Set([slot[1],...slot[2]])],selected=getExercise(a.mode,slot,a).id;
     document.getElementById("swapList").innerHTML=ids.map(id=>{
-      const ex=EX[id];return '<button class="swap-option '+(id===selected?"selected":"")+'" data-action="choose-swap" data-id="'+id+'"><span class="swap-radio">'+(id===selected?"●":"○")+'</span><span><strong>'+esc(ex.en)+'</strong><p>'+esc(ex.vi)+' · '+esc(ex.need)+'</p><p>'+esc(ex.steps[0])+'</p></span></button>';
+      const ex=EX[id];return '<button class="swap-option '+(id===selected?"selected":"")+'" data-action="choose-swap" data-id="'+id+'"><span class="swap-radio">'+(id===selected?"●":"○")+'</span><span><strong>'+esc(ex.en)+'</strong><p>'+esc(ex.vi)+' · '+esc(ex.need)+(a.mode==='power'&&POWER_SLOTS.has(slot[0])&&!EXPLOSIVE.has(id)?' · Bổ trợ, không phải bộc phát':'')+'</p><p>'+esc(ex.steps[0])+'</p></span></button>';
     }).join("");
     document.getElementById("swapDialog").showModal();
   }
@@ -453,6 +528,7 @@
     else if(action==="start-set"||action==="resume-set")startSet();
     else if(action==="pause-set")pauseSet();
     else if(action==="reset-set")resetSet();
+    else if(action==="reset-workout")resetWorkout();
     else if(action==="finish-set")finishSet(false);
     else if(action==="skip-rest")advance();
     else if(action==="add-rest"){
@@ -463,6 +539,7 @@
       const a=S.active;if(!a)return;
       if(a.phase==="work"||a.setIndex>0){toast("Hãy đổi dây trước hiệp đầu tiên của bài");return;}
       const b=target.dataset.band;if(!["light","heavy"].includes(b))return;
+      const currentEx=getExercise(a.mode,getTemplate(a.mode)[a.index],a);if(b==="heavy"&&(/nhẹ/i.test(currentEx.need)||EXPLOSIVE.has(currentEx.id))){toast("Bài này dùng dây nhẹ để giữ kỹ thuật và tốc độ");return;}
       const slot=getTemplate(a.mode)[a.index];a.bands[slot[0]]=b;S.bands[slotId(a.mode,slot)]=b;
       initSet(a);persist();render();toast("Đã chọn "+BAND_LABEL[b]);
     }
@@ -471,6 +548,7 @@
     else if(action==="exit-workout"){if(S.active&&S.active.phase==="work")pauseSet();page="home";render();}
     else if(action==="go-home")goHome();
     else if(action==="filter"){libraryFilter=target.dataset.cat;detailId=null;render();}
+    else if(action==="filter-mode"){libraryMode=target.dataset.mode;detailId=null;render();}
     else if(action==="toggle-detail"){detailId=detailId===target.dataset.id?null:target.dataset.id;document.getElementById("libraryList").innerHTML=renderLibraryList();}
     else if(action==="export")exportData();
   });

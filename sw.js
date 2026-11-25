@@ -1,4 +1,4 @@
-const CACHE="bandfit-shell-v4-20261125";
+const CACHE="bandfit-shell-v5-campaign-20261125";
 const ASSETS=["./","./index.html","./style.css","./app.js","./manifest.webmanifest","./icon.svg"];
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));

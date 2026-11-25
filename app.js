@@ -164,7 +164,182 @@
   const UNILATERAL=new Set("split lunge singleRow woodChop pallof birdDog deadBug externalRot standingKnee sideReach altCurl bicycle sideDip singleRdl singleCalf speedPunch speedChop grip bandLateral bandWrist skater heelTouch shoulderTap march lateralWalk".split(" "));
   const MODE_FILTERS={all:"Mọi mục tiêu",strength:"Sức mạnh",power:"Bộc phát",balance:"Sức bền / Cân bằng",recovery:"Phục hồi"};
   function exerciseModes(id){return Object.keys(TEMPLATES).filter(mode=>TEMPLATES[mode].some(slot=>[slot[1],...slot[2]].includes(id)));}
-  function defaultData(){return {onboarded:false,schedule:[2,4,6],settings:{restSec:90,workSec:45,sound:true,vibration:false},logs:[],targets:{},swaps:{},bands:{},coachTips:{},active:null};}
+  function campaignEngine(){
+  // Targets are personal challenges, not scientifically equivalent strength standards.
+  const v=(id, name, goals, cap, step, unit="reps", both=false, band=false, cue="")=>({id,name,goals,cap,step,unit,both,band,cue});
+  const domains=[
+    {id:"push",name:"Đẩy · Ngực / tay sau",goal:"Đẩy thân hoặc tải có kiểm soát",options:[
+      v("pushup","Standard Push-Up",[15,25,40],50,2,"reps",false,false,"Ngực hạ tới cùng một độ sâu; thân thẳng, không võng lưng."),
+      v("tempoPush","Tempo Push-Up (3–1–1)",[6,10,15],20,1,"reps",false,false,"Hạ 3 giây, dừng 1 giây, đẩy 1 giây; không nghỉ ở đỉnh."),
+      v("chest","Band Chest Press",[10,14,18],24,1,"reps",false,true,"Dùng cùng loại dây, độ căng ban đầu và biên độ khi so sánh.")]},
+    {id:"pull",name:"Kéo · Lưng / tay trước",goal:"Kéo bằng lưng, không lấy đà",options:[
+      v("pullup","Pull-Up",[3,6,10],15,1,"reps",false,false,"Bắt đầu tay gần thẳng, cằm qua xà, hạ có kiểm soát. Không đung đưa."),
+      v("chinup","Chin-Up",[3,6,10],15,1,"reps",false,false,"Tay ngửa, cằm qua xà; không đá chân."),
+      v("row","Resistance Band Row",[10,14,18],24,1,"reps",false,true,"Gập hông ổn định; kéo khuỷu tới hông, giữ cùng mức dây và độ căng.")]},
+    {id:"legs",name:"Chân · Đùi / mông",goal:"Sức bền và kiểm soát chân",options:[
+      v("bodySquat","Bodyweight Squat",[20,30,40],50,2,"reps",false,false,"Hạ tới độ sâu cố định, vừa sức; gối cùng hướng bàn chân, đứng thẳng giữa các lần."),
+      v("bodySplit","Bodyweight Split Squat",[8,12,16],22,1,"reps",true,false,"Hạ thẳng thân, gối trước ổn định; cùng độ sâu mỗi bên."),
+      v("squat","Resistance Band Squat",[8,12,16],22,1,"reps",false,true,"Giữ dây và độ căng cố định, không tăng dây chỉ để thi.")]},
+    {id:"hinge",name:"Chuỗi sau · Hông / lưng",goal:"Gập hông và duỗi hông ổn định",options:[
+      v("rdl","Resistance Band Romanian Deadlift",[8,12,16],20,1,"reps",false,true,"Đẩy hông ra sau, lưng tự nhiên; không giật người."),
+      v("bridge","Single-Leg Glute Bridge",[8,12,16],22,1,"reps",true,false,"Một chân trụ, nâng hông đều hai bên; không ưỡn lưng.")]},
+    {id:"core",name:"Core · Chống võng lưng",goal:"Giữ thân ổn định, thở đều",options:[
+      v("plank","Forearm Plank",[45,75,120],150,5,"seconds",false,false,"Thân thẳng, dừng ngay khi võng lưng hoặc phải nín thở."),
+      v("hollow","Hollow Body Hold",[15,25,40],60,5,"seconds",false,false,"Lưng dưới tiếp xúc sàn, chân duỗi ở cùng độ cao; không cố khi đau.")]},
+    {id:"oblique",name:"Eo · Chống nghiêng / xoay",goal:"Ổn định cơ liên sườn ở cả hai bên",options:[
+      v("sidePlank","Side Plank",[20,30,45],60,5,"seconds",true,false,"Chân duỗi, khuỷu dưới vai, hông không sụp; kiểm tra riêng trái/phải."),
+      v("pallof","Pallof Press",[8,12,16],20,1,"reps",true,true,"Giữ tay duỗi 2 giây mỗi lần; không để thân xoay. Dây nhẹ, neo chắc.")]},
+    {id:"balance",name:"Cân bằng · Kiểm soát một chân",goal:"Kiểm soát hai bên đồng đều",options:[
+      v("stance","Single-Leg Stand",[20,30,45],60,5,"seconds",true,false,"Mắt mở, sàn phẳng, đứng gần tường; không vịn hoặc chạm chân còn lại."),
+      v("singleHinge","Single-Leg Bodyweight RDL",[6,10,12],18,1,"reps",true,false,"Gập hông chậm, chân sau đưa ra sau; không cần hạ sâu, không vịn trong lần được tính.")]},
+    {id:"power",name:"Bộc phát · Tốc độ / tiếp đất",goal:"Phát lực nhanh, không thử đến kiệt sức",options:[
+      v("broadJump","Standing Broad Jump",[70,100,130],160,5,"cm",false,false,"Khởi động, thử 3 lần ở mức tự tin; nghỉ 60–90 giây/lần. Đo từ vạch bật tới gót gần nhất khi tiếp đất. Nhập khoảng cách thấp nhất của 3 lần tiếp đất vững. Không cố nhảy tối đa."),
+      v("verticalJump","Vertical Reach Jump",[15,20,25],35,2,"cm",false,false,"Đo tầm với đứng, sau đó độ cao chạm khi bật tại chỗ trừ tầm với đứng. Nhập mức thấp nhất của 3 lần tiếp đất vững, nghỉ 60–90 giây/lần."),
+      v("speedPress","Speed Chest Press (không nhảy)",[3,4,5],5,1,"reps",false,true,"Dây nhẹ, mỗi lần đẩy nhanh có kiểm soát, không khóa khuỷu. Dừng khi tốc độ giảm. Chỉ đánh giá chất lượng kỹ thuật tự ghi nhận, không đo công suất.")] }
+  ];
+  const roman=n=>{if(n>3999)return String(n);let s="";for(const [a,b] of [[1000,"M"],[900,"CM"],[500,"D"],[400,"CD"],[100,"C"],[90,"XC"],[50,"L"],[40,"XL"],[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]])while(n>=a){s+=b;n-=a;}return s;};
+  const name=n=>n<=3?"Giai đoạn "+roman(n):"Endless "+roman(n-3);
+  const theme=n=>["","Nền tảng","Phát triển","Nâng cao"][n]||"Thành tích cá nhân & duy trì";
+  const integer=(x,lo,hi)=>typeof x==="number"&&Number.isSafeInteger(x)&&x>=lo&&x<=hi;
+  const goal=(n,o,di)=>n<=3?o.goals[n-1]:Math.min(o.cap,o.goals[2]+o.step*Math.max(0,Math.floor((n-4+domains.length-di)/domains.length)));
+  const unit=o=>o.unit==="seconds"?"giây":o.unit==="cm"?"cm":"lần";
+  const label=(o,g)=>g+" "+unit(o)+(o.both?" / bên":"");
+  const validResult=(r,n,d)=>{
+    if(!r||r.level!==n||r.domain!==d.id||typeof r.date!=="string")return false;
+    const o=d.options.find(x=>x.id===r.option);
+    if(!o||!integer(r.goal,1,o.cap)||!integer(r.a,0,9999)||(o.both&&!integer(r.b,0,9999)))return false;
+    if(n<=3?r.goal!==goal(n,o,domains.indexOf(d)):r.goal<o.goals[2])return false;
+    return r.form===true&&r.a>=r.goal&&(!o.both||r.b>=r.goal)&&(!o.band||(typeof r.setup==="string"&&r.setup.trim().length>0));
+  };
+  const clean=x=>{
+    const raw=x&&typeof x==="object"?x:{},level=integer(raw.level,1,Number.MAX_SAFE_INTEGER-1)?raw.level:1;
+    const history=Array.isArray(raw.history)?raw.history.filter(r=>r&&typeof r==="object"&&typeof r.date==="string").slice(-400):[];
+    const completed=Array.isArray(raw.completed)?raw.completed.filter(r=>r&&integer(r.level,1,level-1)&&typeof r.date==="string").slice(-100):[];
+    const passes={};for(const d of domains){let r=raw.passes&&raw.passes[d.id];if(validResult(r,level,d))passes[d.id]=r;}
+    return {level,history,completed,passes};
+  };
+  const save=(state,r)=>{
+    const s=clean(state),d=domains.find(x=>x.id===r.domain);
+    if(!d||r.level!==s.level||s.passes[d.id])return {state:s,accepted:false,passed:false,unlocked:false};
+    const o=d.options.find(x=>x.id===r.option);
+    if(!o||!integer(r.goal,1,o.cap)||!integer(r.a,0,9999)||(o.both&&!integer(r.b,0,9999))||r.form!==true||(o.band&&!(typeof r.setup==="string"&&r.setup.trim())))return {state:s,accepted:false,passed:false,unlocked:false};
+    if(s.level<=3?r.goal!==goal(s.level,o,domains.indexOf(d)):r.goal<o.goals[2])return {state:s,accepted:false,passed:false,unlocked:false};
+    const passed=validResult(r,s.level,d);
+    const record={...r,passed};s.history=[...s.history,record].slice(-400);
+    if(passed)s.passes[d.id]=record;
+    let unlocked=false;
+    if(domains.every(x=>s.passes[x.id])){
+      s.completed=[...s.completed,{level:s.level,date:r.date,results:domains.map(x=>s.passes[x.id])}].slice(-100);
+      s.level++;s.passes={};unlocked=true;
+    }
+    return {state:s,accepted:true,passed,unlocked};
+  };
+  return {domains,name,theme,goal,unit,label,clean,save};
+}
+  const CE=campaignEngine();
+  function campaignUI(){
+  let draft=null,clock=null;
+  const byId=id=>document.getElementById(id);
+  const safe=x=>esc(String(x??""));
+  const state=()=>CE.clean(S.campaign);
+  const btn=(label,action,extra="",cls="secondary-btn")=>'<button type="button" class="'+cls+'" data-campaign="'+action+'" '+extra+'>'+label+'</button>';
+  function stopClock(copy=false){
+    if(!clock)return;
+    const elapsed=Math.min(clock.goal,Math.max(0,Math.floor((performance.now()-clock.start)/1000)));
+    clearInterval(clock.handle);
+    if(copy){const input=byId(clock.field);if(input)input.value=String(elapsed);}
+    clock=null;
+    const el=byId("cpClock");if(el)el.textContent=elapsed+" giây";
+  }
+  function clear(){stopClock();draft=null;}
+  function home(){
+    const s=state(),n=Object.keys(s.passes).length;
+    return '<section class="card cp-home"><div class="eyebrow">STRENGTH CAMPAIGN</div><h2>'+CE.name(s.level)+' · '+CE.theme(s.level)+'</h2><p class="muted tiny">'+n+'/'+CE.domains.length+' mục tiêu đạt · Thử sức và mở khóa cấp độ tiếp theo.</p><progress class="cp-progress" max="'+CE.domains.length+'" value="'+n+'"></progress>'+btn("Xem mục tiêu & Test thử →","open","","primary-btn wide")+'</section>';
+  }
+  function road(s){
+    const levels=[1,2,3,...Array.from({length:Math.max(3,Math.min(5,s.level-1))},(_,i)=>Math.max(4,s.level-1)+i)];
+    return '<div class="cp-road">'+[...new Set(levels)].sort((a,b)=>a-b).map(n=>'<div class="cp-stage '+(n===s.level?'current':'')+'"><b>'+CE.name(n)+'</b><small>'+(n<s.level?'Đã vượt qua':n===s.level?'Đang mở':'Khóa')+'</small></div>').join("")+'</div>';
+  }
+  function config(s){
+    const d=CE.domains.find(x=>x.id===draft.domain),di=CE.domains.indexOf(d);
+    if(!d||s.passes[d.id]||draft.level!==s.level){clear();return "";}
+    const o=d.options.find(x=>x.id===draft.option)||d.options[0],suggested=CE.goal(s.level,o,di);
+    if(draft.phase==="ready"){
+      return '<section class="card cp-test"><div class="eyebrow">CHỌN BÀI KIỂM TRA</div><h2>'+safe(d.name)+'</h2><p class="muted tiny">Chọn một bài phù hợp dụng cụ. Các biến thể là mục tiêu thay thế, không phải quy đổi sức mạnh tương đương.</p><label>Biến thể<select id="cpOption">'+d.options.map(x=>'<option value="'+x.id+'" '+(o.id===x.id?'selected':'')+'>'+safe(x.name)+' · '+CE.label(x,CE.goal(s.level,x,di))+'</option>').join("")+'</select></label><p>'+safe(o.cue)+'</p><label>Mốc '+(s.level<=3?'cố định':'cá nhân (Endless)')+'<input id="cpGoal" type="number" min="'+(s.level<=3?suggested:o.goals[2])+'" max="'+(s.level<=3?suggested:o.cap)+'" step="1" value="'+suggested+'" '+(s.level<=3?'readonly':'')+'></label><p class="muted tiny">'+CE.unit(o)+(o.both?' mỗi bên':'')+' · '+(s.level>3?'Mốc gợi ý '+suggested+'; không thấp hơn chuẩn III của bài. Có thể giữ mốc khi đã chạm giới hạn.':'Đạt mốc rồi dừng, không bắt buộc tập tối đa.')+'</p><label class="cp-check"><input id="cpReady" type="checkbox">Tôi đã khởi động, không đau, không chóng mặt, không mệt bất thường và có dụng cụ/vị trí an toàn.</label><div class="cp-buttons">'+btn("Chốt mục tiêu · Bắt đầu","begin","","primary-btn")+btn("Quay lại","cancel")+'</div></section>';
+    }
+    const goal=draft.goal;
+    const inputs=(id,lab)=>'<label>'+lab+'<input id="'+id+'" type="number" min="0" max="9999" step="1" required inputmode="numeric" placeholder="Nhập kết quả thực tế"></label>';
+    const timer=o.unit==="seconds"?'<div class="cp-clock"><strong id="cpClock">0 giây</strong><div class="cp-buttons">'+btn(o.both?"Bấm giờ trái":"Bấm giờ","clock",'data-field="cpA"')+(o.both?btn("Bấm giờ phải","clock",'data-field="cpB"'):"")+btn("Dừng & điền","clock-stop")+'</div><p class="muted tiny">Đồng hồ tự dừng ở mốc mục tiêu; dừng sớm nếu kỹ thuật hỏng. Có thể nhập tay.</p></div>':"";
+    const ex=EX[o.id];
+    return '<section class="card cp-test"><div class="eyebrow">TEST · '+CE.name(s.level)+'</div><h2>'+safe(o.name)+'</h2><p><b>Mục tiêu: '+CE.label(o,goal)+'</b></p><p>'+safe(o.cue)+'</p>'+(ex?'<details><summary>Hướng dẫn bài tập trong thư viện</summary><ol>'+ex.steps.map(x=>'<li>'+safe(x)+'</li>').join("")+'</ol></details>':"")+
+      '<form id="cpTestForm">'+timer+inputs("cpA",o.both?"Bên trái · "+CE.unit(o):"Kết quả · "+CE.unit(o))+(o.both?inputs("cpB","Bên phải · "+CE.unit(o)):"")+
+      (o.band?'<label>Thông số dây / cách đặt dây (bắt buộc)<input id="cpSetup" type="text" maxlength="160" required placeholder="VD: dây đỏ, 15 kg danh định, vị trí chân/neo đánh dấu"></label>':'')+
+      '<label class="cp-check"><input id="cpFormOK" type="checkbox" required>Chỉ tính lần/giây/khoảng cách đạt kỹ thuật, đủ biên độ, không lấy đà, không đau. Tôi đã dừng khi kỹ thuật giảm.</label><div class="cp-buttons"><button type="submit" class="primary-btn">Lưu kết quả</button>'+btn("Hủy test","cancel")+'</div></form></section>';
+  }
+  function render(){
+    const s=state(),n=Object.keys(s.passes).length;
+    const chosen=draft?config(s):"";
+    const cards=CE.domains.map((d,i)=>{
+      const r=s.passes[d.id],first=d.options[0],g=CE.goal(s.level,first,i);
+      return '<article class="card cp-domain"><div class="section-head"><h2>'+safe(d.name)+'</h2><span class="pill '+(r?'':'muted')+'">'+(r?'Đã đạt':'Chưa đạt')+'</span></div><p class="muted tiny">'+safe(d.goal)+'</p>'+(r?'<p><b>'+safe(d.options.find(o=>o.id===r.option).name)+'</b> · '+r.a+(r.b!=null?' / '+r.b:'')+' '+CE.unit(d.options.find(o=>o.id===r.option))+'</p>':'<p><b>'+safe(first.name)+'</b> · '+CE.label(first,g)+'</p><details><summary>Bài thay thế & mốc</summary><ul>'+d.options.slice(1).map(o=>'<li>'+safe(o.name)+' · '+CE.label(o,CE.goal(s.level,o,i))+'</li>').join("")+'</ul></details>'+btn("Test mục tiêu","select",'data-domain="'+d.id+'"',"primary-btn wide"))+'</article>';
+    }).join("");
+    const recent=s.history.slice(-15).reverse().map(r=>{
+      const d=CE.domains.find(x=>x.id===r.domain),o=d&&d.options.find(x=>x.id===r.option);
+      if(!o)return "";
+      return '<div class="cp-log"><b>'+safe(CE.name(Number.isSafeInteger(r.level)&&r.level>0?r.level:1))+' · '+safe(o.name)+'</b><small>'+safe(isoDay(r.date))+' · '+safe(r.a)+(o.both?' / '+safe(r.b):'')+' / mốc '+safe(r.goal)+' '+CE.unit(o)+' · '+(r.passed===true?'Đạt':'Chưa đạt')+'</small>'+(r.setup?'<small>'+safe(r.setup)+'</small>':'')+'</div>';
+    }).join("");
+    return '<section class="page-head"><div><div class="eyebrow">STRENGTH CAMPAIGN</div><h1>Hành trình<br><span style="color:var(--green)">sức mạnh</span></h1><p>Mỗi nhóm năng lực là một thử thách riêng. Không phải chuẩn sức khỏe hay phân hạng vận động viên.</p></div></section>'+road(s)+
+      '<section class="card"><div class="eyebrow">CẤP ĐỘ HIỆN TẠI</div><h2>'+CE.name(s.level)+' · '+CE.theme(s.level)+'</h2><p>'+n+'/'+CE.domains.length+' mục tiêu đã đạt</p><progress class="cp-progress" max="'+CE.domains.length+'" value="'+n+'"></progress><p class="muted tiny">Đạt tất cả để mở '+CE.name(s.level+1)+'. Không cần test cùng ngày; lưu tự động. Mỗi giai đoạn có thể chọn biến thể khác, nhưng chỉ so sánh thành tích cùng bài, cùng cách đo và tải.</p><div class="inline-note">Nên test khi hồi phục, sau khởi động; không thêm cả bộ test vào buổi tập. Tránh test cùng nhóm cơ trong 24–48 giờ sau buổi nặng. Đau hoặc mệt bất thường: dừng. Cấp độ không ép tăng tải tự động.</div></section>'+
+      (chosen||cards)+
+      '<section class="card"><h2>Thành tích mở khóa</h2>'+(s.completed.length?s.completed.slice(-12).reverse().map(x=>'<div class="cp-log"><b>'+safe(CE.name(x.level))+' · Hoàn thành</b><small>'+safe(isoDay(x.date))+'</small></div>').join(""):'<p class="muted tiny">Chưa hoàn thành giai đoạn nào.</p>')+'</section><section class="card"><h2>15 lần test gần nhất</h2>'+(recent||'<p class="muted tiny">Chưa có kết quả.</p>')+'</section><p class="muted tiny">Endless luân phiên tăng mốc từng nhóm, có giới hạn mặc định; khi đạt trần, duy trì kỹ thuật hoặc đặt mục tiêu cá nhân trong phạm vi cho phép. Không ép tăng số lần vô hạn.</p>';
+  }
+  function click(e){
+    const b=e.target.closest("[data-campaign]");if(!b)return;
+    const a=b.dataset.campaign;
+    if(a==="open"){clear();navigate("campaign");return;}
+    if(page!=="campaign")return;
+    const s=state();
+    if(a==="cancel"){clear();renderPage();return;}
+    if(a==="select"){
+      if(S.active){toast("Hãy hoàn thành hoặc kết thúc buổi tập đang dở trước khi test.");return;}
+      if(readiness==="poor"){toast("Bạn đang báo phục hồi kém. Nên nghỉ và kiểm tra vào ngày khỏe.");return;}
+      const d=CE.domains.find(x=>x.id===b.dataset.domain);if(!d||s.passes[d.id])return;
+      clear();draft={level:s.level,domain:d.id,option:d.options[0].id,phase:"ready"};renderPage();byId("cpOption")?.focus();return;
+    }
+    if(!draft)return;
+    const d=CE.domains.find(x=>x.id===draft.domain),o=d?.options.find(x=>x.id===draft.option);
+    if(!o)return;
+    if(a==="begin"){
+      if(S.active||readiness==="poor"||!byId("cpReady")?.checked){toast("Chỉ bắt đầu khi đã hồi phục, khởi động và xác nhận an toàn.");return;}
+      const inp=byId("cpGoal"),g=inp.valueAsNumber;if(!inp.checkValidity()||!Number.isSafeInteger(g)){toast("Mốc không hợp lệ.");return;}
+      draft.goal=g;draft.phase="test";renderPage();return;
+    }
+    if(a==="clock"&&draft.phase==="test"&&o.unit==="seconds"){
+      if(clock){toast("Dừng đồng hồ hiện tại trước khi bắt đầu bên kia.");return;}
+      const field=b.dataset.field;if(!["cpA","cpB"].includes(field)||!byId(field))return;
+      const out=byId("cpClock");clock={start:performance.now(),field,goal:draft.goal,handle:null};
+      clock.handle=setInterval(()=>{if(!clock)return;const seconds=Math.floor((performance.now()-clock.start)/1000);if(out)out.textContent=Math.min(seconds,clock.goal)+" / "+clock.goal+" giây";if(seconds>=clock.goal){stopClock(true);toast("Đã tới mốc, hãy dừng và xác nhận kỹ thuật.");}},200);
+      if(out)out.textContent="0 / "+draft.goal+" giây";
+    }else if(a==="clock-stop"){stopClock(true);}
+  }
+  function renderPage(){document.querySelectorAll(".nav-item").forEach(el=>el.classList.toggle("active",el.dataset.page===page));app.innerHTML=render();window.scrollTo(0,0);}
+  function change(e){if(page==="campaign"&&draft?.phase==="ready"&&e.target.id==="cpOption"){const d=CE.domains.find(x=>x.id===draft.domain);if(d?.options.some(x=>x.id===e.target.value)){draft.option=e.target.value;renderPage();}}}
+  function submit(e){
+    if(e.target.id!=="cpTestForm")return;e.preventDefault();
+    if(!draft||draft.phase!=="test"||S.active||readiness==="poor")return;
+    if(clock){toast("Hãy dừng đồng hồ trước khi lưu.");return;}
+    if(!e.target.reportValidity())return;
+    const s=state(),d=CE.domains.find(x=>x.id===draft.domain),o=d?.options.find(x=>x.id===draft.option);if(!o)return;
+    const r={level:draft.level,domain:d.id,option:o.id,goal:draft.goal,a:byId("cpA").valueAsNumber,b:o.both?byId("cpB").valueAsNumber:null,setup:o.band?byId("cpSetup").value.trim():"",form:byId("cpFormOK").checked,date:stamp()};
+    const result=CE.save(s,r);if(!result.accepted){toast("Kết quả không hợp lệ hoặc mục tiêu đã được ghi nhận.");return;}
+    S.campaign=result.state;persist();clear();renderPage();
+    toast(result.unlocked?"Mở khóa "+CE.name(S.campaign.level)+"!":result.passed?"Đạt mục tiêu!":"Đã lưu kết quả. Hồi phục rồi thử lại.");
+  }
+  function attach(){app.addEventListener("click",click);app.addEventListener("change",change);app.addEventListener("submit",submit);document.addEventListener("visibilitychange",()=>{if(document.hidden&&clock){stopClock(false);const out=byId("cpClock");if(out)out.textContent="Đã dừng khi rời màn hình; hãy kiểm tra lại.";}});}
+  return {home,render,clear,attach};
+}
+  const CP=campaignUI();
+  function defaultData(){return {onboarded:false,schedule:[2,4,6],settings:{restSec:90,workSec:45,sound:true,vibration:false},logs:[],targets:{},swaps:{},bands:{},coachTips:{},campaign:CE.clean(null),active:null};}
   function load(){
     let data=defaultData();
     try{let saved=JSON.parse(localStorage.getItem(KEY)||"null");if(saved&&typeof saved==="object"){data=Object.assign(data,saved);data.settings=Object.assign(defaultData().settings,saved.settings||{});}}
@@ -180,6 +355,7 @@
       data.active.coachVersion=3;data.active.input=null;data.active.rir=null;data.active.quality=null;data.active.effort=null;
       data.active.records=(data.active.records||[]).map(r=>({...r,confirmed:false}));
     }
+    data.campaign=CE.clean(data.campaign);
     return data;
   }
   let S=load(),page=S.active?"workout":(S.onboarded?"home":"setup"),draftDays=S.schedule.slice(),presetCustom=false;
@@ -266,6 +442,7 @@
     return schedule.map(x=>Object.assign({},x,{delta:(ORDER.indexOf(x.day)-n+7)%7})).sort((a,b)=>a.delta-b.delta)[0];
   }
   function render(){
+    CP.clear();
     document.querySelectorAll(".nav-item").forEach(el=>el.classList.toggle("active",el.dataset.page===page));
     document.getElementById("bottomNav").style.display=(page==="setup"||page==="workout"||page==="summary")?"none":"";
     app.style.paddingBottom=(page==="setup"||page==="workout"||page==="summary")?"45px":"";
@@ -275,6 +452,7 @@
     else if(page==="summary")app.innerHTML=renderSummary();
     else if(page==="library")app.innerHTML=renderLibrary();
     else if(page==="history")app.innerHTML=renderHistory();
+    else if(page==="campaign")app.innerHTML=CP.render();
     refreshTickDisplay();
   }
   function navigate(p){if(S.active && p!=="workout" && p!=="home" && !confirm("Bạn đang tập dở. Tiến độ được giữ lại, bộ đếm sẽ tạm dừng. Tiếp tục?"))return;if(S.active&&S.active.phase==="work"&&p!=="workout")pauseSet();page=p;render();window.scrollTo(0,0);}
@@ -317,7 +495,7 @@
     }).join("");
     let banner=S.active?'<div class="inline-note">Buổi tập đang tạm lưu: '+MODES[S.active.mode].title+'. <button class="link-btn" data-action="resume">Tiếp tục →</button> <button class="link-btn" data-action="reset-workout">↺ Reset</button></div>':'';
     return '<section class="hero card"><div class="eyebrow">BUILD STRENGTH. MOVE BETTER.</div><h1>Khỏe hơn.<br>Không cần tập quá sức.</h1><p>Bài tập bằng dây kháng lực, đo thời gian từng hiệp và tăng số rep theo tiến bộ thực tế của bạn.</p><div class="hero-actions"><button class="primary-btn" data-action="'+(S.active?"resume":"start")+'" data-mode="'+(todayMode?todayMode.mode:up.mode)+'" data-day="'+(todayMode?todayMode.day:up.day)+'">'+(S.active?"▶ Tiếp tục buổi tập":todayMode?"▶ Tập hôm nay":"▶ Bắt đầu buổi kế tiếp")+'</button></div></section>'+
-    banner+coachHome(todayMode?todayMode.mode:up.mode)+'<div class="stats"><div class="stat"><strong>'+S.logs.length+'</strong><small>Buổi đã lưu</small></div><div class="stat"><strong>'+last7.length+'</strong><small>Buổi / 7 ngày</small></div><div class="stat"><strong>'+Object.keys(EX).length+'</strong><small>Bài trong thư viện</small></div></div>'+
+    banner+CP.home()+coachHome(todayMode?todayMode.mode:up.mode)+'<div class="stats"><div class="stat"><strong>'+S.logs.length+'</strong><small>Buổi đã lưu</small></div><div class="stat"><strong>'+last7.length+'</strong><small>Buổi / 7 ngày</small></div><div class="stat"><strong>'+Object.keys(EX).length+'</strong><small>Bài trong thư viện</small></div></div>'+
     '<div class="section-head"><h2>Lịch của bạn</h2><button class="link-btn" data-action="edit-schedule">Chỉnh lịch ↗</button></div>'+weekly+
     '<div class="section-head"><h2>Chọn một buổi để tập</h2></div><div class="workout-list">'+rows+'</div>'+
     '<div class="inline-note mt20">Mỗi động tác có nhiều phương án thay thế theo mục tiêu. Bài bổ trợ cuối buổi có thể bỏ qua nếu chưa hồi phục. Nếu bài khiến bạn đau khớp, hãy dừng bài đó và đổi sang động tác phù hợp hơn.</div>';
@@ -586,7 +764,7 @@
     }else refreshTickDisplay();
   }
   function exportData(){
-    const blob=new Blob([JSON.stringify({app:"BandFit",version:2,exportedAt:stamp(),data:{onboarded:S.onboarded,schedule:S.schedule,settings:S.settings,logs:S.logs,targets:S.targets,swaps:S.swaps,bands:S.bands,coachTips:S.coachTips}},null,2)],{type:"application/json"});
+    const blob=new Blob([JSON.stringify({app:"BandFit",version:3,exportedAt:stamp(),data:{onboarded:S.onboarded,schedule:S.schedule,settings:S.settings,logs:S.logs,targets:S.targets,swaps:S.swaps,bands:S.bands,coachTips:S.coachTips,campaign:S.campaign}},null,2)],{type:"application/json"});
     const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="bandfit-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
   }
   async function importData(file){
@@ -595,7 +773,7 @@
       if(!obj||obj.app!=="BandFit"||!obj.data||!Array.isArray(obj.data.logs)||!Array.isArray(obj.data.schedule))throw Error("Sai định dạng bản sao lưu BandFit");
       if(!confirm("Nhập dữ liệu sẽ thay lịch sử, số rep đã học và cài đặt hiện tại. Tiếp tục?"))return;
       const x=obj.data;
-      S={onboarded:!!x.onboarded,schedule:sortDays(x.schedule.filter(d=>ORDER.includes(d))).slice(0,4),settings:Object.assign(defaultData().settings,x.settings||{}),logs:x.logs.slice(-250),targets:x.targets||{},swaps:x.swaps||{},bands:x.bands||{},coachTips:x.coachTips&&typeof x.coachTips==="object"&&!Array.isArray(x.coachTips)?x.coachTips:{},active:null};
+      S={onboarded:!!x.onboarded,schedule:sortDays(x.schedule.filter(d=>ORDER.includes(d))).slice(0,4),settings:Object.assign(defaultData().settings,x.settings||{}),logs:x.logs.slice(-250),targets:x.targets||{},swaps:x.swaps||{},bands:x.bands||{},coachTips:x.coachTips&&typeof x.coachTips==="object"&&!Array.isArray(x.coachTips)?x.coachTips:{},campaign:CE.clean(x.campaign),active:null};
       if(S.schedule.length<3)S.schedule=[2,4,6];
       persist();goHome();toast("Đã khôi phục bản sao lưu");
     }catch(e){toast("Không nhập được: "+e.message);}
@@ -649,6 +827,7 @@
   });
   document.getElementById("brandBtn").addEventListener("click",goHome);
   document.getElementById("settingsBtn").addEventListener("click",()=>{
+    if(page==="campaign"){CP.clear();render();}
     const f=document.getElementById("settingsForm");
     f.elements.restSec.value=S.settings.restSec;f.elements.workSec.value=S.settings.workSec;
     f.elements.sound.checked=!!S.settings.sound;f.elements.vibration.checked=!!S.settings.vibration;
@@ -674,6 +853,7 @@
   if(!navigator.onLine)document.getElementById("onlineStatus").classList.add("offline");
   if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
   document.addEventListener("visibilitychange",()=>{if(document.hidden&&S.active&&S.active.phase==="work"){const a=S.active;a.remaining=Math.max(1,Math.ceil((a.deadline-Date.now())/1000));a.phase="paused";a.deadline=0;persist();}else if(!document.hidden&&page==="workout"){render();}});
+  CP.attach();
   timerInterval=setInterval(tick,250);
   render();
 })();

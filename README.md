@@ -62,3 +62,11 @@ HTML5 + CSS3 + JavaScript thuần, PWA service worker, không thư viện ngoài
 - Giảm tải: gợi ý nếu tự báo phục hồi kém hoặc hai buổi gần nhất cùng loại đạt dưới 85% mục tiêu, có đủ hiệp xác nhận. Có thể chọn giảm tải thủ công; số hiệp giảm khoảng 40% (làm tròn), mục tiêu giảm khoảng 25%, dùng dây nhẹ/trợ lực và thay bài bộc phá. Không cập nhật mục tiêu dài hạn trong buổi giảm tải.
 - Bản sao lưu JSON v2 tương thích dữ liệu cũ, giữ lịch sử và đề xuất. Hiệp cũ không xác nhận không dùng để tính tiến bộ. Dữ liệu vẫn lưu tại trình duyệt.
 - Ngưỡng chỉ là quy tắc hỗ trợ, không phải chỉ định y khoa; dừng hoặc nghỉ khi đau, mệt bất thường.
+
+
+## Hành trình sức mạnh (v5)
+- Tab **Cấp độ** và thẻ Tổng quan: Giai đoạn I → II → III → Endless I, II, III...
+- Mỗi cấp có 8 nhóm: đẩy, kéo, chân, chuỗi sau, core, liên sườn, cân bằng, bộc phát. Chọn biến thể trong từng nhóm theo dụng cụ; mốc I–III cố định, Endless gợi ý luân phiên và cho chỉnh trong giới hạn. Biến thể không được quy đổi thành cùng một mức sức mạnh.
+- Test từng mục bất cứ khi nào sẵn sàng (không khi đang tập dở hoặc báo phục hồi kém), xác nhận an toàn, chốt mốc, nhập kết quả thật, xác nhận kỹ thuật. Bài hai bên phải đạt cả hai; bài dùng dây ghi thông số/cách đặt dây. Bài giữ tư thế có bấm giờ tới mốc. Test không tự ghi vào log buổi tập hay tự tăng kháng lực.
+- Đạt cả 8 nhóm mới mở cấp kế; lưu lịch sử riêng và mốc đã đạt. Không cần test cùng một ngày. Mốc gợi ý là thử thách cá nhân, không phải tiêu chuẩn thể lực đã được kiểm định. Endless giữ mốc khi đạt giới hạn, không bắt tăng vô hạn; tránh test tối đa và không tập thêm khi mệt/đau.
+- Sao lưu JSON v3 gồm hành trình, vẫn nhập được bản cũ; giữ lịch, lịch sử buổi tập, tăng/giảm tải. Tối đa 400 lần test và 100 giai đoạn gần nhất trong lịch sử; cấp hiện tại vẫn được giữ.

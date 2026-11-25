@@ -658,7 +658,7 @@
     else if(page==="library")app.innerHTML=renderLibrary();
     else if(page==="history")app.innerHTML=renderHistory();
     else if(page==="campaign")app.innerHTML=CP.render();
-    refreshTickDisplay();
+    refreshTickDisplay();syncWorkoutFlow();
   }
   function navigate(p){if(FS.active()&&!confirm("Rời Full Stage Test sẽ kết thúc phiên đang thực hiện. Tiếp tục?"))return;if(S.active && p!=="workout" && p!=="home" && !confirm("Bạn đang tập dở. Tiến độ được giữ lại, bộ đếm sẽ tạm dừng. Tiếp tục?"))return;if(S.active&&S.active.phase==="work"&&p!=="workout")pauseSet();page=p;render();window.scrollTo(0,0);}
   function renderSetup(){
@@ -732,6 +732,86 @@
     if(!t||t.exerciseId!==ex.id||t.band!==band||(t.bandIdentity||"")!==bandIdentity(a.mode,slot,a)||(t.nextExercise&&!GE.available(t.nextExercise,a.equipment))||(t.nextBand&&a.equipment&&!GE.bands(ex.id,a.equipment).includes(t.nextBand)))return "";
     return '<div class="inline-note coach-tip"><strong>Progressive Overload · Tăng tải</strong><p>'+esc(t.reason)+'</p>'+(t.nextBand||t.nextExercise?'<button class="secondary-btn wide" data-action="apply-tip">Áp dụng đề xuất</button>':'<p class="tiny muted">Chỉ tăng tải khi kiểm soát tốt kỹ thuật; có thể giữ nguyên.</p>')+'<button class="link-btn" data-action="dismiss-tip">Bỏ qua đề xuất</button></div>';
   }
+function flowUnit(a,slot,ex){return getMetric(a.mode,slot,a)==="seconds"?"giây":UNILATERAL.has(ex.id)?"lần mỗi bên":"lần";}
+function flowGuideKey(a,ex){return a.index+":"+ex.id;}
+function renderFlowGuide(a,ex){
+ return '<dialog id="flowGuide" class="sheet-dialog flow-sheet" aria-labelledby="flowGuideTitle"><div class="sheet-head"><div><div class="eyebrow">HƯỚNG DẪN ĐỘNG TÁC</div><h2 id="flowGuideTitle">'+esc(ex.en)+'</h2><p class="muted tiny">'+esc(ex.vi)+'</p></div></div><div class="flow-content"><ol class="exercise-instructions">'+ex.steps.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol><div class="tips">'+esc(ex.tip)+'</div><p class="tiny muted">Dụng cụ: '+esc(ex.need)+'. Khi sẵn sàng, chạm vòng tròn để bắt đầu hiệp.</p><button type="button" class="primary-btn wide" data-flow="guide-ok">Đã hiểu →</button></div></dialog>';
+}
+function renderFlowReview(a,slot,ex){
+ const target=getTarget(a.mode,slot,a),unit=flowUnit(a,slot,ex),metric=getMetric(a.mode,slot,a);
+ const initial=Number.isInteger(a.input)&&a.input>=0&&a.input<=999?a.input:Math.min(999,target);
+ const rating=EXPLOSIVE.has(ex.id)?a.quality:metric==="seconds"?a.effort:a.rir;
+ const opts=EXPLOSIVE.has(ex.id)?[["fast","Nhanh, kỹ thuật tốt"],["slow","Chậm / mất kỹ thuật"],["unknown","Chưa rõ"]]:metric==="seconds"?[["easy","Dễ"],["medium","Vừa"],["hard","Khó"],["unknown","Chưa rõ"]]:[["0","0"],["1","1"],["2","2"],["3","3"],["4","4+"],["unknown","Chưa rõ"]];
+ const heading=EXPLOSIVE.has(ex.id)?"Tốc độ phát lực":metric==="seconds"?"Độ khó":"RIR · Còn làm được bao nhiêu lần?";
+ return '<dialog id="flowReview" class="sheet-dialog flow-sheet" aria-labelledby="flowReviewTitle"><div class="sheet-head"><div><div class="eyebrow">HIỆP '+(a.setIndex+1)+' / '+slot[3]+'</div><h2 id="flowReviewTitle">Bạn đã làm được bao nhiêu?</h2><p class="muted tiny">'+esc(ex.en)+' · Mục tiêu '+target+' '+unit+'</p></div><button type="button" class="icon-btn" data-flow="review-later" aria-label="Để sau">✕</button></div><div class="flow-content"><p class="tiny muted">Vuốt lên / xuống để chọn kết quả thực tế, kể cả 0. Số ban đầu chỉ là mốc gợi ý, chưa ghi nhận.</p><div class="flow-picker"><button type="button" class="secondary-btn flow-step" data-flow="minus" aria-label="Giảm một">−</button><div class="flow-wheel-frame"><div class="flow-wheel" id="flowWheel" role="spinbutton" aria-label="Kết quả thực tế" aria-valuemin="0" aria-valuemax="999" aria-valuenow="'+initial+'" tabindex="0" data-initial="'+initial+'">'+Array.from({length:1000},(_,i)=>'<div class="flow-wheel-option" data-flow-number="'+i+'">'+i+'</div>').join("")+'</div><div class="flow-wheel-highlight" aria-hidden="true"></div></div><button type="button" class="secondary-btn flow-step" data-flow="plus" aria-label="Tăng một">+</button><span class="flow-unit">'+unit+'</span></div><div class="flow-quick"><button type="button" class="ghost-btn" data-flow="target">Đúng mục tiêu ('+target+')</button><label class="flow-direct">Nhập nhanh <input id="flowDirect" type="number" inputmode="numeric" min="0" max="999" step="1" aria-label="Nhập kết quả trực tiếp" value="'+initial+'"></label></div><div class="flow-rating"><strong>'+heading+'</strong><p class="muted tiny">'+(EXPLOSIVE.has(ex.id)?"Dừng khi tốc độ giảm hoặc mất kỹ thuật.":metric==="seconds"?"Đánh giá cảm giác thực tế.":"Ước tính, không cần thử đến kiệt sức.")+' Có thể để Chưa rõ.</p><div class="coach-options">'+opts.map(([k,v])=>'<button type="button" class="effort-choice '+(String(rating??"unknown")===k?"selected":"")+'" data-flow="rate" data-rating="'+k+'" aria-pressed="'+(String(rating??"unknown")===k)+'">'+v+'</button>').join("")+'</div></div><button type="button" class="primary-btn wide" id="flowSave" data-flow="save">Lưu '+initial+' '+unit+' & nghỉ</button><button type="button" class="link-btn flow-later" data-flow="review-later">Để sau (chưa lưu)</button></div></dialog>';
+}
+function flowWheelValue(w){return Math.max(0,Math.min(999,Math.round(w.scrollTop/44)));}
+function flowUpdateWheel(w,writeDirect=true){
+ const n=flowWheelValue(w),a=S.active;if(!a||a.phase!=="review")return;
+ w.setAttribute("aria-valuenow",String(n));
+ const old=w.querySelector(".chosen");if(old)old.classList.remove("chosen");
+ const row=w.children[n];if(row)row.classList.add("chosen");
+ const direct=document.getElementById("flowDirect");if(writeDirect&&direct&&document.activeElement!==direct)direct.value=String(n);
+ const v=current(),ex=getExercise(a.mode,v.slot,a),save=document.getElementById("flowSave");
+ if(save)save.textContent="Lưu "+n+" "+flowUnit(a,v.slot,ex)+(a.index===getTemplate(a.mode).length-1&&a.setIndex===v.slot[3]-1?" & kết thúc":" & nghỉ");
+}
+function flowSetWheel(w,n){
+ n=Math.max(0,Math.min(999,Math.round(Number(n)||0)));w.scrollTop=n*44;flowUpdateWheel(w);
+}
+function flowOpenReview(){
+ const d=document.getElementById("flowReview");if(!d||d.open)return;
+ d.showModal();
+ const w=document.getElementById("flowWheel");if(!w)return;
+ if(w.dataset.bound==="1"){flowUpdateWheel(w);return;}
+ w.dataset.bound="1";flowSetWheel(w,Number(w.dataset.initial));
+ w.addEventListener("scroll",()=>flowUpdateWheel(w),{passive:true});
+ w.addEventListener("keydown",e=>{if(!["ArrowUp","ArrowDown","Home","End","PageUp","PageDown"].includes(e.key))return;e.preventDefault();const n=flowWheelValue(w);flowSetWheel(w,e.key==="Home"?0:e.key==="End"?999:n+({ArrowUp:-1,ArrowDown:1,PageUp:-10,PageDown:10}[e.key]||0));});
+ const direct=document.getElementById("flowDirect");
+ direct.addEventListener("change",()=>{if(direct.value!==""&&direct.checkValidity())flowSetWheel(w,direct.valueAsNumber);});
+ d.addEventListener("cancel",e=>{e.preventDefault();d.close();});
+}
+function flowOpenGuide(){
+ const d=document.getElementById("flowGuide");if(!d||d.open)return;
+ d.showModal();if(!d.dataset.bound){d.dataset.bound="1";d.addEventListener("cancel",e=>e.preventDefault());}
+}
+function syncWorkoutFlow(){
+ if(page!=="workout"||!S.active)return;
+ const a=S.active,v=current();if(!v?.slot)return;
+ const ex=getExercise(a.mode,v.slot,a);
+ if(a.phase==="review")flowOpenReview();
+ else if(a.phase==="ready"&&!(a.guideSeen||[]).includes(flowGuideKey(a,ex)))flowOpenGuide();
+}
+function attachWorkoutFlow(){
+ app.addEventListener("click",e=>{
+  const el=e.target.closest("[data-flow],[data-flow-number]");if(!el||page!=="workout"||!S.active)return;
+  const a=S.active,v=current(),slot=v?.slot;if(!slot)return;const ex=getExercise(a.mode,slot,a),act=el.dataset.flow,w=document.getElementById("flowWheel");
+  if(act==="guide"){flowOpenGuide();return;}
+  if(act==="guide-ok"){const key=flowGuideKey(a,ex);a.guideSeen=[...new Set([...(a.guideSeen||[]),key])];persist();document.getElementById("flowGuide")?.close();return;}
+  if(act==="open-review"){flowOpenReview();return;}
+  if(act==="review-later"){document.getElementById("flowReview")?.close();return;}
+  if(act==="end-set"){if(a.phase==="work"||a.phase==="paused")finishSet(true);return;}
+  if(a.phase!=="review"||!w)return;
+  if(el.dataset.flowNumber!==undefined){flowSetWheel(w,Number(el.dataset.flowNumber));return;}
+  if(act==="plus"||act==="minus"){flowSetWheel(w,flowWheelValue(w)+(act==="plus"?1:-1));return;}
+  if(act==="target"){flowSetWheel(w,getTarget(a.mode,slot,a));return;}
+  if(act==="rate"){
+   const k=el.dataset.rating,metric=getMetric(a.mode,slot,a);
+   if(EXPLOSIVE.has(ex.id))a.quality=k;else if(metric==="seconds")a.effort=k;else a.rir=k==="unknown"?k:Number(k);
+   document.getElementById("flowReview").querySelectorAll("[data-flow=rate]").forEach(b=>{const yes=b===el;b.classList.toggle("selected",yes);b.setAttribute("aria-pressed",String(yes));});persist();return;
+  }
+  if(act==="save"){
+   const input=document.getElementById("flowDirect");
+   if(input&&input.value!==""&&!input.checkValidity()){input.reportValidity();return;}
+   // The wheel is authoritative; direct entry updates it on change/blur.
+   if(input&&document.activeElement===input&&input.value!==""&&input.checkValidity())flowSetWheel(w,input.valueAsNumber);
+   a.input=flowWheelValue(w);
+   if(EXPLOSIVE.has(ex.id))a.quality=a.quality||"unknown";
+   else if(getMetric(a.mode,slot,a)==="seconds")a.effort=a.effort||"unknown";
+   else a.rir=a.rir??"unknown";
+   persist();finishSet(false);
+  }
+ });
+}
   function renderWorkout(){
     const v=current();if(!v)return '<div class="card"><h2>Không có buổi tập đang mở</h2><button class="primary-btn mt20" data-action="go-home">Về tổng quan</button></div>';
     const a=v.a,s=v.slot,ex=getExercise(a.mode,s,a),m=MODES[a.mode],st=workoutStats(a),target=getTarget(a.mode,s,a),band=getBand(a.mode,s,a);
@@ -745,20 +825,19 @@
       let restSec=Math.max(0,Math.ceil((a.deadline-Date.now())/1000));
       let restPct=Math.min(100,Math.max(0,restSec/Math.max(15,a.restTotal||S.settings.restSec)*100));
       let nextText=a.setIndex+1<s[3]?'Hiệp '+(a.setIndex+2)+' / '+s[3]+' của '+ex.en:(a.index+1<getTemplate(a.mode).length?getExercise(a.mode,getTemplate(a.mode)[a.index+1],a).en:"Hoàn tất");
-      body='<div class="next-panel"><span class="pill orange">REST · NGHỈ NGƠI</span><h2>Hồi sức để tập tốt hơn</h2><div class="timer-wrap"><div class="timer-ring rest" id="timerRing" style="--pct:'+restPct+'"><div class="timer-inner"><div id="timerNum" class="timer-number">'+formatTime(restSec)+'</div><div class="timer-label">THỜI GIAN NGHỈ</div></div></div></div><p>Tiếp theo: <strong>'+esc(nextText)+'</strong></p><div class="timer-button-row"><button class="secondary-btn" data-action="add-rest">+15 giây</button><button class="ghost-btn" data-action="skip-rest">Đã nghỉ xong →</button></div><p class="tiny muted mt12">Bạn có thể nhấn +15 giây nhiều lần. Hết giờ không tự ép bạn bắt đầu hiệp mới.</p></div>';
+      body='<div class="next-panel"><span class="pill orange">REST · NGHỈ NGƠI</span><h2>Hồi sức để tập tốt hơn</h2><div class="timer-wrap"><div class="timer-ring rest" id="timerRing" style="--pct:'+restPct+'"><div class="timer-inner"><div id="timerNum" class="timer-number">'+formatTime(restSec)+'</div><div class="timer-label">THỜI GIAN NGHỈ</div></div></div></div><p>Tiếp theo: <strong>'+esc(nextText)+'</strong></p><div class="timer-button-row"><button class="secondary-btn" data-action="add-rest">+15 giây</button><button class="ghost-btn" data-action="skip-rest">Kết thúc nghỉ sớm →</button></div><p class="tiny muted mt12">Bạn có thể nhấn +15 giây nhiều lần. Hết giờ tự mở hiệp tiếp theo. Chạm vòng tròn khi bạn sẵn sàng.</p></div>';
     } else {
-      body='<div class="exercise-card"><div class="set-meta"><span>ĐỘNG TÁC '+(a.index+1)+' / '+getTemplate(a.mode).length+'</span><strong>HIỆP '+(a.setIndex+1)+' / '+s[3]+'</strong></div>'+
+      const action=a.phase==="ready"?"start-set":a.phase==="paused"?"resume-set":null;
+      const flowAction=a.phase==="review"?"open-review":a.phase==="work"?"end-set":null;
+      const label=a.phase==="ready"?"CHẠM ĐỂ BẮT ĐẦU":a.phase==="paused"?"CHẠM ĐỂ TIẾP TỤC":a.phase==="work"?"CHẠM ĐỂ KẾT THÚC":"CHẠM ĐỂ XÁC NHẬN";
+      body='<div class="exercise-card flow-exercise"><div class="set-meta"><span>ĐỘNG TÁC '+(a.index+1)+' / '+getTemplate(a.mode).length+'</span><strong>HIỆP '+(a.setIndex+1)+' / '+s[3]+'</strong></div>'+
         '<div class="exercise-name">'+esc(ex.en)+'</div><div class="exercise-vn">'+esc(ex.vi)+'</div><div class="ex-tags"><span class="pill">'+esc(ex.group)+'</span><span class="pill muted">'+esc(ex.need)+'</span></div>'+
-        '<div class="band-select"><span>'+(ex.id==="assistPull"||ex.id==="assistChin"?"Dây trợ lực (dây mạnh hơn = dễ hơn):":"Loại dây đang dùng:")+'</span>'+(band==="none"?'<span class="pill muted">Không cần dây</span>':(a.equipment?GE.bands(ex.id,a.equipment):['light','heavy']).map(b=>'<button class="band-choice '+(band===b?'selected':'')+'" data-action="set-band" data-band="'+b+'">'+BAND_LABEL[b]+'</button>').join(''))+'</div>'+        '<ol class="exercise-instructions">'+ex.steps.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ol>'+
-        '<div class="tips">Lưu ý: '+esc(ex.tip)+'</div>'+renderCoachTip(a,s,ex,band)+
-        '<div class="exercise-tool-row"><button class="ghost-btn" data-action="swap">⇄ Đổi bài tương tự</button><button class="ghost-btn" data-action="skip-exercise">Bỏ qua bài</button></div>'+
-        '<div class="timer-wrap"><div class="timer-ring" id="timerRing" style="--pct:'+pct+'"><div class="timer-inner"><div class="timer-number" id="timerNum">'+formatTime(remaining)+'</div><div class="timer-label">'+(a.phase==="review"?"XÁC NHẬN KẾT QUẢ":a.phase==="ready"?"SẴN SÀNG":a.phase==="paused"?"TẠM DỪNG":"ĐANG TẬP")+'</div></div></div></div>'+
-        '<div class="rep-row"><label><strong>Thực tế: bao nhiêu '+unit+'?</strong>Mục tiêu: '+target+' '+repUnit+(["sidePlank","suitcase"].includes(ex.id)&&unit==="giây"?" (chia đều 2 bên)":"")+'. Nhập đúng kết quả, kể cả 0.</label><input id="repInput" class="rep-input" type="number" inputmode="numeric" min="0" max="999" step="1" placeholder="—" value="'+esc(a.input==null?"":a.input)+'" aria-label="Số '+unit+' thực tế"></div>'+
-        '<button class="ghost-btn wide" data-action="use-target">Đã làm đúng mục tiêu ('+target+' '+unit+')</button>'+
-        renderEffort(a,ex,unit)+
-        (a.phase==="review"?'<div class="inline-note">Đã hết giờ hoặc dừng hiệp. Nhập số thực tế và xác nhận để lưu; thời gian nghỉ bắt đầu sau khi xác nhận.</div>':'')+
-        '<div class="timer-button-row">'+(a.phase==="ready"?'<button class="primary-btn" data-action="start-set">▶ Bắt đầu đếm giờ</button>':a.phase==="paused"?'<button class="primary-btn" data-action="resume-set">▶ Tiếp tục</button>':a.phase==="work"?'<button class="secondary-btn" data-action="pause-set">Ⅱ Tạm dừng</button>':'')+
-        '<button class="ghost-btn" data-action="reset-set">↺ Đếm lại</button><button class="primary-btn" data-action="finish-set">✓ Xác nhận kết quả / Nghỉ</button></div></div>';
+        '<div class="flow-target">Mục tiêu <strong>'+target+' '+esc(flowUnit(a,s,ex))+'</strong>'+((["sidePlank","suitcase"].includes(ex.id)&&unit==="giây")?' <small>(chia đều hai bên)</small>':'')+'</div>'+
+        '<div class="timer-wrap"><button type="button" class="timer-ring flow-timer" id="timerRing" style="--pct:'+pct+'" '+(action?'data-action="'+action+'"':'data-flow="'+flowAction+'"')+' aria-label="'+label+'"><span class="timer-inner"><span class="timer-number" id="timerNum">'+(a.phase==="review"?'✓':formatTime(remaining))+'</span><span class="timer-label">'+label+'</span></span></button></div>'+
+        (a.phase==="work"?'<div class="cp-buttons"><button class="secondary-btn" data-action="pause-set">Ⅱ Tạm dừng</button><button class="ghost-btn" data-flow="end-set">Kết thúc hiệp</button></div>':a.phase==="paused"?'<button class="secondary-btn wide" data-flow="end-set">Kết thúc hiệp</button>':a.phase==="review"?'<p class="tiny muted">Chạm vòng tròn để mở lại popup kết quả. Chưa lưu thì chưa tính hiệp.</p>':'')+
+        '<div class="exercise-tool-row"><button class="ghost-btn" data-flow="guide">? Hướng dẫn</button><button class="ghost-btn" data-action="swap">⇄ Đổi bài</button><button class="ghost-btn" data-action="skip-exercise">Bỏ qua</button></div>'+
+        (a.phase==="ready"?'<div class="band-select"><span>Loại dây:</span>'+(band==="none"?'<span class="pill muted">Không cần dây</span>':(a.equipment?GE.bands(ex.id,a.equipment):["light","heavy"]).map(b=>'<button class="band-choice '+(band===b?'selected':'')+'" data-action="set-band" data-band="'+b+'">'+BAND_LABEL[b]+'</button>').join(""))+'</div>'+renderCoachTip(a,s,ex,band):'')+
+        (a.phase==="review"||a.phase==="paused"?'<button class="ghost-btn wide" data-action="reset-set">↺ Đếm lại hiệp</button>':'')+'</div>'+renderFlowGuide(a,ex)+(a.phase==="review"?renderFlowReview(a,s,ex):"");
     }
     return '<div class="workout-top"><div><div class="eyebrow">'+m.tag+' · '+DAYNAME[a.day]+'</div><h2 style="font-size:23px;margin:6px 0">'+m.title+'</h2><p class="tiny muted">'+esc(GE.label(a.equipment))+'</p>'+(a.deload?'<span class="pill orange">DELOAD · GIẢM TẢI</span>':'')+'</div><button class="ghost-btn" data-action="exit-workout">Thoát tạm</button></div><button class="secondary-btn wide" data-action="reset-workout">↺ Reset buổi tập</button>'+
       '<div class="set-meta"><span>ĐÃ HOÀN THÀNH '+st.done+' / '+st.total+' HIỆP</span><span>'+st.pct+'%</span></div><div class="progress-track"><div class="progress-fill" style="width:'+st.pct+'%"></div></div>'+body;
@@ -826,7 +905,7 @@
   function initSet(a){const slot=getTemplate(a.mode)[a.index];a.input=null;a.rir=null;a.quality=null;a.effort=null;a.remaining=workSeconds(a,slot);a.phase="ready";a.deadline=0;}
   function startSet(){
     const a=S.active;if(!a||!["ready","paused"].includes(a.phase))return;
-    let t=a.phase==="paused"?a.remaining:workSeconds(a,getTemplate(a.mode)[a.index]);
+    unlockFlowAudio();let t=a.phase==="paused"?a.remaining:workSeconds(a,getTemplate(a.mode)[a.index]);
     a.deadline=Date.now()+Math.max(1,t)*1000;a.phase="work";a.remaining=t;persist();render();
   }
   function pauseSet(){
@@ -834,20 +913,22 @@
     a.remaining=Math.max(1,Math.ceil((a.deadline-Date.now())/1000));a.phase="paused";a.deadline=0;persist();render();
   }
   function resetSet(){
-    const a=S.active;if(!a)return;if(!["ready","paused","work","review"].includes(a.phase))return;
+    const a=S.active;if(!a)return;if(a.phase==="review"&&!confirm("Bỏ kết quả chưa lưu và đếm lại hiệp?"))return;if(!["ready","paused","work","review"].includes(a.phase))return;
     initSet(a);persist();render();
   }
+  let flowAudio=null;
+  function unlockFlowAudio(){if(!S.settings.sound)return;try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;if(!flowAudio||flowAudio.state==="closed")flowAudio=new C();if(flowAudio.state==="suspended")flowAudio.resume().catch(()=>{});}catch(_){}}
   function alertEnd(){
     if(S.settings.vibration && navigator.vibrate)navigator.vibrate([90,60,90]);
     if(!S.settings.sound)return;
     try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
-      const ctx=new C(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.type="sine";osc.frequency.setValueAtTime(740,ctx.currentTime);osc.frequency.exponentialRampToValueAtTime(990,ctx.currentTime+.15);
+      const ctx=flowAudio&&flowAudio.state!=="closed"?flowAudio:new C();flowAudio=ctx;const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type="sine";osc.frequency.setValueAtTime(740,ctx.currentTime);osc.frequency.exponentialRampToValueAtTime(990,ctx.currentTime+.15);
       gain.gain.setValueAtTime(.045,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.21);
-      osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.22);osc.onended=()=>ctx.close();
+      osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.22);osc.onended=()=>{try{osc.disconnect();gain.disconnect();}catch(_){}};
     }catch(e){/* Trình duyệt có thể chặn âm thanh không có tương tác */}}
   function finishSet(auto){
     const a=S.active;if(!a||a.phase==="rest")return;
-    if(auto){a.phase="review";a.deadline=0;a.remaining=0;persist();render();toast("Hết giờ · Nhập và xác nhận kết quả");return;}
+    if(auto){if(!["work","paused"].includes(a.phase))return;a.phase="review";a.deadline=0;a.remaining=0;persist();render();return;}
     const slot=getTemplate(a.mode)[a.index],ex=getExercise(a.mode,slot,a),metric=getMetric(a.mode,slot,a);
     if(a.phase!=="review"){a.phase="review";a.deadline=0;a.remaining=0;persist();render();}
     if(a.input===null||a.input===""||!Number.isInteger(Number(a.input))||Number(a.input)<0||Number(a.input)>999){toast("Nhập số lần/giây thực tế, kể cả 0");return;}
@@ -867,7 +948,7 @@
   }
   function skipExercise(){
     const a=S.active;if(!a)return;
-    if(!confirm("Bỏ qua động tác này? Các hiệp chưa làm sẽ không được tính vào tổng tải đã thực hiện."))return;
+    if(a.phase==="work"){pauseSet();return;}if(!confirm("Bỏ qua động tác này? Các hiệp chưa làm sẽ không được tính vào tổng tải đã thực hiện."))return;
     a.index++;a.setIndex=0;
     if(a.index>=getTemplate(a.mode).length)finishWorkout();else{initSet(a);persist();render();}
   }
@@ -974,7 +1055,7 @@
     const seconds=Math.ceil((a.deadline-Date.now())/1000);
     if(seconds<=0){
       if(a.phase==="work"){alertEnd();finishSet(true);}
-      else{refreshTickDisplay();if(!lastRestBeep){lastRestBeep=true;alertEnd();}}
+      else{refreshTickDisplay();if(typeof document.hidden!=="undefined"&&document.hidden)return;if(!lastRestBeep){lastRestBeep=true;alertEnd();}advance();}
     }else refreshTickDisplay();
   }
   function exportData(){
@@ -1017,7 +1098,7 @@
     else if(action==="apply-tip")applyTip();
     else if(action==="dismiss-tip"){const a=S.active;if(a){delete S.coachTips[slotId(a.mode,getTemplate(a.mode)[a.index])];persist();render();}}
     else if(action==="rir"||action==="quality"){const a=S.active,v=target.dataset.value;if(a&&a.phase!=="rest"){if(action==="rir"&&["0","1","2","3","4","unknown"].includes(v))a.rir=v==="unknown"?v:Number(v);if(action==="quality"&&["fast","slow","unknown"].includes(v))a.quality=v;persist();render();}}
-    else if(action==="skip-rest")advance();
+    else if(action==="skip-rest"){const a=S.active;if(a?.phase==="rest"&&(Date.now()>=a.deadline||confirm("Bạn muốn kết thúc nghỉ sớm? Chỉ tiếp tục khi đã hồi phục.")))advance();}
     else if(action==="add-rest"){
       const a=S.active;if(a&&a.phase==="rest"){let now=Date.now();a.deadline=Math.max(now,a.deadline)+15000;a.restTotal=Math.max(15,Math.ceil((a.deadline-now)/1000));lastRestBeep=false;persist();refreshTickDisplay();toast("Đã cộng thêm 15 giây");}
     }else if(action==="swap")openSwap();
@@ -1069,6 +1150,7 @@
   document.addEventListener("visibilitychange",()=>{if(document.hidden&&S.active&&S.active.phase==="work"){const a=S.active;a.remaining=Math.max(1,Math.ceil((a.deadline-Date.now())/1000));a.phase="paused";a.deadline=0;persist();}else if(!document.hidden&&page==="workout"){render();}});
   CP.attach();
   FS.attach();
+  attachWorkoutFlow();
   timerInterval=setInterval(tick,250);
   render();
 })();

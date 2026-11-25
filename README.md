@@ -81,3 +81,9 @@ HTML5 + CSS3 + JavaScript thuần, PWA service worker, không thư viện ngoài
 - Trước buổi tập, Individual Test hoặc Full Stage Test, xác nhận dụng cụ đang có: không dây, một dây, hai dây, dây nhảy, xà đơn, xà kép; các điều kiện neo/dây vòng/bục/thước... chọn riêng. Có lựa chọn nhanh tất cả dụng cụ chính hoặc không dụng cụ. App nhớ lựa chọn gần nhất nhưng luôn hỏi trước phiên mới.
 - Tự lọc giáo án, bài đổi và đề xuất tăng tải. Có bài bodyweight cho mỗi nhóm, xà kép Dip và khởi động nhảy dây nhẹ 30 giây nếu có. Nhóm kéo không dụng cụ dùng tự kháng lực hoặc kiểm soát bả vai, không tương đương kéo xà/dây; bài kỹ thuật bộc phát không đo công suất. Một dây ghi tên để tách thành tích và không đề xuất dây khác khi không có.
 - Test chỉ hiện biến thể phù hợp; Full Stage giữ bài/mốc cũ khi đủ dụng cụ hoặc đổi bài với mốc riêng và liệt kê trước khi bắt đầu. Không tuyên bố các biến thể tương đương sức mạnh. Kết quả ghi dụng cụ; huân chương cũ không mất. Sao lưu JSON v5 tương thích cũ.
+
+## Luồng tập liền mạch và bánh xe số (v8)
+- Mỗi bài mới tự mở hướng dẫn một lần trong buổi; mở lại bằng nút Hướng dẫn. Vòng tròn là nút Bắt đầu / Tiếp tục / Kết thúc hiệp / Mở lại xác nhận. Hết giờ tự mở popup; không tự ghi nhận mục tiêu.
+- Popup kết quả có bánh xe cuộn dọc 0–999, nút +/-1, nhập nhanh và chọn đúng mục tiêu. Số ban đầu là gợi ý; chỉ lưu khi người dùng xác nhận rõ số thực tế. Đánh giá có lựa chọn Chưa rõ mặc định, không chặn ghi nhận khi chưa tự đánh giá. Vẫn lưu riêng RIR/tốc độ/độ khó và không tự tăng tải nếu thiếu bằng chứng.
+- Lưu kết quả tự chạy nghỉ; hết nghỉ tự chuẩn bị hiệp mới nhưng không tự bắt đầu tập. Có cộng thời gian nghỉ và xác nhận khi kết thúc nghỉ sớm. Buổi đang dở ở trạng thái review cũ mở popup khi tiếp tục. Không xóa localStorage.
+- Safe area cho iPhone; âm báo dùng lại AudioContext đã mở khi bấm bắt đầu (trình duyệt/thiết bị có thể hạn chế âm thanh hoặc chạy nền).

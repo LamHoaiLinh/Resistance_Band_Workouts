@@ -87,3 +87,8 @@ HTML5 + CSS3 + JavaScript thuần, PWA service worker, không thư viện ngoài
 - Popup kết quả có bánh xe cuộn dọc 0–999, nút +/-1, nhập nhanh và chọn đúng mục tiêu. Số ban đầu là gợi ý; chỉ lưu khi người dùng xác nhận rõ số thực tế. Đánh giá có lựa chọn Chưa rõ mặc định, không chặn ghi nhận khi chưa tự đánh giá. Vẫn lưu riêng RIR/tốc độ/độ khó và không tự tăng tải nếu thiếu bằng chứng.
 - Lưu kết quả tự chạy nghỉ; hết nghỉ tự chuẩn bị hiệp mới nhưng không tự bắt đầu tập. Có cộng thời gian nghỉ và xác nhận khi kết thúc nghỉ sớm. Buổi đang dở ở trạng thái review cũ mở popup khi tiếp tục. Không xóa localStorage.
 - Safe area cho iPhone; âm báo dùng lại AudioContext đã mở khi bấm bắt đầu (trình duyệt/thiết bị có thể hạn chế âm thanh hoặc chạy nền).
+
+## Đếm nhịp theo loại bài (v9)
+- Bài lặp: chỉ hiển thị lần hiện tại/tổng lần, đọc tiếng Việt mỗi lần bắt đầu, bíp đồng thời; 3 giây chuẩn bị, nhịp gợi ý 3–4 giây/lần, bài bộc phát 5 giây/lần, Tempo Push-Up 7 giây/lần. Nhịp là hướng dẫn không phải đo cảm biến. Bài hai bên có nhắc bên trái/phải hoặc 5 giây đổi bên tùy động tác.
+- Bài thời lượng: hiển thị giây còn lại, bíp mỗi giây, đọc mốc đầu và 5 giây cuối. Side Plank/Suitcase Hold/Single-Leg Stand chia tổng thời lượng hai bên, 5 giây đổi bên không tính thời gian tập. Nghỉ đọc 5 giây cuối và thông báo kết thúc. Không tự bắt đầu hiệp mới.
+- Kết thúc sớm hoặc hết nhịp mở popup; giá trị đề xuất dựa trên nhịp đã chạy (không đo số lần thật), xác nhận thực tế trước lưu. Hiệp cũ đang dở được bắt đầu lại theo nhịp mới, không mất kết quả đã lưu. Có nút thử âm thanh ở buổi tập và cài đặt; âm thanh phụ thuộc trình duyệt/giọng tiếng Việt/âm lượng thiết bị. Tạm dừng khi ra nền.

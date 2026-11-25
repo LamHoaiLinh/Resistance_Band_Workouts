@@ -1,4 +1,4 @@
-const CACHE="bandfit-shell-v8-workflow-20261126";
+const CACHE="bandfit-shell-v9-audio-pacing-20261126";
 const ASSETS=["./","./index.html","./style.css","./app.js","./manifest.webmanifest","./icon.svg"];
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));

@@ -37,10 +37,10 @@
     <div class="sheet-head"><div><div class="eyebrow">PERSONALIZE</div><h2 id="settingsTitle">Cài đặt buổi tập</h2></div><button class="icon-btn close-dialog" data-dialog="settingsDialog" aria-label="Đóng">✕</button></div>
     <form id="settingsForm" class="settings-body" method="dialog">
       <label>Thời gian nghỉ giữa các hiệp <span class="input-unit">giây</span><input name="restSec" type="number" min="15" max="300" step="5" required></label>
-      <label>Đếm giờ một hiệp thường <span class="input-unit">giây</span><input name="workSec" type="number" min="15" max="180" step="5" required></label>
-      <p class="muted tiny">Bài giữ tư thế dùng thời gian riêng; bài bộc phát sử dụng hiệp ngắn để đảm bảo tốc độ. Có thể kết thúc hiệp sớm.</p>
-      <label class="check-setting"><span>Âm báo kết thúc giờ</span><input name="sound" type="checkbox"></label>
-      <label class="check-setting"><span>Rung khi kết thúc (thiết bị hỗ trợ)</span><input name="vibration" type="checkbox"></label>
+      <p class="muted tiny">Nhịp tập tự tính theo mục tiêu số lần hoặc số giây của từng bài, không dùng một khoảng thời gian chung.</p>
+      <p class="muted tiny">Bài theo lần: tiếng đếm từng động tác. Bài theo giây: tiếng nhịp mỗi giây và đọc những giây cuối. Có thể dừng sớm.</p>
+      <label class="check-setting"><span>Âm thanh hướng dẫn (giọng đọc + tiếng bíp)</span><input name="sound" type="checkbox"></label>
+      <button type="button" class="secondary-btn wide" id="settingsSoundTest">♪ Thử âm thanh</button><label class="check-setting"><span>Rung khi kết thúc (thiết bị hỗ trợ)</span><input name="vibration" type="checkbox"></label>
       <button class="primary-btn wide" type="submit">Lưu cài đặt</button>
     </form>
   </dialog>

@@ -70,3 +70,9 @@ HTML5 + CSS3 + JavaScript thuần, PWA service worker, không thư viện ngoài
 - Test từng mục bất cứ khi nào sẵn sàng (không khi đang tập dở hoặc báo phục hồi kém), xác nhận an toàn, chốt mốc, nhập kết quả thật, xác nhận kỹ thuật. Bài hai bên phải đạt cả hai; bài dùng dây ghi thông số/cách đặt dây. Bài giữ tư thế có bấm giờ tới mốc. Test không tự ghi vào log buổi tập hay tự tăng kháng lực.
 - Đạt cả 8 nhóm mới mở cấp kế; lưu lịch sử riêng và mốc đã đạt. Không cần test cùng một ngày. Mốc gợi ý là thử thách cá nhân, không phải tiêu chuẩn thể lực đã được kiểm định. Endless giữ mốc khi đạt giới hạn, không bắt tăng vô hạn; tránh test tối đa và không tập thêm khi mệt/đau.
 - Sao lưu JSON v3 gồm hành trình, vẫn nhập được bản cũ; giữ lịch, lịch sử buổi tập, tăng/giảm tải. Tối đa 400 lần test và 100 giai đoạn gần nhất trong lịch sử; cấp hiện tại vẫn được giữ.
+
+## Huân chương & Full Stage Test (v6)
+- **Bền bỉ (Individual):** đạt đủ 8 mục tiêu tích lũy, tự mở cấp kế. Thành tích đã đạt trong v5 được công nhận tự động.
+- **Toàn diện (Full Stage):** mở sau khi đã có Bền bỉ ở cấp đó. Kiểm tra lại đủ 8 bài trong cùng phiên, theo thứ tự bộc phát → đẩy → kéo → chân → chuỗi sau → cân bằng → core → liên sườn. Dùng đúng biến thể, mốc và thông số dây của Individual nếu hồ sơ còn lưu; cấp quá cũ thiếu hồ sơ dùng mốc mặc định. Không cộng kết quả Individual hoặc từ lần Full Stage khác. Không đạt một bài thì không nhận huân chương. Không mất huân chương Bền bỉ.
+- Nghỉ bắt buộc giữa bài 60–180 giây tùy nhóm, có +30 giây; không tự chuyển bài. Đồng hồ giữ tư thế riêng. Bài bộc phát có hướng dẫn nghỉ giữa lần thử. Đạt mốc rồi dừng, không test tối đa. Phiên tối đa 120 phút; có thể hủy khi mệt/đau. Phiên chưa xong không khôi phục khi tải lại trang; không ép tiếp tục nếu rời app.
+- Huân chương Toàn diện được lưu trong campaign.fullMedals; sao lưu JSON v4, tương thích bản v3 và cũ hơn. Thành tích được tự ghi nhận, không phải chuẩn kiểm định thể lực.

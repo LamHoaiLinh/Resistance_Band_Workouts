@@ -216,7 +216,7 @@
     const history=Array.isArray(raw.history)?raw.history.filter(r=>r&&typeof r==="object"&&typeof r.date==="string").slice(-400):[];
     const completed=Array.isArray(raw.completed)?raw.completed.filter(r=>r&&integer(r.level,1,level-1)&&typeof r.date==="string").slice(-100):[];
     const passes={};for(const d of domains){let r=raw.passes&&raw.passes[d.id];if(validResult(r,level,d))passes[d.id]=r;}
-    return {level,history,completed,passes};
+    return {level,history,completed,passes,fullMedals:ME.clean(raw.fullMedals,level)};
   };
   const save=(state,r)=>{
     const s=clean(state),d=domains.find(x=>x.id===r.domain);
@@ -234,9 +234,134 @@
     }
     return {state:s,accepted:true,passed,unlocked};
   };
-  return {domains,name,theme,goal,unit,label,clean,save};
+  return {domains,name,theme,goal,unit,label,clean,save,validResult};
 }
   const CE=campaignEngine();
+  function medalEngine(CE){
+  const order=["power","push","pull","legs","hinge","balance","core","oblique"];
+  const rest={power:180,push:180,pull:180,legs:120,hinge:180,balance:60,core:120,oblique:120};
+  const plan=(s,level)=>{
+    if(!Number.isSafeInteger(level)||level<1||level>=s.level)return null;
+    const old=s.completed.find(x=>x.level===level);
+    return order.map(id=>{
+      const d=CE.domains.find(x=>x.id===id),r=old?.results?.find(x=>x.domain===id);
+      const valid=CE.validResult(r,level,d),o=valid?d.options.find(x=>x.id===r.option):d.options[0];
+      return {id,option:o.id,goal:valid?r.goal:CE.goal(level,o,CE.domains.indexOf(d)),setup:valid&&o.band?r.setup:"",rest:rest[id]};
+    });
+  };
+  const verify=(level,items,results)=>{
+    if(!Array.isArray(items)||items.length!==8||!Array.isArray(results)||results.length!==8)return false;
+    return order.every((id,i)=>{
+      const d=CE.domains.find(x=>x.id===id),t=items[i],r=results[i];
+      return t?.id===id&&r?.option===t.option&&r?.goal===t.goal&&(!t.setup||r.setup===t.setup)&&CE.validResult(r,level,d);
+    });
+  };
+  const clean=(raw,level)=>{
+    const out={};
+    if(raw&&typeof raw==="object"&&!Array.isArray(raw))for(const [key,x] of Object.entries(raw)){
+      const n=Number(key);
+      if(Number.isSafeInteger(n)&&n>=1&&n<level&&x?.level===n&&typeof x.date==="string"&&Number.isFinite(x.duration)&&x.duration>=0&&x.duration<=7200&&verify(n,x.plan,x.results))out[n]=x;
+    }
+    return out;
+  };
+  const award=(s,run,now)=>{
+    if(!run||!Number.isFinite(now)||!Number.isFinite(run.started)||now<run.started||now-run.started>7200000||run.level>=s.level||run.level<1||!verify(run.level,run.plan,run.results))return false;
+    if(s.fullMedals[run.level])return false;
+    s.fullMedals[run.level]={level:run.level,date:new Date(now).toISOString(),duration:Math.floor((now-run.started)/1000),plan:run.plan,results:run.results};return true;
+  };
+  return {order,rest,plan,verify,clean,award};
+}
+  const ME=medalEngine(CE);
+  function fullStageUI(){
+  let run=null,interval=null,work=null;
+  const by=id=>document.getElementById(id),safe=x=>esc(String(x??""));
+  const b=(label,act,cls="secondary-btn",extra="")=>'<button type="button" class="'+cls+'" data-full="'+act+'" '+extra+'>'+label+'</button>';
+  const refresh=()=>{app.innerHTML=render();window.scrollTo(0,0);updateRest();};
+  const campaign=()=>CE.clean(S.campaign);
+  function clear(){if(interval)clearInterval(interval);if(work)clearInterval(work.handle);interval=null;work=null;run=null;}
+  function active(){return !!run;}
+  function medal(which,earned){return '<div class="medal-item '+(earned?'earned':'locked')+'"><span class="medal-symbol '+which+'">'+(which==="individual"?"◆":"✦")+'</span><div><b>'+(which==="individual"?"Bền bỉ · Individual":"Toàn diện · Full Stage")+'</b><small>'+(earned?"Đã nhận":"Chưa đạt")+'</small></div></div>';}
+  function summary(s){
+    const total=Object.keys(s.fullMedals).length;
+    let recent=[];
+    for(let n=s.level-1;n>=Math.max(1,s.level-8);n--)recent.push(n);
+    return '<section class="card medal-panel"><div class="eyebrow">MEDAL COLLECTION · HUÂN CHƯƠNG</div><h2>Bộ sưu tập thành tích</h2><p class="muted tiny">Mỗi cấp có hai huân chương độc lập. Hoàn thành từng mục để nhận Bền bỉ và mở khóa cấp tiếp theo. Vượt lại cả 8 bài trong một buổi để nhận Toàn diện.</p><div class="medal-counts"><div><strong>'+(s.level-1)+'</strong><small>Bền bỉ</small></div><div><strong>'+total+'</strong><small>Toàn diện</small></div></div>'+
+    '<div class="medal-level"><b>'+CE.name(s.level)+' · hiện tại</b>'+medal("individual",false)+medal("full",false)+'</div>'+
+    recent.map(n=>'<div class="medal-level"><b>'+CE.name(n)+'</b>'+medal("individual",true)+medal("full",!!s.fullMedals[n])+(s.fullMedals[n]?'<small class="muted">Toàn diện: '+safe(isoDay(s.fullMedals[n].date))+'</small>':b("Full Stage Test","start","primary-btn wide",'data-level="'+n+'"'))+'</div>').join("")+
+    (s.level>9?'<label class="medal-picker">Chọn cấp cũ (số thứ tự; Endless I = 4)<input id="medalLevel" type="number" min="1" max="'+(s.level-1)+'" value="1" step="1"></label>'+b("Xem / test cấp cũ","older"):"")+
+    (s.level===1?'<div class="inline-note">Full Stage Test sẽ mở sau khi nhận huân chương Bền bỉ đầu tiên.</div>':"")+'</section>';
+  }
+  function render(){
+    if(!run)return "";
+    const t=run.plan[run.results.length],d=t&&CE.domains.find(x=>x.id===t.id),o=d&&d.options.find(x=>x.id===t.option);
+    const top='<section class="card"><div class="eyebrow">FULL STAGE TEST · '+CE.name(run.level)+'</div><h2>Thử thách Toàn diện</h2><p>'+run.results.length+'/8 bài đã kiểm tra · '+run.results.filter(r=>r.passed).length+' bài đạt</p><progress class="cp-progress" max="8" value="'+run.results.length+'"></progress><div class="full-order">'+run.plan.map((x,i)=>'<div class="'+(i===run.results.length?'current':'')+'">'+(i+1)+'. '+safe(CE.domains.find(d=>d.id===x.id).name)+' <b>'+(run.results[i]?(run.results[i].passed?"Đạt":"Chưa đạt"):i===run.results.length?"Tiếp theo":"")+'</b></div>').join("")+'</div></section>';
+    const stop=b("Dừng / thoát thử thách","cancel");
+    if(run.phase==="intro")return top+'<section class="card cp-test"><h2>Chuẩn bị</h2><p>Test 8 bài theo thứ tự cố định, dùng đúng biến thể và mục tiêu đã đạt ở Individual Test nếu còn hồ sơ. Không lấy kết quả từ ngày trước. Đạt mốc thì dừng, không thi tối đa. Dùng đúng thông số dây đã ghi.</p><p>Thời gian nghỉ tối thiểu 60–180 giây tùy bài; có thể nghỉ thêm. Đây là thử thách tự ghi nhận, không phải chuẩn thể lực chính thức. Tối đa 120 phút trong cùng phiên; tải lại trang sẽ hủy phiên chưa hoàn thành. Không cần cố làm đủ nếu mệt hoặc đau.</p><label class="cp-check"><input id="fsReady" type="checkbox">Tôi đã khởi động, hồi phục tốt, không đau/chóng mặt và có dụng cụ an toàn.</label><div class="cp-buttons">'+b("Bắt đầu 8 bài","begin","primary-btn")+stop+'</div></section>';
+    if(run.phase==="done")return top+'<section class="card cp-test"><h2>'+(run.earned?"✦ Nhận huân chương Toàn diện!":"Chưa đạt huân chương Toàn diện")+'</h2><p>'+run.results.filter(r=>r.passed).length+'/8 bài đạt trong cùng buổi. '+(run.earned?"Thành tích đã lưu vĩnh viễn trong dữ liệu app.":"Hãy hồi phục rồi thử lại vào buổi khác. Huân chương Bền bỉ vẫn giữ nguyên.")+'</p>'+b("Về bộ sưu tập","finish","primary-btn wide")+'</section>';
+    if(run.phase==="rest")return top+'<section class="card cp-test"><div class="eyebrow">RECOVERY · NGHỈ GIỮA BÀI</div><div class="cp-clock"><strong id="fsRest">'+formatTime(Math.max(0,Math.ceil((run.deadline-Date.now())/1000)))+'</strong><p class="muted tiny">Tối thiểu '+run.restMin+' giây. Nghỉ thêm nếu cần.</p></div><p>Tiếp theo: <b>'+safe(o.name)+'</b> · '+CE.label(o,t.goal)+'</p><div class="cp-buttons">'+b("+30 giây","extend")+b("Bài tiếp theo","next","primary-btn",'id="fsNext" disabled')+stop+'</div></section>';
+    const inputs=(id,label)=>'<label>'+label+'<input type="number" id="'+id+'" min="0" max="9999" step="1" required inputmode="numeric" placeholder="Kết quả thật"></label>';
+    const timer=o.unit==="seconds"?'<div class="cp-clock"><strong id="fsClock">00:00</strong><div class="cp-buttons">'+b(o.both?"Bấm giờ trái":"Bấm giờ","clock","secondary-btn",'data-field="fsA"')+(o.both?b("Bấm giờ phải","clock","secondary-btn",'data-field="fsB"'):"")+b("Dừng & điền","clock-stop")+'</div><p class="muted tiny">Dừng ở mốc hoặc khi mất kỹ thuật. Có thể nhập tay.'+(o.both?" Nghỉ ít nhất 60 giây khi đổi bên.":"")+'</p></div>':"";
+    return top+'<section class="card cp-test"><div class="eyebrow">BÀI '+(run.results.length+1)+' / 8</div><h2>'+safe(o.name)+'</h2><p><b>Mục tiêu: '+CE.label(o,t.goal)+'</b></p><p>'+safe(o.cue)+'</p><form id="fsForm">'+timer+inputs("fsA",o.both?"Bên trái · "+CE.unit(o):"Kết quả · "+CE.unit(o))+(o.both?inputs("fsB","Bên phải · "+CE.unit(o)):"")+
+    (o.band?'<label>Thông số / cách đặt dây<input id="fsSetup" type="text" required maxlength="160" value="'+safe(t.setup)+'" '+(t.setup?"readonly":"")+' placeholder="Dây, vị trí chân/neo"></label>':'')+
+    '<label class="cp-check"><input type="checkbox" id="fsOK" required>Chỉ ghi kết quả đúng kỹ thuật, không đau, đã dừng khi kỹ thuật giảm.'+(t.setup?" Tôi dùng đúng thông số dây ghi ở trên.":"")+'</label><div class="cp-buttons"><button type="submit" class="primary-btn">Lưu bài & nghỉ</button>'+stop+'</div></form></section>';
+  }
+  function updateRest(){
+    if(!run||run.phase!=="rest")return;
+    const n=Math.max(0,Math.ceil((run.deadline-Date.now())/1000)),el=by("fsRest"),next=by("fsNext");
+    if(el)el.textContent=formatTime(n);if(next)next.disabled=n>0;
+    if(n===0&&interval){clearInterval(interval);interval=null;try{alertEnd();}catch(_){}}
+  }
+  function stopWork(copy){
+    if(!work)return;const elapsed=Math.min(work.goal,Math.max(0,Math.floor((performance.now()-work.start)/1000)));
+    clearInterval(work.handle);if(copy&&by(work.field))by(work.field).value=String(elapsed);
+    if(by("fsClock"))by("fsClock").textContent=formatTime(elapsed);work=null;
+  }
+  function start(level){
+    if(S.active||readiness==="poor"){toast("Hãy hoàn thành buổi đang dở hoặc nghỉ hồi phục trước.");return;}
+    const s=campaign();
+    if(s.fullMedals[level]){toast("Đã nhận Toàn diện ở "+CE.name(level));return;}
+    const plan=ME.plan(s,level);if(!plan){toast("Cấp độ chưa mở Full Stage Test.");return;}
+    clear();run={level,plan,results:[],phase:"intro",started:null,deadline:0};refresh();
+  }
+  function click(e){
+    const el=e.target.closest("[data-full]");if(!el||page!=="campaign")return;
+    const a=el.dataset.full;
+    if(a==="start"||a==="older"){start(a==="start"?Number(el.dataset.level):by("medalLevel")?.valueAsNumber);return;}
+    if(!run)return;
+    if(a==="finish"){clear();CP.redraw();return;}
+    if(a==="cancel"){if(run.phase==="intro"||confirm("Dừng thử thách? Phiên Full Stage này sẽ không nhận huân chương.")){clear();CP.redraw();}return;}
+    if(a==="begin"){
+      if(!by("fsReady")?.checked||S.active||readiness==="poor"){toast("Xác nhận đã khởi động và đủ điều kiện an toàn.");return;}
+      run.started=Date.now();run.phase="test";refresh();return;
+    }
+    if(run.started&&Date.now()-run.started>7200000){toast("Đã hết 120 phút. Hãy thử lại vào ngày khác.");clear();CP.redraw();return;}
+    if(a==="extend"&&run.phase==="rest"){run.deadline=Math.max(Date.now(),run.deadline)+30000;if(!interval)interval=setInterval(updateRest,250);updateRest();return;}
+    if(a==="next"&&run.phase==="rest"&&Date.now()>=run.deadline){if(interval)clearInterval(interval);interval=null;run.phase="test";refresh();return;}
+    if(a==="clock-stop"){stopWork(true);return;}
+    if(a==="clock"&&run.phase==="test"&&!work){
+      const t=run.plan[run.results.length],d=CE.domains.find(x=>x.id===t.id),o=d.options.find(x=>x.id===t.option);
+      const field=el.dataset.field;if(o.unit!=="seconds"||!["fsA","fsB"].includes(field)||!by(field))return;
+      work={start:performance.now(),goal:t.goal,field,handle:setInterval(()=>{if(!work)return;const n=Math.floor((performance.now()-work.start)/1000);if(by("fsClock"))by("fsClock").textContent=formatTime(Math.min(n,work.goal));if(n>=work.goal){stopWork(true);try{alertEnd();}catch(_){}}},200)};
+      if(by("fsClock"))by("fsClock").textContent="00:00";
+    }
+  }
+  function submit(e){
+    if(e.target.id!=="fsForm")return;e.preventDefault();
+    if(!run||run.phase!=="test"||work||S.active||readiness==="poor"||!e.target.reportValidity())return;
+    if(Date.now()-run.started>7200000){clear();CP.redraw();toast("Phiên đã hết thời gian.");return;}
+    const t=run.plan[run.results.length],d=CE.domains.find(x=>x.id===t.id),o=d.options.find(x=>x.id===t.option);
+    const r={level:run.level,domain:d.id,option:o.id,goal:t.goal,a:by("fsA").valueAsNumber,b:o.both?by("fsB").valueAsNumber:null,setup:o.band?by("fsSetup").value.trim():"",form:by("fsOK").checked,date:stamp()};
+    if(!Number.isSafeInteger(r.a)||r.a<0||r.a>9999||(o.both&&(!Number.isSafeInteger(r.b)||r.b<0||r.b>9999))||!r.form||(o.band&&!r.setup)||(t.setup&&r.setup!==t.setup)){toast("Kết quả hoặc thông số dây chưa hợp lệ.");return;}
+    r.passed=CE.validResult(r,run.level,d);run.results.push(r);
+    if(run.results.length===8){
+      const s=campaign();run.earned=ME.award(s,run,Date.now());S.campaign=s;persist();run.phase="done";refresh();return;
+    }
+    run.phase="rest";run.restMin=t.rest;run.deadline=Date.now()+1000*t.rest;refresh();interval=setInterval(updateRest,250);updateRest();
+  }
+  function attach(){app.addEventListener("click",click);app.addEventListener("submit",submit);document.addEventListener("visibilitychange",()=>{if(document.hidden&&work)stopWork(false);if(!document.hidden)updateRest();});}
+  return {summary,render,active,clear,attach};
+}
+  const FS=fullStageUI();
   function campaignUI(){
   let draft=null,clock=null;
   const byId=id=>document.getElementById(id);
@@ -251,7 +376,7 @@
     clock=null;
     const el=byId("cpClock");if(el)el.textContent=elapsed+" giây";
   }
-  function clear(){stopClock();draft=null;}
+  function clear(){stopClock();draft=null;FS.clear();}
   function home(){
     const s=state(),n=Object.keys(s.passes).length;
     return '<section class="card cp-home"><div class="eyebrow">STRENGTH CAMPAIGN</div><h2>'+CE.name(s.level)+' · '+CE.theme(s.level)+'</h2><p class="muted tiny">'+n+'/'+CE.domains.length+' mục tiêu đạt · Thử sức và mở khóa cấp độ tiếp theo.</p><progress class="cp-progress" max="'+CE.domains.length+'" value="'+n+'"></progress>'+btn("Xem mục tiêu & Test thử →","open","","primary-btn wide")+'</section>';
@@ -277,6 +402,7 @@
       '<label class="cp-check"><input id="cpFormOK" type="checkbox" required>Chỉ tính lần/giây/khoảng cách đạt kỹ thuật, đủ biên độ, không lấy đà, không đau. Tôi đã dừng khi kỹ thuật giảm.</label><div class="cp-buttons"><button type="submit" class="primary-btn">Lưu kết quả</button>'+btn("Hủy test","cancel")+'</div></form></section>';
   }
   function render(){
+    if(FS.active())return FS.render();
     const s=state(),n=Object.keys(s.passes).length;
     const chosen=draft?config(s):"";
     const cards=CE.domains.map((d,i)=>{
@@ -290,7 +416,7 @@
     }).join("");
     return '<section class="page-head"><div><div class="eyebrow">STRENGTH CAMPAIGN</div><h1>Hành trình<br><span style="color:var(--green)">sức mạnh</span></h1><p>Mỗi nhóm năng lực là một thử thách riêng. Không phải chuẩn sức khỏe hay phân hạng vận động viên.</p></div></section>'+road(s)+
       '<section class="card"><div class="eyebrow">CẤP ĐỘ HIỆN TẠI</div><h2>'+CE.name(s.level)+' · '+CE.theme(s.level)+'</h2><p>'+n+'/'+CE.domains.length+' mục tiêu đã đạt</p><progress class="cp-progress" max="'+CE.domains.length+'" value="'+n+'"></progress><p class="muted tiny">Đạt tất cả để mở '+CE.name(s.level+1)+'. Không cần test cùng ngày; lưu tự động. Mỗi giai đoạn có thể chọn biến thể khác, nhưng chỉ so sánh thành tích cùng bài, cùng cách đo và tải.</p><div class="inline-note">Nên test khi hồi phục, sau khởi động; không thêm cả bộ test vào buổi tập. Tránh test cùng nhóm cơ trong 24–48 giờ sau buổi nặng. Đau hoặc mệt bất thường: dừng. Cấp độ không ép tăng tải tự động.</div></section>'+
-      (chosen||cards)+
+      (chosen||FS.summary(s)+cards)+
       '<section class="card"><h2>Thành tích mở khóa</h2>'+(s.completed.length?s.completed.slice(-12).reverse().map(x=>'<div class="cp-log"><b>'+safe(CE.name(x.level))+' · Hoàn thành</b><small>'+safe(isoDay(x.date))+'</small></div>').join(""):'<p class="muted tiny">Chưa hoàn thành giai đoạn nào.</p>')+'</section><section class="card"><h2>15 lần test gần nhất</h2>'+(recent||'<p class="muted tiny">Chưa có kết quả.</p>')+'</section><p class="muted tiny">Endless luân phiên tăng mốc từng nhóm, có giới hạn mặc định; khi đạt trần, duy trì kỹ thuật hoặc đặt mục tiêu cá nhân trong phạm vi cho phép. Không ép tăng số lần vô hạn.</p>';
   }
   function click(e){
@@ -336,7 +462,7 @@
     toast(result.unlocked?"Mở khóa "+CE.name(S.campaign.level)+"!":result.passed?"Đạt mục tiêu!":"Đã lưu kết quả. Hồi phục rồi thử lại.");
   }
   function attach(){app.addEventListener("click",click);app.addEventListener("change",change);app.addEventListener("submit",submit);document.addEventListener("visibilitychange",()=>{if(document.hidden&&clock){stopClock(false);const out=byId("cpClock");if(out)out.textContent="Đã dừng khi rời màn hình; hãy kiểm tra lại.";}});}
-  return {home,render,clear,attach};
+  return {home,render,clear,attach,redraw:renderPage};
 }
   const CP=campaignUI();
   function defaultData(){return {onboarded:false,schedule:[2,4,6],settings:{restSec:90,workSec:45,sound:true,vibration:false},logs:[],targets:{},swaps:{},bands:{},coachTips:{},campaign:CE.clean(null),active:null};}
@@ -455,7 +581,7 @@
     else if(page==="campaign")app.innerHTML=CP.render();
     refreshTickDisplay();
   }
-  function navigate(p){if(S.active && p!=="workout" && p!=="home" && !confirm("Bạn đang tập dở. Tiến độ được giữ lại, bộ đếm sẽ tạm dừng. Tiếp tục?"))return;if(S.active&&S.active.phase==="work"&&p!=="workout")pauseSet();page=p;render();window.scrollTo(0,0);}
+  function navigate(p){if(FS.active()&&!confirm("Rời Full Stage Test sẽ kết thúc phiên đang thực hiện. Tiếp tục?"))return;if(S.active && p!=="workout" && p!=="home" && !confirm("Bạn đang tập dở. Tiến độ được giữ lại, bộ đếm sẽ tạm dừng. Tiếp tục?"))return;if(S.active&&S.active.phase==="work"&&p!=="workout")pauseSet();page=p;render();window.scrollTo(0,0);}
   function renderSetup(){
     const selected=draftDays.join(",");
     let opts=PRESETS.map(p=>{
@@ -595,7 +721,7 @@
       '<button class="secondary-btn wide" data-action="export">Xuất lịch sử và cài đặt (JSON)</button>'+
       '<label class="secondary-btn wide mt12" style="display:flex;cursor:pointer">Nhập dữ liệu đã sao lưu<input type="file" id="importFile" accept="application/json,.json" style="display:none"></label>';
   }
-  function goHome(){if(S.active&&S.active.phase==="work")pauseSet();page="home";render();window.scrollTo(0,0);}
+  function goHome(){if(FS.active()&&!confirm("Rời Full Stage Test? Phiên chưa hoàn thành sẽ bị hủy."))return;if(S.active&&S.active.phase==="work")pauseSet();page="home";render();window.scrollTo(0,0);}
   function startWorkout(mode,day,override){
     if(S.active){page="workout";render();return;}
     if(!TEMPLATES[mode])return;
@@ -764,7 +890,7 @@
     }else refreshTickDisplay();
   }
   function exportData(){
-    const blob=new Blob([JSON.stringify({app:"BandFit",version:3,exportedAt:stamp(),data:{onboarded:S.onboarded,schedule:S.schedule,settings:S.settings,logs:S.logs,targets:S.targets,swaps:S.swaps,bands:S.bands,coachTips:S.coachTips,campaign:S.campaign}},null,2)],{type:"application/json"});
+    const blob=new Blob([JSON.stringify({app:"BandFit",version:4,exportedAt:stamp(),data:{onboarded:S.onboarded,schedule:S.schedule,settings:S.settings,logs:S.logs,targets:S.targets,swaps:S.swaps,bands:S.bands,coachTips:S.coachTips,campaign:S.campaign}},null,2)],{type:"application/json"});
     const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="bandfit-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
   }
   async function importData(file){
@@ -827,7 +953,7 @@
   });
   document.getElementById("brandBtn").addEventListener("click",goHome);
   document.getElementById("settingsBtn").addEventListener("click",()=>{
-    if(page==="campaign"){CP.clear();render();}
+    if(page==="campaign"){if(FS.active()&&!confirm("Mở cài đặt sẽ kết thúc Full Stage Test. Tiếp tục?"))return;CP.clear();render();}
     const f=document.getElementById("settingsForm");
     f.elements.restSec.value=S.settings.restSec;f.elements.workSec.value=S.settings.workSec;
     f.elements.sound.checked=!!S.settings.sound;f.elements.vibration.checked=!!S.settings.vibration;
@@ -854,6 +980,7 @@
   if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
   document.addEventListener("visibilitychange",()=>{if(document.hidden&&S.active&&S.active.phase==="work"){const a=S.active;a.remaining=Math.max(1,Math.ceil((a.deadline-Date.now())/1000));a.phase="paused";a.deadline=0;persist();}else if(!document.hidden&&page==="workout"){render();}});
   CP.attach();
+  FS.attach();
   timerInterval=setInterval(tick,250);
   render();
 })();

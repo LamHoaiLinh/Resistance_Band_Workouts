@@ -164,7 +164,7 @@
   const UNILATERAL=new Set("split lunge singleRow woodChop pallof birdDog deadBug externalRot standingKnee sideReach altCurl bicycle sideDip singleRdl singleCalf speedPunch speedChop grip bandLateral bandWrist skater heelTouch shoulderTap march lateralWalk".split(" "));
   const MODE_FILTERS={all:"Mọi mục tiêu",strength:"Sức mạnh",power:"Bộc phát",balance:"Sức bền / Cân bằng",recovery:"Phục hồi"};
   function exerciseModes(id){return Object.keys(TEMPLATES).filter(mode=>TEMPLATES[mode].some(slot=>[slot[1],...slot[2]].includes(id)));}
-  function defaultData(){return {onboarded:false,schedule:[2,4,6],settings:{restSec:90,workSec:45,sound:true,vibration:false},logs:[],targets:{},swaps:{},bands:{},active:null};}
+  function defaultData(){return {onboarded:false,schedule:[2,4,6],settings:{restSec:90,workSec:45,sound:true,vibration:false},logs:[],targets:{},swaps:{},bands:{},coachTips:{},active:null};}
   function load(){
     let data=defaultData();
     try{let saved=JSON.parse(localStorage.getItem(KEY)||"null");if(saved&&typeof saved==="object"){data=Object.assign(data,saved);data.settings=Object.assign(defaultData().settings,saved.settings||{});}}
@@ -175,30 +175,51 @@
     if(!data.swaps||typeof data.swaps!=="object")data.swaps={};
     if(!data.bands||typeof data.bands!=="object")data.bands={};
     if(data.active&&data.active.phase==="work"){data.active.phase="paused";data.active.remaining=Math.max(1,Number(data.active.remaining)||15);}
+    if(!data.coachTips||typeof data.coachTips!=="object"||Array.isArray(data.coachTips))data.coachTips={};
+    if(data.active&&!data.active.coachVersion){
+      data.active.coachVersion=3;data.active.input=null;data.active.rir=null;data.active.quality=null;data.active.effort=null;
+      data.active.records=(data.active.records||[]).map(r=>({...r,confirmed:false}));
+    }
     return data;
   }
   let S=load(),page=S.active?"workout":(S.onboarded?"home":"setup"),draftDays=S.schedule.slice(),presetCustom=false;
+  let readiness="unknown",deloadChoice="auto";
   let libraryQuery="",libraryFilter="Tất cả",libraryMode="all",detailId=null,lastSummary=null,toastTimer=null,timerInterval=null,lastRestBeep=false;
   const app=document.getElementById("app");
   const dayOrder=(a,b)=>ORDER.indexOf(a)-ORDER.indexOf(b);
   const sortDays=arr=>Array.from(new Set(arr)).sort(dayOrder);
-  const getTemplate=mode=>{const slots=TEMPLATES[mode]||TEMPLATES.strength;return S.active&&S.active.mode===mode&&!S.active.templateVersion?slots.slice(0,slots.length-(EXTRA_SLOTS[mode]||[]).length):slots;};
+  const getTemplate=mode=>{
+    let slots=TEMPLATES[mode]||TEMPLATES.strength;
+    const a=S.active&&S.active.mode===mode?S.active:null;
+    if(a&&!a.templateVersion)slots=slots.slice(0,slots.length-(EXTRA_SLOTS[mode]||[]).length);
+    return a&&a.deload?slots.map(slot=>[...slot.slice(0,3),Math.max(1,Math.round(slot[3]*.6)),...slot.slice(4)]):slots;
+  };
   const slotId=(mode,slot)=>mode+":"+slot[0];
-  const getExercise=(mode,slot,act)=>EX[(act&&act.swaps&&act.swaps[slot[0]])||S.swaps[slotId(mode,slot)]||slot[1]]||EX[slot[1]];
+  const ASSIST=new Set(["assistPull","assistChin"]);
+  const DELOAD_ALT={squatJump:"squat",tuckJump:"squat",broadJump:"squat",skater:"lunge",pogo:"calf",speedPress:"chest",wallPush:"inclinePush",explosivePush:"inclinePush",clapPush:"inclinePush",speedPunch:"chest",speedRow:"row",speedPulldown:"row",speedChop:"pallof"};
+  const getExercise=(mode,slot,act)=>{
+    const ex=EX[(act&&act.swaps&&act.swaps[slot[0]])||S.swaps[slotId(mode,slot)]||slot[1]]||EX[slot[1]];
+    if(act&&act.deload&&EXPLOSIVE.has(ex.id)){
+      const allowed=[slot[1],...slot[2]],id=DELOAD_ALT[ex.id];
+      return EX[allowed.includes(id)?id:allowed.find(x=>!EXPLOSIVE.has(x))]||ex;
+    }
+    return ex;
+  };
   const getBand=(mode,slot,act)=>{
     const ex=getExercise(mode,slot,act);
     if(!/dây|neo/i.test(ex.need))return "none";
+    if(act&&act.deload)return ASSIST.has(ex.id)?"heavy":"light";
     if(/nhẹ/i.test(ex.need)||EXPLOSIVE.has(ex.id))return "light";
     const saved=(act&&act.bands&&act.bands[slot[0]])||S.bands[slotId(mode,slot)];
     if(saved==="heavy"||saved==="light")return saved;
-    if(ex.id==="assistPull"||ex.id==="assistChin")return "heavy";
+    if(ASSIST.has(ex.id))return "heavy";
     return mode==="strength"&&["Chân & mông","Ngực","Lưng","Hông & lưng dưới"].includes(ex.group)?"heavy":"light";
   };
   const BAND_LABEL={heavy:"Dây nặng",light:"Dây nhẹ",none:"Không dây"};
   const TIMED_EXERCISES=new Set(["sidePlank","plank","wallSit","hollow","deadHang","suitcase"]);
   const getMetric=(mode,slot,act)=>TIMED_EXERCISES.has(getExercise(mode,slot,act).id)?"seconds":"reps";
   const targetKey=(mode,slot,act)=>slotId(mode,slot)+":"+getExercise(mode,slot,act).id+":"+getMetric(mode,slot,act)+":"+getBand(mode,slot,act);
-  const getTarget=(mode,slot,act)=>{
+  const getBaseTarget=(mode,slot,act)=>{
     const ex=getExercise(mode,slot,act),metric=getMetric(mode,slot,act);let base=slot[5]===metric?slot[4]:metric==="seconds"?40:10;
     if(metric==="seconds"&&["hollow","deadHang","suitcase"].includes(ex.id))base=20;
     if(metric==="reps"){
@@ -211,6 +232,11 @@
     }
     const value=Math.max(1,Number(S.targets[targetKey(mode,slot,act)])||base);
     return metric==="reps"&&EXPLOSIVE.has(ex.id)?Math.min(5,value):value;
+  };
+  const getTarget=(mode,slot,act)=>{
+    const a=act||(S.active&&S.active.mode===mode?S.active:null);
+    const base=getBaseTarget(mode,slot,a);
+    return a&&a.deload?Math.max(1,Math.floor(base*.75)):base;
   };
   const esc=v=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const minmax=(n,min,max)=>Math.min(max,Math.max(min,Number(n)||min));
@@ -265,6 +291,21 @@
     '<div class="inline-note">Buổi thứ tư sẽ được phân bổ nhẹ hơn để tránh dồn tải vào các ngày liền nhau. Bạn có thể đổi lịch sau trong Tổng quan.</div>'+
     '<button data-action="save-schedule" class="primary-btn wide" '+(draftDays.length<3||draftDays.length>4?"disabled":"")+'>Lưu lịch và bắt đầu →</button></div>';
   }
+  const READINESS={unknown:"Chưa đánh giá",good:"Khỏe, hồi phục tốt",medium:"Hơi mệt",poor:"Mệt nhiều / phục hồi kém"};
+  function confirmedRecords(log){return (log.records||[]).filter(r=>r.confirmed===true);}
+  function verifiedRatio(records){return records.length?records.reduce((n,r)=>n+Math.min(1,r.target>0?r.actual/r.target:0),0)/records.length:null;}
+  function deloadReason(mode){
+    if(readiness==="poor")return "Bạn tự đánh giá phục hồi kém.";
+    const logs=S.logs.filter(l=>l.mode===mode&&!l.deload&&l.coachVersion===3&&confirmedRecords(l).length>=Math.max(2,Math.ceil((l.plannedSets||1)*.5))).slice(-3);
+    const last=logs.slice(-2);
+    if(last.length===2&&last.every(l=>verifiedRatio(confirmedRecords(l))<.85))return "Hai buổi gần nhất cùng loại đều đạt dưới 85% mục tiêu (chỉ tính hiệp đã xác nhận).";
+    return "";
+  }
+  function coachHome(mode){
+    const reason=deloadReason(mode);
+    const tips=Object.values(S.coachTips||{}).filter(t=>t&&t.mode===mode);
+    return '<div class="card coach-panel"><div class="eyebrow">SMART TRAINING · HUẤN LUYỆN THÔNG MINH</div><h2>Phục hồi & tăng tải</h2><p class="muted tiny">Đánh giá trước buổi tập. Nếu đau nhói, chóng mặt, sốt hoặc mệt bất thường, hãy nghỉ; không dùng giảm tải để cố tập.</p><div class="coach-label">Hôm nay cơ thể thế nào?</div><div class="coach-options">'+Object.entries(READINESS).map(([k,v])=>'<button class="filter-btn '+(readiness===k?"active":"")+'" data-action="readiness" data-value="'+k+'">'+esc(v)+'</button>').join("")+'</div><div class="coach-label">Chế độ buổi tiếp theo</div><div class="coach-options">'+[["auto","Gợi ý tự động"],["normal","Bình thường"],["light","Giảm tải"]].map(([k,v])=>'<button class="filter-btn '+(deloadChoice===k?"active":"")+'" data-action="deload-choice" data-value="'+k+'">'+v+'</button>').join("")+'</div><div class="inline-note">'+(reason?'<strong>Đề xuất giảm tải:</strong> '+esc(reason):'Chưa có tín hiệu cần giảm tải từ dữ liệu hiện tại.')+' Giảm số hiệp khoảng 40%, số lần/giây khoảng 25%, ưu tiên dây nhẹ hoặc trợ lực, bỏ động tác bộc phá. Không thay đổi mục tiêu dài hạn.</div>'+(tips.length?'<p class="tiny muted">Có '+tips.length+' đề xuất tăng độ khó cho buổi '+esc(MODES[mode].title)+'. Xem tại động tác tương ứng.</p>':'')+'<details><summary>RIR, tăng tải và giảm tải là gì?</summary><p class="tiny muted">RIR là số lần còn có thể làm đúng kỹ thuật: 0 = hết khả năng, 2 = còn 2 lần. Tập sức mạnh thường giữ 1–3 lần dự trữ. Tăng tải là tăng lực dây hoặc biến thể khó hơn khi đã thích nghi. Giảm tải là tạm giảm lượng và độ khó tập để hồi phục. Các ngưỡng trong app là quy tắc thực hành, không phải chẩn đoán.</p></details></div>';
+  }
   function renderHome(){
     const today=new Date().getDay(),session=scheduleFor(S.schedule),up=nextScheduled();
     const todayMode=session.find(x=>x.day===today);
@@ -276,7 +317,7 @@
     }).join("");
     let banner=S.active?'<div class="inline-note">Buổi tập đang tạm lưu: '+MODES[S.active.mode].title+'. <button class="link-btn" data-action="resume">Tiếp tục →</button> <button class="link-btn" data-action="reset-workout">↺ Reset</button></div>':'';
     return '<section class="hero card"><div class="eyebrow">BUILD STRENGTH. MOVE BETTER.</div><h1>Khỏe hơn.<br>Không cần tập quá sức.</h1><p>Bài tập bằng dây kháng lực, đo thời gian từng hiệp và tăng số rep theo tiến bộ thực tế của bạn.</p><div class="hero-actions"><button class="primary-btn" data-action="'+(S.active?"resume":"start")+'" data-mode="'+(todayMode?todayMode.mode:up.mode)+'" data-day="'+(todayMode?todayMode.day:up.day)+'">'+(S.active?"▶ Tiếp tục buổi tập":todayMode?"▶ Tập hôm nay":"▶ Bắt đầu buổi kế tiếp")+'</button></div></section>'+
-    banner+'<div class="stats"><div class="stat"><strong>'+S.logs.length+'</strong><small>Buổi đã lưu</small></div><div class="stat"><strong>'+last7.length+'</strong><small>Buổi / 7 ngày</small></div><div class="stat"><strong>'+Object.keys(EX).length+'</strong><small>Bài trong thư viện</small></div></div>'+
+    banner+coachHome(todayMode?todayMode.mode:up.mode)+'<div class="stats"><div class="stat"><strong>'+S.logs.length+'</strong><small>Buổi đã lưu</small></div><div class="stat"><strong>'+last7.length+'</strong><small>Buổi / 7 ngày</small></div><div class="stat"><strong>'+Object.keys(EX).length+'</strong><small>Bài trong thư viện</small></div></div>'+
     '<div class="section-head"><h2>Lịch của bạn</h2><button class="link-btn" data-action="edit-schedule">Chỉnh lịch ↗</button></div>'+weekly+
     '<div class="section-head"><h2>Chọn một buổi để tập</h2></div><div class="workout-list">'+rows+'</div>'+
     '<div class="inline-note mt20">Mỗi động tác có nhiều phương án thay thế theo mục tiêu. Bài bổ trợ cuối buổi có thể bỏ qua nếu chưa hồi phục. Nếu bài khiến bạn đau khớp, hãy dừng bài đó và đổi sang động tác phù hợp hơn.</div>';
@@ -297,14 +338,25 @@
     const a=S.active;if(!a)return null;
     return {a:a,slot:getTemplate(a.mode)[a.index]};
   }
+  function renderEffort(a,ex,unit){
+    if(EXPLOSIVE.has(ex.id))return '<div class="coach-panel"><strong>Tốc độ phát lực</strong><p class="tiny muted">Không dùng RIR cho bộc phá. Dừng khi chậm rõ, mất kiểm soát hoặc tiếp đất không ổn định.</p><div class="coach-options">'+[["fast","Nhanh, kỹ thuật tốt"],["slow","Chậm / mất kỹ thuật"],["unknown","Chưa rõ"]].map(([k,v])=>'<button class="effort-choice '+(a.quality===k?"selected":"")+'" data-action="quality" data-value="'+k+'">'+v+'</button>').join("")+'</div></div>';
+    if(unit==="giây")return '<div class="coach-panel"><strong>Độ khó khi giữ tư thế</strong><p class="tiny muted">RIR là số lần lặp nên không áp dụng cho bài tính giây.</p><div class="coach-options">'+[["easy","Dễ"],["medium","Vừa"],["hard","Khó"],["unknown","Chưa rõ"]].map(([k,v])=>'<button class="effort-choice '+(a.effort===k?"selected":"")+'" data-action="effort" data-value="'+k+'">'+v+'</button>').join("")+'</div></div>';
+    return '<div class="coach-panel"><strong>RIR – còn làm được bao nhiêu lần?</strong><p class="tiny muted">Ước tính số lần còn có thể làm đúng kỹ thuật sau hiệp, không cần thử đến kiệt sức. 0: hết sức; 1–3: còn ít; 4+: còn nhiều.</p><div class="coach-options">'+[["0","0"],["1","1"],["2","2"],["3","3"],["4","4+"],["unknown","Chưa rõ"]].map(([k,v])=>'<button class="effort-choice '+(String(a.rir)===k?"selected":"")+'" data-action="rir" data-value="'+k+'">'+v+'</button>').join("")+'</div>'+(a.deload?'<p class="tiny muted">Giảm tải: cố gắng còn ít nhất 3–4 lần dự trữ, không cố tập hết sức.</p>':'')+'</div>';
+  }
+  function renderCoachTip(a,slot,ex,band){
+    if(a.deload||a.setIndex!==0||a.phase!=="ready")return "";
+    const t=S.coachTips[slotId(a.mode,slot)];
+    if(!t||t.exerciseId!==ex.id||t.band!==band)return "";
+    return '<div class="inline-note coach-tip"><strong>Progressive Overload · Tăng tải</strong><p>'+esc(t.reason)+'</p>'+(t.nextBand||t.nextExercise?'<button class="secondary-btn wide" data-action="apply-tip">Áp dụng đề xuất</button>':'<p class="tiny muted">Chỉ tăng tải khi kiểm soát tốt kỹ thuật; có thể giữ nguyên.</p>')+'<button class="link-btn" data-action="dismiss-tip">Bỏ qua đề xuất</button></div>';
+  }
   function renderWorkout(){
     const v=current();if(!v)return '<div class="card"><h2>Không có buổi tập đang mở</h2><button class="primary-btn mt20" data-action="go-home">Về tổng quan</button></div>';
     const a=v.a,s=v.slot,ex=getExercise(a.mode,s,a),m=MODES[a.mode],st=workoutStats(a),target=getTarget(a.mode,s,a),band=getBand(a.mode,s,a);
     const unit=getMetric(a.mode,s,a)==="seconds"?"giây":"lần";
     const unilateralRep=UNILATERAL.has(ex.id);const repUnit=unit==="lần"&&unilateralRep?"lần mỗi bên":unit;
     const exerciseTimer=workSeconds(a,s);
-    let remaining=a.phase==="ready"?exerciseTimer:(a.phase==="paused"?a.remaining:(a.phase==="work"?Math.max(0,Math.ceil((a.deadline-Date.now())/1000)):exerciseTimer));
-    let pct=a.phase==="ready"?100:Math.min(100,Math.max(0,100*remaining/exerciseTimer));
+    let remaining=a.phase==="review"?0:a.phase==="ready"?exerciseTimer:(a.phase==="paused"?a.remaining:(a.phase==="work"?Math.max(0,Math.ceil((a.deadline-Date.now())/1000)):exerciseTimer));
+    let pct=a.phase==="review"?0:a.phase==="ready"?100:Math.min(100,Math.max(0,100*remaining/exerciseTimer));
     let body='';
     if(a.phase==="rest"){
       let restSec=Math.max(0,Math.ceil((a.deadline-Date.now())/1000));
@@ -315,24 +367,26 @@
       body='<div class="exercise-card"><div class="set-meta"><span>ĐỘNG TÁC '+(a.index+1)+' / '+getTemplate(a.mode).length+'</span><strong>HIỆP '+(a.setIndex+1)+' / '+s[3]+'</strong></div>'+
         '<div class="exercise-name">'+esc(ex.en)+'</div><div class="exercise-vn">'+esc(ex.vi)+'</div><div class="ex-tags"><span class="pill">'+esc(ex.group)+'</span><span class="pill muted">'+esc(ex.need)+'</span></div>'+
         '<div class="band-select"><span>'+(ex.id==="assistPull"||ex.id==="assistChin"?"Dây trợ lực (dây mạnh hơn = dễ hơn):":"Loại dây đang dùng:")+'</span>'+(band==="none"?'<span class="pill muted">Không cần dây</span>':['light','heavy'].map(b=>'<button class="band-choice '+(band===b?'selected':'')+'" data-action="set-band" data-band="'+b+'">'+BAND_LABEL[b]+'</button>').join(''))+'</div>'+        '<ol class="exercise-instructions">'+ex.steps.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ol>'+
-        '<div class="tips">Lưu ý: '+esc(ex.tip)+'</div>'+
+        '<div class="tips">Lưu ý: '+esc(ex.tip)+'</div>'+renderCoachTip(a,s,ex,band)+
         '<div class="exercise-tool-row"><button class="ghost-btn" data-action="swap">⇄ Đổi bài tương tự</button><button class="ghost-btn" data-action="skip-exercise">Bỏ qua bài</button></div>'+
-        '<div class="timer-wrap"><div class="timer-ring" id="timerRing" style="--pct:'+pct+'"><div class="timer-inner"><div class="timer-number" id="timerNum">'+formatTime(remaining)+'</div><div class="timer-label">'+(a.phase==="ready"?"SẴN SÀNG":a.phase==="paused"?"TẠM DỪNG":"ĐANG TẬP")+'</div></div></div></div>'+
-        '<div class="rep-row"><label><strong>Thực hiện được bao nhiêu '+unit+'?</strong>Gợi ý: '+target+' '+repUnit+(["sidePlank","suitcase"].includes(ex.id)&&unit==="giây"?" (chia đều 2 bên)":"")+'. Có thể sửa số thực tế.</label><input id="repInput" class="rep-input" type="number" inputmode="numeric" min="0" max="999" value="'+esc(a.input==null?target:a.input)+'" aria-label="Số '+unit+' thực tế"></div>'+
-        '<div class="effort-row"><span>Cảm giác sau hiệp:</span>'+[["easy","Dễ"],["medium","Vừa"],["hard","Khó"]].map(x=>'<button class="effort-choice '+(a.effort===x[0]?"selected":"")+'" data-action="effort" data-value="'+x[0]+'">'+x[1]+'</button>').join("")+'</div>'+
-        '<div class="timer-button-row">'+(a.phase==="ready"?'<button class="primary-btn" data-action="start-set">▶ Bắt đầu đếm giờ</button>':a.phase==="paused"?'<button class="primary-btn" data-action="resume-set">▶ Tiếp tục</button>':'<button class="secondary-btn" data-action="pause-set">Ⅱ Tạm dừng</button>')+
-        '<button class="ghost-btn" data-action="reset-set">↺ Đếm lại</button><button class="primary-btn" data-action="finish-set">✓ Hoàn thành hiệp / Nghỉ</button></div></div>';
+        '<div class="timer-wrap"><div class="timer-ring" id="timerRing" style="--pct:'+pct+'"><div class="timer-inner"><div class="timer-number" id="timerNum">'+formatTime(remaining)+'</div><div class="timer-label">'+(a.phase==="review"?"XÁC NHẬN KẾT QUẢ":a.phase==="ready"?"SẴN SÀNG":a.phase==="paused"?"TẠM DỪNG":"ĐANG TẬP")+'</div></div></div></div>'+
+        '<div class="rep-row"><label><strong>Thực tế: bao nhiêu '+unit+'?</strong>Mục tiêu: '+target+' '+repUnit+(["sidePlank","suitcase"].includes(ex.id)&&unit==="giây"?" (chia đều 2 bên)":"")+'. Nhập đúng kết quả, kể cả 0.</label><input id="repInput" class="rep-input" type="number" inputmode="numeric" min="0" max="999" step="1" placeholder="—" value="'+esc(a.input==null?"":a.input)+'" aria-label="Số '+unit+' thực tế"></div>'+
+        '<button class="ghost-btn wide" data-action="use-target">Đã làm đúng mục tiêu ('+target+' '+unit+')</button>'+
+        renderEffort(a,ex,unit)+
+        (a.phase==="review"?'<div class="inline-note">Đã hết giờ hoặc dừng hiệp. Nhập số thực tế và xác nhận để lưu; thời gian nghỉ bắt đầu sau khi xác nhận.</div>':'')+
+        '<div class="timer-button-row">'+(a.phase==="ready"?'<button class="primary-btn" data-action="start-set">▶ Bắt đầu đếm giờ</button>':a.phase==="paused"?'<button class="primary-btn" data-action="resume-set">▶ Tiếp tục</button>':a.phase==="work"?'<button class="secondary-btn" data-action="pause-set">Ⅱ Tạm dừng</button>':'')+
+        '<button class="ghost-btn" data-action="reset-set">↺ Đếm lại</button><button class="primary-btn" data-action="finish-set">✓ Xác nhận kết quả / Nghỉ</button></div></div>';
     }
-    return '<div class="workout-top"><div><div class="eyebrow">'+m.tag+' · '+DAYNAME[a.day]+'</div><h2 style="font-size:23px;margin:6px 0">'+m.title+'</h2></div><button class="ghost-btn" data-action="exit-workout">Thoát tạm</button></div><button class="secondary-btn wide" data-action="reset-workout">↺ Reset buổi tập</button>'+
+    return '<div class="workout-top"><div><div class="eyebrow">'+m.tag+' · '+DAYNAME[a.day]+'</div><h2 style="font-size:23px;margin:6px 0">'+m.title+'</h2>'+(a.deload?'<span class="pill orange">DELOAD · GIẢM TẢI</span>':'')+'</div><button class="ghost-btn" data-action="exit-workout">Thoát tạm</button></div><button class="secondary-btn wide" data-action="reset-workout">↺ Reset buổi tập</button>'+
       '<div class="set-meta"><span>ĐÃ HOÀN THÀNH '+st.done+' / '+st.total+' HIỆP</span><span>'+st.pct+'%</span></div><div class="progress-track"><div class="progress-fill" style="width:'+st.pct+'%"></div></div>'+body;
   }
   function renderSummary(){
     if(!lastSummary){return '<div class="card"><h2>Chưa có kết quả mới</h2><button class="primary-btn mt20" data-action="go-home">Về trang chủ</button></div>';}
-    const l=lastSummary,adj=l.adjustments||[],items=adj.slice(0,8).map(a=>'<div class="history-item"><strong>'+esc(a.name)+'</strong><p>'+a.previous+' → '+a.next+' '+(a.metric==="seconds"?"giây":"lần")+'/hiệp · '+esc(a.reason)+'</p></div>').join("");
+    const l=lastSummary,adj=l.adjustments||[],items=adj.slice(0,8).map(a=>'<div class="history-item"><strong>'+esc(a.name)+'</strong><p>'+(a.kind==='tip'?'Đề xuất tăng độ khó · ':a.previous+' → '+a.next+' '+(a.metric==="seconds"?"giây":"lần")+'/hiệp · ')+esc(a.reason)+'</p></div>').join("");
     return '<div class="eyebrow">WORKOUT SAVED</div><h1 style="font-size:34px;margin:11px 0">Hoàn thành buổi tập.</h1><p class="muted">Kết quả được lưu trên thiết bị này, không cần tài khoản.</p>'+
-      '<div class="summary-grid"><div class="stat"><strong>'+l.records.length+' / '+l.plannedSets+'</strong><small>Hiệp hoàn thành</small></div><div class="stat"><strong>'+l.volume+'</strong><small>Tổng lần/giây đã ghi*</small></div><div class="stat"><strong>'+l.ratio+'%</strong><small>Số lần/giây đạt trên hiệp đã làm</small></div><div class="stat"><strong>'+l.minutes+' phút</strong><small>Thời gian phiên</small></div></div>'+
-      '<div class="card"><h2 style="font-size:19px">Cá nhân hóa buổi sau</h2><p class="muted tiny mt12">Hệ thống so sánh số lần thực tế với mục tiêu của từng bài, đồng thời xét mức hoàn thành toàn buổi và cảm giác nặng/nhẹ. Thay đổi từng bước nhỏ, không tự tăng số hiệp.</p>'+
-      (adj.length?'<div class="mt12">'+items+'</div>':'<div class="inline-note">Giữ nguyên mức hiện tại: phù hợp với số lần bạn vừa thực hiện.</div>')+
+      '<div class="summary-grid"><div class="stat"><strong>'+l.records.length+' / '+l.plannedSets+'</strong><small>Hiệp hoàn thành</small></div><div class="stat"><strong>'+l.volume+'</strong><small>Tổng lần/giây đã ghi*</small></div><div class="stat"><strong>'+(l.ratio==null?'—':l.ratio+'%')+'</strong><small>Trung bình mức đạt từng hiệp đã xác nhận</small></div><div class="stat"><strong>'+l.minutes+' phút</strong><small>Thời gian phiên</small></div></div>'+
+      '<div class="card"><h2 style="font-size:19px">Cá nhân hóa buổi sau</h2><p class="muted tiny mt12">Chỉ dùng hiệp đã xác nhận. So sánh cùng bài, cùng tải, cùng mục tiêu; hai buổi liên tiếp đủ dễ mới tăng nhẹ. Bộc phá ưu tiên tốc độ; giảm tải không sửa mục tiêu dài hạn.</p>'+
+      (l.deload?'<div class="inline-note">Buổi giảm tải: đã lưu kết quả nhưng giữ nguyên mục tiêu dài hạn.</div>':adj.length?'<div class="mt12">'+items+'</div>':'<div class="inline-note">Giữ nguyên mục tiêu. Chưa đủ dữ liệu xác nhận để tăng tải hoặc không cần điều chỉnh.</div>')+
       '<p class="muted tiny mt12">* Tổng khối lượng chỉ là số đếm để theo dõi, không phải năng lượng tiêu hao; không cộng giây và lần thành cùng một đơn vị sinh lý.</p></div>'+
       '<button class="primary-btn wide mt20" data-action="go-home">Về tổng quan →</button>';
   }
@@ -354,8 +408,8 @@
     const list=S.logs.slice().reverse();
     let html=list.map(l=>{
       const fmt=l.mode==="strength"?"Sức mạnh":MODES[l.mode].title;
-      return '<details class="history-item"><summary><span class="pill">'+esc(fmt)+'</span><strong>'+isoDay(l.date)+' · '+l.records.length+' hiệp</strong><p>'+l.ratio+'% mục tiêu · '+l.minutes+' phút · '+(l.adjustments||[]).length+' bài được điều chỉnh</p></summary>'+
-      '<div class="mt12">'+l.records.map(r=>'<div class="tiny muted" style="padding:5px 0">'+esc(EX[r.exerciseId]?EX[r.exerciseId].en:r.exerciseId)+' · hiệp '+r.set+' · '+r.actual+'/'+r.target+' '+(r.metric==="seconds"?"giây":"lần")+' · '+(BAND_LABEL[r.band]||'Không rõ dây')+'</div>').join("")+'</div></details>';
+      return '<details class="history-item"><summary><span class="pill">'+esc(fmt)+(l.deload?' · Giảm tải':'')+'</span><strong>'+isoDay(l.date)+' · '+l.records.length+' hiệp</strong><p>'+(l.ratio==null?'Chưa có kết quả xác nhận':l.ratio+'% mục tiêu')+' · '+l.minutes+' phút · '+(l.adjustments||[]).length+' bài được điều chỉnh</p></summary>'+
+      '<div class="mt12">'+l.records.map(r=>'<div class="tiny muted" style="padding:5px 0">'+esc(EX[r.exerciseId]?EX[r.exerciseId].en:r.exerciseId)+' · hiệp '+r.set+' · '+r.actual+'/'+r.target+' '+(r.metric==="seconds"?"giây":"lần")+' · '+(BAND_LABEL[r.band]||'Không rõ dây')+(r.confirmed===true?' · Đã xác nhận'+(Number.isInteger(r.rir)?' · RIR '+(r.rir===4?'4+':r.rir):r.quality?' · '+(r.quality==='fast'?'Phát lực tốt':r.quality==='slow'?'Tốc độ giảm':'Chưa rõ tốc độ'):r.effort?' · '+({easy:'Dễ',medium:'Vừa',hard:'Khó',unknown:'Chưa rõ'}[r.effort]||'Chưa rõ'):' · RIR chưa rõ'):' · Dữ liệu cũ, chưa xác nhận')+'</div>').join("")+'</div></details>';
     }).join("");
     return '<div class="page-head"><div><div class="eyebrow">PROGRESS LOG</div><h1>Lịch sử tập luyện</h1><p>Dữ liệu lưu tại trình duyệt này. Xóa dữ liệu trang web sẽ xóa lịch sử.</p></div></div>'+
       (list.length?'<div class="card">'+html+'</div>':'<div class="card"><h2>Chưa có buổi tập</h2><p class="muted mt12">Sau khi hoàn thành buổi đầu tiên, lịch sử và điều chỉnh rep sẽ xuất hiện ở đây.</p></div>')+
@@ -364,18 +418,21 @@
       '<label class="secondary-btn wide mt12" style="display:flex;cursor:pointer">Nhập dữ liệu đã sao lưu<input type="file" id="importFile" accept="application/json,.json" style="display:none"></label>';
   }
   function goHome(){if(S.active&&S.active.phase==="work")pauseSet();page="home";render();window.scrollTo(0,0);}
-  function startWorkout(mode,day){
+  function startWorkout(mode,day,override){
     if(S.active){page="workout";render();return;}
     if(!TEMPLATES[mode])return;
-    const a={templateVersion:2,mode:mode,day:day,index:0,setIndex:0,phase:"ready",records:[],startedAt:stamp(),swaps:{},bands:{},input:null,effort:"medium",remaining:0,deadline:0,restTotal:0};
+    const reason=deloadReason(mode);
+    const useDeload=override?override.deload:(deloadChoice==="light"||(deloadChoice==="auto"&&!!reason&&confirm(reason+" Bắt đầu buổi giảm tải? OK = giảm tải; Hủy = buổi bình thường.")));
+    const a={templateVersion:2,coachVersion:3,deload:!!useDeload,readiness:override?override.readiness:readiness,mode:mode,day:day,index:0,setIndex:0,phase:"ready",records:[],startedAt:stamp(),swaps:{},bands:{},input:null,rir:null,quality:null,effort:null,remaining:0,deadline:0,restTotal:0};
+    readiness="unknown";deloadChoice="auto";
     S.active=a;initSet(a);persist();page="workout";render();window.scrollTo(0,0);
   }
   function resetWorkout(){
     const a=S.active;if(!a)return;
     if(!confirm("Bắt đầu lại từ động tác 1, hiệp 1? Các hiệp chưa lưu của buổi này sẽ bị bỏ. Lịch sử, cài đặt và bài đã chọn vẫn được giữ."))return;
-    const mode=a.mode,day=a.day;S.active=null;lastRestBeep=false;lastSummary=null;startWorkout(mode,day);toast("Đã reset buổi tập");
+    const mode=a.mode,day=a.day;S.active=null;lastRestBeep=false;lastSummary=null;startWorkout(mode,day,{deload:!!a.deload,readiness:a.readiness});toast("Đã reset buổi tập");
   }
-  function initSet(a){const slot=getTemplate(a.mode)[a.index];a.input=getTarget(a.mode,slot);a.effort="medium";a.remaining=workSeconds(a,slot);a.phase="ready";a.deadline=0;}
+  function initSet(a){const slot=getTemplate(a.mode)[a.index];a.input=null;a.rir=null;a.quality=null;a.effort=null;a.remaining=workSeconds(a,slot);a.phase="ready";a.deadline=0;}
   function startSet(){
     const a=S.active;if(!a||!["ready","paused"].includes(a.phase))return;
     let t=a.phase==="paused"?a.remaining:workSeconds(a,getTemplate(a.mode)[a.index]);
@@ -386,8 +443,8 @@
     a.remaining=Math.max(1,Math.ceil((a.deadline-Date.now())/1000));a.phase="paused";a.deadline=0;persist();render();
   }
   function resetSet(){
-    const a=S.active;if(!a)return;if(!["ready","paused","work"].includes(a.phase))return;
-    a.phase="ready";a.remaining=workSeconds(a,getTemplate(a.mode)[a.index]);a.deadline=0;persist();render();
+    const a=S.active;if(!a)return;if(!["ready","paused","work","review"].includes(a.phase))return;
+    initSet(a);persist();render();
   }
   function alertEnd(){
     if(S.settings.vibration && navigator.vibrate)navigator.vibrate([90,60,90]);
@@ -399,12 +456,15 @@
     }catch(e){/* Trình duyệt có thể chặn âm thanh không có tương tác */}}
   function finishSet(auto){
     const a=S.active;if(!a||a.phase==="rest")return;
-    const slot=getTemplate(a.mode)[a.index],ex=getExercise(a.mode,slot,a);
-    const raw=Number(a.input),target=getTarget(a.mode,slot),actual=Number.isFinite(raw)?Math.max(0,Math.min(999,Math.round(raw))):target;
-    a.records.push({slot:slot[0],exerciseId:ex.id,set:a.setIndex+1,target:target,actual:actual,metric:getMetric(a.mode,slot,a),band:getBand(a.mode,slot,a),effort:a.effort,auto:!!auto});
+    if(auto){a.phase="review";a.deadline=0;a.remaining=0;persist();render();toast("Hết giờ · Nhập và xác nhận kết quả");return;}
+    const slot=getTemplate(a.mode)[a.index],ex=getExercise(a.mode,slot,a),metric=getMetric(a.mode,slot,a);
+    if(a.phase!=="review"){a.phase="review";a.deadline=0;a.remaining=0;persist();render();}
+    if(a.input===null||a.input===""||!Number.isInteger(Number(a.input))||Number(a.input)<0||Number(a.input)>999){toast("Nhập số lần/giây thực tế, kể cả 0");return;}
+    if(EXPLOSIVE.has(ex.id)?!a.quality:metric==="seconds"?!a.effort:a.rir===null||a.rir===undefined){toast("Chọn đánh giá sau hiệp hoặc Chưa rõ");return;}
+    const target=getTarget(a.mode,slot,a),actual=Number(a.input);
+    a.records.push({slot:slot[0],exerciseId:ex.id,set:a.setIndex+1,target,actual,metric,band:getBand(a.mode,slot,a),effort:a.effort,rir:metric==="reps"&&!EXPLOSIVE.has(ex.id)&&a.rir!=="unknown"?Number(a.rir):null,quality:EXPLOSIVE.has(ex.id)?a.quality:null,confirmed:true,auto:false});
     if(a.index===getTemplate(a.mode).length-1 && a.setIndex===slot[3]-1){finishWorkout();return;}
     a.phase="rest";a.restTotal=Math.max(minmax(S.settings.restSec,15,300),(EXPLOSIVE.has(ex.id)||(a.mode==="strength"&&["leg","push","pull","verticalPull","shoulder","hip"].includes(slot[0])))?120:15);a.deadline=Date.now()+a.restTotal*1000;a.remaining=a.restTotal;lastRestBeep=false;persist();render();
-    if(auto)toast("Hết giờ hiệp · Bắt đầu nghỉ");
   }
   function advance(){
     const a=S.active;if(!a||a.phase!=="rest")return;
@@ -420,52 +480,80 @@
     a.index++;a.setIndex=0;
     if(a.index>=getTemplate(a.mode).length)finishWorkout();else{initSet(a);persist();render();}
   }
+  const VARIANTS={inclinePush:["pushup","tempoPush","bandPush"],pushup:["tempoPush","bandPush","declinePush"],tempoPush:["bandPush","declinePush"],fastPush:["tempoPush","bandPush"],chest:["bandPush","tempoPush"],floorChest:["bandPush","tempoPush"],pullup:[],chinup:[],assistPull:["pullup"],assistChin:["chinup"],negativePull:["assistPull","assistChin"],squat:["split","bandLateral"],hipHinge:["rdl","singleRdl"],rdl:["singleRdl"],gluteBridge:["singleRdl"],calf:["singleCalf"],plank:["hollow"],reverseCrunch:["legRaise"],row:["singleRow"],lunge:["split"]};
+  function capFor(a,ex,metric){
+    if(metric==="seconds")return 60;
+    if(EXPLOSIVE.has(ex.id))return 5;
+    if(PULL_IDS.has(ex.id))return a.mode==="balance"?8:5;
+    return a.mode==="strength"?8:a.mode==="balance"?20:12;
+  }
+  function loadTip(a,slot,ex,band){
+    const key=slotId(a.mode,slot),allowed=[slot[1],...slot[2]],base={mode:a.mode,slot:slot[0],exerciseId:ex.id,band};
+    if(ASSIST.has(ex.id)&&band==="heavy")return {...base,nextBand:"light",reason:"Hai buổi cùng bài đạt mục tiêu, còn ít nhất 3 lần dự trữ. Có thể dùng dây trợ lực nhẹ hơn (khó hơn)."};
+    if(!ASSIST.has(ex.id)&&band==="light"&&!/nhẹ/i.test(ex.need)&&!EXPLOSIVE.has(ex.id))return {...base,nextBand:"heavy",reason:"Hai buổi cùng bài đạt mục tiêu, còn ít nhất 3 lần dự trữ. Thử dây nặng hơn; nếu khó quá, đổi lại dây nhẹ."};
+    const next=(VARIANTS[ex.id]||[]).find(id=>allowed.includes(id)&&id!==ex.id);
+    if(next)return {...base,nextExercise:next,reason:"Đã thích nghi ở mức hiện tại. Thử "+EX[next].en+"; bắt đầu với ít lần và kiểm soát kỹ thuật."};
+    return {...base,reason:"Đã đạt ngưỡng số lần và còn dự trữ tốt. Nếu có tải phù hợp hơn, tăng độ khó từng bước; nếu không, giữ nguyên và ưu tiên kỹ thuật."};
+  }
+  function applyTip(){
+    const a=S.active;if(!a||a.deload||a.phase!=="ready"||a.setIndex!==0)return;
+    const slot=getTemplate(a.mode)[a.index],ex=getExercise(a.mode,slot,a),band=getBand(a.mode,slot,a),key=slotId(a.mode,slot),t=S.coachTips[key];
+    if(!t||t.exerciseId!==ex.id||t.band!==band)return;
+    if(t.nextExercise&&![slot[1],...slot[2]].includes(t.nextExercise))return;
+    if(t.nextBand&&!["light","heavy"].includes(t.nextBand))return;
+    if(!confirm("Áp dụng mức khó hơn cho bài này? Nếu kỹ thuật giảm, hãy đổi lại trước khi tập."))return;
+    if(t.nextExercise){a.swaps[slot[0]]=t.nextExercise;S.swaps[key]=t.nextExercise;delete a.bands[slot[0]];delete S.bands[key];}
+    if(t.nextBand){a.bands[slot[0]]=t.nextBand;S.bands[key]=t.nextBand;}
+    const k=targetKey(a.mode,slot,a);if(getMetric(a.mode,slot,a)==="reps"){
+      const newEx=getExercise(a.mode,slot,a),newBase=getBaseTarget(a.mode,slot,a);
+      S.targets[k]=Math.max(1,Math.min(newBase,PULL_IDS.has(newEx.id)?3:a.mode==="strength"?5:8));
+    }
+    delete S.coachTips[key];initSet(a);persist();render();toast("Đã áp dụng; có thể đổi lại nếu quá khó");
+  }
   function updateTargets(a){
-    const records=a.records||[];
-    const totalTarget=records.reduce((v,r)=>v+r.target,0);
-    const totalActual=records.reduce((v,r)=>v+r.actual,0);
-    const overall=totalTarget?totalActual/totalTarget:1;
-    const grouped={};records.forEach(r=>{(grouped[r.slot]||(grouped[r.slot]=[])).push(r);});
-    let changes=[];
-    Object.keys(grouped).forEach(slotKey=>{
-      const rs=grouped[slotKey],slot=getTemplate(a.mode).find(x=>x[0]===slotKey);
-      if(!slot)return;
-      const expected=rs.reduce((n,r)=>n+r.target,0);
-      const actual=rs.reduce((n,r)=>n+r.actual,0);
-      if(!expected)return;
-      const local=actual/expected,combined=local*.8+overall*.2;
-      const hard=rs.filter(r=>r.effort==="hard").length/rs.length;
-      const easy=rs.filter(r=>r.effort==="easy").length/rs.length;
-      const before=getTarget(a.mode,slot,a),isSeconds=rs[0].metric==="seconds";
+    const all=a.records||[],records=all.filter(r=>r.confirmed===true),overall=verifiedRatio(records),changes=[];
+    if(a.deload||a.mode==="recovery")return {changes,overall,totalActual:records.reduce((n,r)=>n+r.actual,0)};
+    const grouped={};for(const r of records)(grouped[r.slot]||(grouped[r.slot]=[])).push(r);
+    for(const [slotKey,rs] of Object.entries(grouped)){
+      const slot=getTemplate(a.mode).find(x=>x[0]===slotKey);if(!slot)continue;
+      const ex=getExercise(a.mode,slot,a),band=getBand(a.mode,slot,a),metric=getMetric(a.mode,slot,a),key=slotId(a.mode,slot);
+      if(rs.length!==slot[3]||rs.some(r=>r.exerciseId!==ex.id||r.band!==band||r.metric!==metric))continue;
+      delete S.coachTips[key];
+      const before=getBaseTarget(a.mode,slot,a),ratio=verifiedRatio(rs),timed=metric==="seconds";
+      const floor=timed?5:1,step=timed?5:1;
       let next=before,reason="";
-      if(combined<.74){next=before-(isSeconds?10:2);reason="Số lần thực tế thấp hơn mục tiêu";}
-      else if(combined<.90){next=before-(isSeconds?5:1);reason="Giảm nhẹ để phù hợp khả năng";}
-      else if(combined>1.14&&hard<.5){next=before+(isSeconds?5:1);reason="Hoàn thành vượt mục tiêu, tăng nhẹ";}
-      else if(combined>=1.06&&easy>.7){next=before+(isSeconds?5:1);reason="Bạn đánh giá bài khá dễ";}
-      if(a.mode==="power"&&!isSeconds&&before>=6&&next>before){next=before;reason="Giữ ít lần để tập nhanh; có thể tăng lực dây nhẹ";}
-      const ex=getExercise(a.mode,slot,a);const cap=isSeconds?120:EXPLOSIVE.has(ex.id)?5:(a.mode==="power"?16:30),floor=isSeconds?15:EXPLOSIVE.has(ex.id)?2:3;
-      next=Math.round(minmax(next,floor,cap));
-      if(next!==before){
-        S.targets[targetKey(a.mode,slot,a)]=next;
-        changes.push({name:getExercise(a.mode,slot,a).en,previous:before,next:next,metric:rs[0].metric,reason:reason});
+      if(EXPLOSIVE.has(ex.id)){
+        if(rs.some(r=>r.quality==="slow")||ratio<.85){next=Math.max(1,before-1);reason="Tốc độ/kỹ thuật giảm hoặc chưa đạt mục tiêu; giảm số lần, nghỉ đủ. Không tăng tải bộc phá tự động.";}
+      }else if(ratio<.85||(!timed&&rs.filter(r=>r.rir===0).length>=Math.ceil(rs.length/2))){
+        next=Math.max(floor,before-step);reason="Chưa đạt mục tiêu hoặc thường xuyên hết sức; giảm nhẹ để giữ kỹ thuật.";
+      }else{
+        const ready=arr=>arr.length===slot[3]&&arr.every(r=>r.confirmed===true&&r.actual>=r.target&&(timed?r.effort==="easy":Number.isInteger(r.rir)&&r.rir>=3));
+        const previous=S.logs.slice().reverse().find(l=>l.mode===a.mode&&!l.deload&&l.coachVersion===3&&confirmedRecords(l).some(r=>r.slot===slotKey&&r.exerciseId===ex.id&&r.band===band&&r.metric===metric));
+        const prev=previous?confirmedRecords(previous).filter(r=>r.slot===slotKey&&r.exerciseId===ex.id&&r.band===band&&r.metric===metric):[];
+        if(a.readiness!=="poor"&&ready(rs)&&ready(prev)&&prev.every(r=>r.target===before)&&rs.every(r=>r.target===before)){
+          const cap=capFor(a,ex,metric);
+          if(before<cap){next=Math.min(cap,before+step);reason="Hai buổi cùng bài, cùng tải và mục tiêu đều hoàn thành dễ; tăng nhẹ số lần/giây.";}
+          else{const t=loadTip(a,slot,ex,band);S.coachTips[key]=t;changes.push({name:ex.en,kind:"tip",previous:before,next:before,metric,reason:t.reason});}
+        }
       }
-    });
-    return {changes:changes,overall:overall,totalActual:totalActual};
+      if(next!==before){S.targets[targetKey(a.mode,slot,a)]=next;changes.push({name:ex.en,kind:"target",previous:before,next,metric,reason});}
+    }
+    return {changes,overall,totalActual:records.reduce((n,r)=>n+r.actual,0)};
   }
   function finishWorkout(){
     const a=S.active;if(!a)return;
     const upd=updateTargets(a);
     const minutes=Math.max(1,Math.round((Date.now()-new Date(a.startedAt).getTime())/60000));
     const plannedSets=getTemplate(a.mode).reduce((n,s)=>n+s[3],0);
-    const log={date:stamp(),mode:a.mode,day:a.day,records:a.records.slice(),plannedSets:plannedSets,minutes:minutes,ratio:Math.round(upd.overall*100),volume:upd.totalActual,adjustments:upd.changes};
+    const log={date:stamp(),coachVersion:3,deload:!!a.deload,readiness:a.readiness||"unknown",mode:a.mode,day:a.day,records:a.records.slice(),plannedSets:plannedSets,minutes:minutes,ratio:upd.overall===null?null:Math.round(upd.overall*100),volume:upd.totalActual,adjustments:upd.changes};
     S.logs.push(log);if(S.logs.length>250)S.logs=S.logs.slice(-250);
     lastSummary=log;S.active=null;persist();page="summary";render();alertEnd();window.scrollTo(0,0);
   }
   function openSwap(){
     const a=S.active;if(!a||a.phase==="rest")return;
-    if(a.phase==="work"){toast("Hãy tạm dừng hiệp trước khi đổi bài");return;}
+    if(!["ready"].includes(a.phase)){toast("Chỉ đổi bài khi sẵn sàng, trước khi bắt đầu hiệp");return;}
     if(a.setIndex>0){toast("Đổi bài trước hiệp đầu tiên của động tác");return;}
-    const slot=getTemplate(a.mode)[a.index],ids=[...new Set([slot[1],...slot[2]])],selected=getExercise(a.mode,slot,a).id;
+    const slot=getTemplate(a.mode)[a.index],ids=[...new Set([slot[1],...slot[2]])].filter(id=>!a.deload||!EXPLOSIVE.has(id)),selected=getExercise(a.mode,slot,a).id;
     document.getElementById("swapList").innerHTML=ids.map(id=>{
       const ex=EX[id];return '<button class="swap-option '+(id===selected?"selected":"")+'" data-action="choose-swap" data-id="'+id+'"><span class="swap-radio">'+(id===selected?"●":"○")+'</span><span><strong>'+esc(ex.en)+'</strong><p>'+esc(ex.vi)+' · '+esc(ex.need)+(a.mode==='power'&&POWER_SLOTS.has(slot[0])&&!EXPLOSIVE.has(id)?' · Bổ trợ, không phải bộc phát':'')+'</p><p>'+esc(ex.steps[0])+'</p></span></button>';
     }).join("");
@@ -474,8 +562,9 @@
   function chooseSwap(id){
     const a=S.active;if(!a)return;
     const slot=getTemplate(a.mode)[a.index];
-    if(![slot[1],...slot[2]].includes(id))return;
-    a.swaps[slot[0]]=id;S.swaps[slotId(a.mode,slot)]=id;initSet(a);persist();
+    if(a.phase!=="ready"||a.setIndex!==0||![slot[1],...slot[2]].includes(id))return;
+    if(a.deload&&EXPLOSIVE.has(id)){toast("Buổi giảm tải không chọn bài bộc phá");return;}
+    a.swaps[slot[0]]=id;if(!a.deload)S.swaps[slotId(a.mode,slot)]=id;initSet(a);persist();
     document.getElementById("swapDialog").close();render();toast("Đã đổi sang "+EX[id].en);
   }
   function refreshTickDisplay(){
@@ -497,7 +586,7 @@
     }else refreshTickDisplay();
   }
   function exportData(){
-    const blob=new Blob([JSON.stringify({app:"BandFit",version:1,exportedAt:stamp(),data:{onboarded:S.onboarded,schedule:S.schedule,settings:S.settings,logs:S.logs,targets:S.targets,swaps:S.swaps,bands:S.bands}},null,2)],{type:"application/json"});
+    const blob=new Blob([JSON.stringify({app:"BandFit",version:2,exportedAt:stamp(),data:{onboarded:S.onboarded,schedule:S.schedule,settings:S.settings,logs:S.logs,targets:S.targets,swaps:S.swaps,bands:S.bands,coachTips:S.coachTips}},null,2)],{type:"application/json"});
     const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="bandfit-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
   }
   async function importData(file){
@@ -506,7 +595,7 @@
       if(!obj||obj.app!=="BandFit"||!obj.data||!Array.isArray(obj.data.logs)||!Array.isArray(obj.data.schedule))throw Error("Sai định dạng bản sao lưu BandFit");
       if(!confirm("Nhập dữ liệu sẽ thay lịch sử, số rep đã học và cài đặt hiện tại. Tiếp tục?"))return;
       const x=obj.data;
-      S={onboarded:!!x.onboarded,schedule:sortDays(x.schedule.filter(d=>ORDER.includes(d))).slice(0,4),settings:Object.assign(defaultData().settings,x.settings||{}),logs:x.logs.slice(-250),targets:x.targets||{},swaps:x.swaps||{},bands:x.bands||{},active:null};
+      S={onboarded:!!x.onboarded,schedule:sortDays(x.schedule.filter(d=>ORDER.includes(d))).slice(0,4),settings:Object.assign(defaultData().settings,x.settings||{}),logs:x.logs.slice(-250),targets:x.targets||{},swaps:x.swaps||{},bands:x.bands||{},coachTips:x.coachTips&&typeof x.coachTips==="object"&&!Array.isArray(x.coachTips)?x.coachTips:{},active:null};
       if(S.schedule.length<3)S.schedule=[2,4,6];
       persist();goHome();toast("Đã khôi phục bản sao lưu");
     }catch(e){toast("Không nhập được: "+e.message);}
@@ -530,6 +619,12 @@
     else if(action==="reset-set")resetSet();
     else if(action==="reset-workout")resetWorkout();
     else if(action==="finish-set")finishSet(false);
+    else if(action==="readiness"){if(Object.hasOwn(READINESS,target.dataset.value)){readiness=target.dataset.value;render();}}
+    else if(action==="deload-choice"){if(["auto","normal","light"].includes(target.dataset.value)){deloadChoice=target.dataset.value;render();}}
+    else if(action==="use-target"){const a=S.active;if(a&&a.phase!=="rest"){a.input=getTarget(a.mode,getTemplate(a.mode)[a.index],a);persist();render();}}
+    else if(action==="apply-tip")applyTip();
+    else if(action==="dismiss-tip"){const a=S.active;if(a){delete S.coachTips[slotId(a.mode,getTemplate(a.mode)[a.index])];persist();render();}}
+    else if(action==="rir"||action==="quality"){const a=S.active,v=target.dataset.value;if(a&&a.phase!=="rest"){if(action==="rir"&&["0","1","2","3","4","unknown"].includes(v))a.rir=v==="unknown"?v:Number(v);if(action==="quality"&&["fast","slow","unknown"].includes(v))a.quality=v;persist();render();}}
     else if(action==="skip-rest")advance();
     else if(action==="add-rest"){
       const a=S.active;if(a&&a.phase==="rest"){let now=Date.now();a.deadline=Math.max(now,a.deadline)+15000;a.restTotal=Math.max(15,Math.ceil((a.deadline-now)/1000));lastRestBeep=false;persist();refreshTickDisplay();toast("Đã cộng thêm 15 giây");}
@@ -537,13 +632,13 @@
     else if(action==="choose-swap")chooseSwap(target.dataset.id);
     else if(action==="set-band"){
       const a=S.active;if(!a)return;
-      if(a.phase==="work"||a.setIndex>0){toast("Hãy đổi dây trước hiệp đầu tiên của bài");return;}
+      if(a.phase!=="ready"||a.setIndex>0||a.deload){toast(a.deload?"Buổi giảm tải tự chọn mức dây nhẹ hoặc trợ lực":"Hãy đổi dây trước hiệp đầu tiên của bài");return;}
       const b=target.dataset.band;if(!["light","heavy"].includes(b))return;
       const currentEx=getExercise(a.mode,getTemplate(a.mode)[a.index],a);if(b==="heavy"&&(/nhẹ/i.test(currentEx.need)||EXPLOSIVE.has(currentEx.id))){toast("Bài này dùng dây nhẹ để giữ kỹ thuật và tốc độ");return;}
       const slot=getTemplate(a.mode)[a.index];a.bands[slot[0]]=b;S.bands[slotId(a.mode,slot)]=b;
       initSet(a);persist();render();toast("Đã chọn "+BAND_LABEL[b]);
     }
-    else if(action==="effort"){const a=S.active;if(a){a.effort=target.dataset.value;persist();document.querySelectorAll(".effort-choice").forEach(b=>b.classList.toggle("selected",b.dataset.value===a.effort));}}
+    else if(action==="effort"){const a=S.active;if(a&&a.phase!=="rest"&&["easy","medium","hard","unknown"].includes(target.dataset.value)){a.effort=target.dataset.value;persist();render();}}
     else if(action==="skip-exercise")skipExercise();
     else if(action==="exit-workout"){if(S.active&&S.active.phase==="work")pauseSet();page="home";render();}
     else if(action==="go-home")goHome();
@@ -569,7 +664,7 @@
   });
   document.querySelectorAll(".nav-item").forEach(btn=>btn.addEventListener("click",()=>navigate(btn.dataset.page)));
   app.addEventListener("input",e=>{
-    if(e.target.id==="repInput"&&S.active){S.active.input=minmax(e.target.value,0,999);persist();}
+    if(e.target.id==="repInput"&&S.active){const v=e.target.value;S.active.input=v===""?null:Number(v);persist();}
     if(e.target.id==="searchExercise"){libraryQuery=e.target.value;detailId=null;document.getElementById("libraryList").innerHTML=renderLibraryList();}
   });
   app.addEventListener("change",e=>{if(e.target.id==="importFile"&&e.target.files&&e.target.files[0])importData(e.target.files[0]);});

@@ -53,3 +53,12 @@ HTML5 + CSS3 + JavaScript thuần, PWA service worker, không thư viện ngoài
 ## Tuyên bố riêng tư
 
 Ứng dụng **không gửi dữ liệu tập luyện tới máy chủ**. Dữ liệu lưu trên thiết bị/trình duyệt đang sử dụng.
+
+
+## Huấn luyện thông minh (v4)
+- Kết quả thực tế: hết giờ chỉ chuyển sang xác nhận; nhập số lần/giây thật (có thể bằng 0), chọn đánh giá rồi lưu. Không tự ghi mục tiêu.
+- RIR: số lần còn có thể làm đúng kỹ thuật, 0–4+ hoặc chưa rõ. Bộc phá đánh giá tốc độ/kỹ thuật; giữ tư thế đánh giá độ khó.
+- Tăng tải: hai buổi cùng bài, cùng tải, cùng mục tiêu và đủ RIR (>=3) hoặc giữ tư thế dễ mới tăng nhẹ; khi chạm ngưỡng, đề xuất dây/biến thể, phải xác nhận. Bộc phá không tự tăng số lần.
+- Giảm tải: gợi ý nếu tự báo phục hồi kém hoặc hai buổi gần nhất cùng loại đạt dưới 85% mục tiêu, có đủ hiệp xác nhận. Có thể chọn giảm tải thủ công; số hiệp giảm khoảng 40% (làm tròn), mục tiêu giảm khoảng 25%, dùng dây nhẹ/trợ lực và thay bài bộc phá. Không cập nhật mục tiêu dài hạn trong buổi giảm tải.
+- Bản sao lưu JSON v2 tương thích dữ liệu cũ, giữ lịch sử và đề xuất. Hiệp cũ không xác nhận không dùng để tính tiến bộ. Dữ liệu vẫn lưu tại trình duyệt.
+- Ngưỡng chỉ là quy tắc hỗ trợ, không phải chỉ định y khoa; dừng hoặc nghỉ khi đau, mệt bất thường.

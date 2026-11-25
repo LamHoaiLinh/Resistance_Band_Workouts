@@ -111,6 +111,24 @@
   E("bandWrist","Resistance Band Wrist Curl","Gập cổ tay với dây","Cẳng tay",["Ngồi tựa cẳng tay lên đùi","Giữ dây dưới chân và gập cổ tay","Hạ chậm đổi bên"],"Dây nhẹ, không cố khi đau","Dây kháng lực nhẹ");
   E("speedPulldown","Resistance Band Speed Lat Pulldown","Kéo xô nhanh bằng dây nhẹ","Lưng",["Neo dây nhẹ chắc trên đầu","Kéo khuỷu xuống nhanh","Trả tay chậm nghỉ một nhịp"],"Không giật vai hay dùng dây nặng","Cần điểm neo chắc chắn");
   E("skater","Skater Jump","Bật ngang đổi chân","Chân & mông",["Bật ngang đoạn ngắn","Tiếp đất một chân gối hơi chùng","Ổn định rồi đổi bên"],"Bắt đầu bước ngang nếu chưa vững","Không cần dụng cụ");
+
+  E("bodySquat","Bodyweight Squat","Squat không dụng cụ","Chân & mông",["Hai chân rộng vai","Hạ hông như ngồi ghế","Đứng thẳng, gối cùng hướng mũi chân"],"Giữ độ sâu vừa sức.","Không cần dụng cụ");
+  E("bodySplit","Bodyweight Split Squat","Chùng chân tại chỗ","Chân & mông",["Chân trước sau, thân thẳng","Hạ gối sau gần sàn vừa sức","Đứng lên, làm đều hai bên"],"Giữ thăng bằng, không ép gối.","Không cần dụng cụ");
+  E("bodyLunge","Bodyweight Reverse Lunge","Chùng chân bước lùi","Chân & mông",["Bước một chân ra sau","Hạ gối vừa tầm","Đạp chân trước về vị trí ban đầu, đổi bên"],"Không lấy đà.","Không cần dụng cụ");
+  E("bridge","Single-Leg Glute Bridge","Nâng hông một chân","Hông & lưng dưới",["Nằm ngửa co một gối, chân kia nâng","Siết mông nâng hông","Hạ chậm, làm đều hai bên"],"Không ưỡn lưng.","Không cần dụng cụ");
+  E("selfRow","Self-Resisted Row","Kéo lưng tự kháng lực","Lưng",["Một tay nắm cổ tay đối diện trước thân","Kéo khuỷu về sau, tay kia tạo lực cản vừa phải","Trả chậm, đổi bên"],"Lực tự tạo không đo được; không giật hoặc vặn thân.","Không cần dụng cụ");
+  E("proneW","Prone W Raise","Nằm sấp nâng tay chữ W","Lưng",["Nằm sấp trán hướng sàn","Gập khuỷu chữ W, nâng tay nhẹ","Giữ một nhịp rồi hạ chậm"],"Không ưỡn lưng, chủ yếu ổn định bả vai.","Không cần dụng cụ");
+  E("reverseSnow","Reverse Snow Angel","Nằm sấp quét tay","Lưng",["Nằm sấp, tay cạnh hông","Nâng tay nhẹ và quét sang ngang tới tầm thoải mái","Quét trở lại chậm"],"Không ép vai, không nâng ngực cao.","Không cần dụng cụ");
+  E("selfCurl","Self-Resisted Biceps Curl","Gập tay tự kháng lực","Tay",["Một tay đỡ cổ tay bên kia","Gập khuỷu trong khi tay còn lại cản nhẹ","Hạ chậm và đổi bên"],"Không giật, không bẻ cổ tay.","Không cần dụng cụ");
+  E("kneePush","Knee Push-Up","Hít đất chống gối","Ngực",["Chống tay dưới vai và gối trên sàn","Giữ thân từ vai tới gối thẳng","Hạ ngực rồi đẩy lên"],"Giảm độ sâu nếu khó.","Không cần dụng cụ");
+  E("wallSlide","Wall Slide","Trượt tay trên tường","Vai",["Đứng tựa tường, khuỷu gập vừa tầm","Trượt tay lên trong tầm thoải mái","Hạ chậm, không ưỡn lưng"],"Chỉ cần tường, không ép tay sát tường.","Không cần dụng cụ");
+  E("bodyCalf","Bodyweight Calf Raise","Nhón gót không dây","Bắp chân",["Đứng hai chân ngang hông","Nhón gót và giữ một nhịp","Hạ từ từ"],"Có thể vịn tường.","Không cần dụng cụ");
+  E("fistHold","Fist Squeeze","Nắm mở bàn tay","Cẳng tay",["Mở bàn tay","Nắm vừa sức một nhịp","Mở ra chậm"],"Bài vận động nhẹ, không thay thế tải lực nắm.","Không cần dụng cụ");
+  E("stance","Single-Leg Stand","Đứng thăng bằng một chân","Chân & mông",["Đứng gần tường, mắt mở","Nhấc một chân khỏi sàn","Giữ thân ổn định, đổi bên"],"Dừng nếu mất thăng bằng.","Không cần dụng cụ");
+  E("singleHinge","Single-Leg Bodyweight RDL","Gập hông một chân không dây","Hông & lưng dưới",["Đứng một chân gần tường","Đẩy hông ra sau, chân kia duỗi sau","Đứng lên chậm và đổi bên"],"Không cần hạ sâu.","Không cần dụng cụ");
+  E("fastSquat","Fast Squat to Stand","Đứng lên nhanh từ squat","Chân & mông",["Hạ squat nông có kiểm soát","Đứng lên nhanh nhưng không nhảy","Ổn định rồi lặp"],"Dừng khi tốc độ giảm; bài kỹ thuật không đo công suất.","Không cần dụng cụ");
+  E("dip","Parallel Bar Dip","Chống đẩy xà kép","Ngực",["Bám xà kép cố định, vai ổn định","Hạ trong biên độ thoải mái","Đẩy lên, không khóa khuỷu mạnh"],"Chỉ khi đủ lực chống đỡ; không ép vai xuống sâu.","Xà kép chắc chắn");
+  E("jumpRope","Easy Jump Rope","Nhảy dây nhẹ","Chân & mông",["Chọn mặt sàn phẳng, giày phù hợp","Bật thấp, xoay dây bằng cổ tay","Giữ nhịp nhẹ và dừng khi đau"],"Khởi động nhẹ; không thi tốc độ.","Dây nhảy");
   const TEMPLATES={
     strength:[
       ["leg","squat",["split","lunge","wallSit"],3,8,"reps"],
@@ -158,12 +176,65 @@
   for(const [mode,slots] of Object.entries(EXTRA_OPTIONS))for(const slot of TEMPLATES[mode])slot[2]=[...new Set([...slot[2],...(slots[slot[0]]||"").split(" ").filter(Boolean)])].filter(id=>id!==slot[1]);
   const EXTRA_SLOTS={"strength":[["verticalPull","latPulldown",["bandPullover","pullup","chinup","neutralPull","assistPull","assistChin","negativePull","row"],2,8,"reps"]],"balance":[["calf","singleCalf",["bentCalf","tibRaise","calf"],2,12,"reps"],["grip","grip",["deadHang","bandWrist","hammerCurl"],1,12,"reps"]]};
   for(const [mode,slots] of Object.entries(EXTRA_SLOTS))TEMPLATES[mode].push(...slots);
+  const BODY_OPTIONS={leg:["bodySquat","bodySplit","bodyLunge"],push:["pushup","kneePush","dip"],pull:["selfRow","proneW","reverseSnow"],verticalPull:["pullup","chinup","proneW","reverseSnow"],shoulder:["pikePush","wallSlide"],hip:["bridge","singleHinge","hipHinge"],biceps:["selfCurl","chinup"],triceps:["closePush","kneePush","dip"],jump:["fastSquat","bodySquat"],speedPush:["explosivePush","wallPush","kneePush"],speedPull:["selfRow","proneW"],upperBack:["proneW","reverseSnow","proneYT"],calf:["bodyCalf","singleCalf","tibRaise"],rotator:["wallSlide","proneW"],grip:["fistHold","deadHang"],oblique:["sidePlank","sideReach","bicycle"],core:["deadBug","plank"],backCore:["birdDog","deadBug"],abs:["reverseCrunch","crunch"]};
+  for(const slots of Object.values(TEMPLATES))for(const slot of slots)slot[2]=[...new Set([...slot[2],...(BODY_OPTIONS[slot[0]]||[])])].filter(x=>x!==slot[1]);
+  const ROPE_SLOT=["ropeWarm","jumpRope",[],1,30,"seconds"];
   const POWER_SLOTS=new Set(["jump","speedPush","speedPull"]);
-  const EXPLOSIVE=new Set("squatJump tuckJump broadJump skater pogo speedPress wallPush explosivePush clapPush speedPunch speedRow speedPulldown speedChop".split(" "));
+  const EXPLOSIVE=new Set("squatJump tuckJump broadJump skater pogo speedPress wallPush explosivePush clapPush speedPunch speedRow speedPulldown speedChop fastSquat".split(" "));
   const PULL_IDS=new Set("pullup chinup neutralPull assistPull assistChin negativePull scapPull".split(" "));
-  const UNILATERAL=new Set("split lunge singleRow woodChop pallof birdDog deadBug externalRot standingKnee sideReach altCurl bicycle sideDip singleRdl singleCalf speedPunch speedChop grip bandLateral bandWrist skater heelTouch shoulderTap march lateralWalk".split(" "));
+  const UNILATERAL=new Set("split lunge singleRow woodChop pallof birdDog deadBug externalRot standingKnee sideReach altCurl bicycle sideDip singleRdl singleCalf speedPunch speedChop grip bandLateral bandWrist skater heelTouch shoulderTap march lateralWalk bodySplit bodyLunge bridge selfRow selfCurl singleHinge".split(" "));
   const MODE_FILTERS={all:"Mọi mục tiêu",strength:"Sức mạnh",power:"Bộc phát",balance:"Sức bền / Cân bằng",recovery:"Phục hồi"};
   function exerciseModes(id){return Object.keys(TEMPLATES).filter(mode=>TEMPLATES[mode].some(slot=>[slot[1],...slot[2]].includes(id)));}
+  function gearEngine(){
+ const flags=["rope","pull","dip","anchor","loop","bench","neutral","grip","towel","measure","singleLight"];
+ function clean(x){const y={band:["one","two"].includes(x?.band)?x.band:"none",bandName:typeof x?.bandName==="string"?x.bandName.trim().slice(0,60):""};for(const k of flags)y[k]=x?.[k]===true;return y;}
+ function available(id,e){
+  if(!e)return true;
+  const g=clean(e),need=EX[id]?.need||"";
+  if(id==="broadJump")return true; // training does not require measuring distance
+  if(id==="verticalJump")return g.measure;
+  if(id==="jumpRope")return g.rope;
+  if(id==="dip")return g.dip;
+  if(id==="grip")return g.grip;
+  if(id==="hamCurl")return g.towel;
+  if(id==="inclinePush"||id==="declinePush")return g.bench;
+  if(id==="neutralPull")return g.pull&&g.neutral;
+  if(["assistPull","assistChin"].includes(id))return g.pull&&g.loop&&g.bench&&g.band!=="none";
+  if(id==="negativePull")return g.pull&&g.bench;
+  if(/xà đơn/i.test(need))return g.pull;
+  if(/neo/i.test(need)&&!g.anchor)return false;
+  if(/dây|neo/i.test(need)){
+    if(g.band==="none")return false;
+    if((/nhẹ/i.test(need)||EXPLOSIVE.has(id)||["pallof","facePull","pullApart","reverseFly","externalRot","woodChop"].includes(id))&&g.band==="one"&&!g.singleLight)return false;
+    if(id==="lateralWalk"&&!g.loop)return false;
+    return true;
+  }
+  if(/bục|ghế/i.test(need))return g.bench;
+  return !need||/không cần dụng cụ/i.test(need);
+ }
+ function testAllowed(o,g){if(!g)return true;if(["broadJump","verticalJump"].includes(o.id))return !!g.measure;if(o.band&&!EX[o.id])return g.band!=="none";return available(o.id,g);}
+ function bands(id,e){if(!e)return ["light","heavy"];if(!available(id,e))return [];if(!/dây|neo/i.test(EX[id]?.need||"")||id==="jumpRope")return [];if(e.band==="one")return ["single"];if(e.band==="two")return /nhẹ/i.test(EX[id].need)||EXPLOSIVE.has(id)||["pallof","facePull","pullApart","reverseFly","externalRot","woodChop"].includes(id)?["light"]:["light","heavy"];return [];}
+ function label(e){if(!e)return "Dụng cụ theo phiên cũ";const x=clean(e),a=[];if(x.band==="one")a.push("1 dây"+(x.bandName?" ("+x.bandName+")":""));if(x.band==="two")a.push("2 dây");if(x.rope)a.push("Dây nhảy");if(x.pull)a.push("Xà đơn");if(x.dip)a.push("Xà kép");if(x.grip)a.push("Bóp tay");return a.join(" · ")||"Không dụng cụ";}
+ return {clean,available,testAllowed,bands,label,flags};
+}
+  const GE=gearEngine();
+  function askEquipment(context,callback){
+ const dlg=document.getElementById("gearDialog"),form=document.getElementById("gearForm"),g=GE.clean(S.lastEquipment);
+ document.getElementById("gearContext").textContent=context;
+ form.elements.band.value=g.band;form.elements.bandName.value=g.bandName;
+ for(const k of GE.flags)form.elements[k].checked=g[k];
+ function update(){document.getElementById("gearSingle").hidden=form.elements.band.value!=="one";}
+ update();
+ form.onchange=update;
+ document.getElementById("gearAll").onclick=()=>{form.elements.band.value="two";for(const k of ["rope","pull","dip"])form.elements[k].checked=true;update();};
+ document.getElementById("gearNone").onclick=()=>{form.elements.band.value="none";form.elements.bandName.value="";for(const k of GE.flags)form.elements[k].checked=false;update();};
+ document.getElementById("gearCancel").onclick=()=>dlg.close();
+ form.onsubmit=e=>{e.preventDefault();const x={band:form.elements.band.value,bandName:form.elements.bandName.value};for(const k of GE.flags)x[k]=form.elements[k].checked;
+ if(x.band==="one"&&!x.bandName.trim()){toast("Đặt tên dây (VD: đỏ 15 kg) để theo dõi riêng từng tải.");form.elements.bandName.focus();return;}
+ const eq=GE.clean(x);if(eq.band!=="one"){eq.bandName="";eq.singleLight=false;}
+ S.lastEquipment=eq;persist();dlg.close();callback(eq);};
+ dlg.showModal();
+}
   function campaignEngine(){
   // Targets are personal challenges, not scientifically equivalent strength standards.
   const v=(id, name, goals, cap, step, unit="reps", both=false, band=false, cue="")=>({id,name,goals,cap,step,unit,both,band,cue});
@@ -171,11 +242,11 @@
     {id:"push",name:"Đẩy · Ngực / tay sau",goal:"Đẩy thân hoặc tải có kiểm soát",options:[
       v("pushup","Standard Push-Up",[15,25,40],50,2,"reps",false,false,"Ngực hạ tới cùng một độ sâu; thân thẳng, không võng lưng."),
       v("tempoPush","Tempo Push-Up (3–1–1)",[6,10,15],20,1,"reps",false,false,"Hạ 3 giây, dừng 1 giây, đẩy 1 giây; không nghỉ ở đỉnh."),
-      v("chest","Band Chest Press",[10,14,18],24,1,"reps",false,true,"Dùng cùng loại dây, độ căng ban đầu và biên độ khi so sánh.")]},
+      v("chest","Band Chest Press",[10,14,18],24,1,"reps",false,true,"Dùng cùng loại dây, độ căng ban đầu và biên độ khi so sánh."),v("dip","Parallel Bar Dip",[3,6,10],15,1,"reps",false,false,"Xà cố định; chỉ hạ tới độ sâu không đau, đủ biên độ và không lấy đà."),v("kneePush","Knee Push-Up",[15,25,35],45,2,"reps",false,false,"Giữ thân từ vai tới gối thẳng, cùng độ sâu. Đây là biến thể nhẹ hơn hít đất chuẩn.")]},
     {id:"pull",name:"Kéo · Lưng / tay trước",goal:"Kéo bằng lưng, không lấy đà",options:[
       v("pullup","Pull-Up",[3,6,10],15,1,"reps",false,false,"Bắt đầu tay gần thẳng, cằm qua xà, hạ có kiểm soát. Không đung đưa."),
       v("chinup","Chin-Up",[3,6,10],15,1,"reps",false,false,"Tay ngửa, cằm qua xà; không đá chân."),
-      v("row","Resistance Band Row",[10,14,18],24,1,"reps",false,true,"Gập hông ổn định; kéo khuỷu tới hông, giữ cùng mức dây và độ căng.")]},
+      v("row","Resistance Band Row",[10,14,18],24,1,"reps",false,true,"Gập hông ổn định; kéo khuỷu tới hông, giữ cùng mức dây và độ căng."),v("proneW","Prone W Raise (không dụng cụ)",[10,15,20],30,2,"reps",false,false,"Nằm sấp, nâng tay chữ W, giữ 2 giây mỗi lần, không ưỡn lưng. Chỉ kiểm tra sức bền/kiểm soát bả vai, không tương đương sức mạnh kéo xà.")]},
     {id:"legs",name:"Chân · Đùi / mông",goal:"Sức bền và kiểm soát chân",options:[
       v("bodySquat","Bodyweight Squat",[20,30,40],50,2,"reps",false,false,"Hạ tới độ sâu cố định, vừa sức; gối cùng hướng bàn chân, đứng thẳng giữa các lần."),
       v("bodySplit","Bodyweight Split Squat",[8,12,16],22,1,"reps",true,false,"Hạ thẳng thân, gối trước ổn định; cùng độ sâu mỗi bên."),
@@ -195,7 +266,7 @@
     {id:"power",name:"Bộc phát · Tốc độ / tiếp đất",goal:"Phát lực nhanh, không thử đến kiệt sức",options:[
       v("broadJump","Standing Broad Jump",[70,100,130],160,5,"cm",false,false,"Khởi động, thử 3 lần ở mức tự tin; nghỉ 60–90 giây/lần. Đo từ vạch bật tới gót gần nhất khi tiếp đất. Nhập khoảng cách thấp nhất của 3 lần tiếp đất vững. Không cố nhảy tối đa."),
       v("verticalJump","Vertical Reach Jump",[15,20,25],35,2,"cm",false,false,"Đo tầm với đứng, sau đó độ cao chạm khi bật tại chỗ trừ tầm với đứng. Nhập mức thấp nhất của 3 lần tiếp đất vững, nghỉ 60–90 giây/lần."),
-      v("speedPress","Speed Chest Press (không nhảy)",[3,4,5],5,1,"reps",false,true,"Dây nhẹ, mỗi lần đẩy nhanh có kiểm soát, không khóa khuỷu. Dừng khi tốc độ giảm. Chỉ đánh giá chất lượng kỹ thuật tự ghi nhận, không đo công suất.")] }
+      v("speedPress","Speed Chest Press (không nhảy)",[3,4,5],5,1,"reps",false,true,"Dây nhẹ, mỗi lần đẩy nhanh có kiểm soát, không khóa khuỷu. Dừng khi tốc độ giảm. Chỉ đánh giá chất lượng kỹ thuật tự ghi nhận, không đo công suất."),v("fastSquat","Fast Squat to Stand",[3,4,5],5,1,"reps",false,false,"Hạ chậm, đứng lên nhanh không nhảy, ổn định giữa các lần. Chỉ kiểm tra kỹ thuật tốc độ, không đo sức bật.")] }
   ];
   const roman=n=>{if(n>3999)return String(n);let s="";for(const [a,b] of [[1000,"M"],[900,"CM"],[500,"D"],[400,"CD"],[100,"C"],[90,"XC"],[50,"L"],[40,"XL"],[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]])while(n>=a){s+=b;n-=a;}return s;};
   const name=n=>n<=3?"Giai đoạn "+roman(n):"Endless "+roman(n-3);
@@ -240,13 +311,13 @@
   function medalEngine(CE){
   const order=["power","push","pull","legs","hinge","balance","core","oblique"];
   const rest={power:180,push:180,pull:180,legs:120,hinge:180,balance:60,core:120,oblique:120};
-  const plan=(s,level)=>{
+  const plan=(s,level,gear)=>{
     if(!Number.isSafeInteger(level)||level<1||level>=s.level)return null;
     const old=s.completed.find(x=>x.level===level);
     return order.map(id=>{
       const d=CE.domains.find(x=>x.id===id),r=old?.results?.find(x=>x.domain===id);
-      const valid=CE.validResult(r,level,d),o=valid?d.options.find(x=>x.id===r.option):d.options[0];
-      return {id,option:o.id,goal:valid?r.goal:CE.goal(level,o,CE.domains.indexOf(d)),setup:valid&&o.band?r.setup:"",rest:rest[id]};
+      const prior=d.options.find(x=>x.id===r?.option),sameBand=!prior?.band||!r?.equipment||!gear||(r.equipment.band===gear.band&&(gear.band!=="one"||r.equipment.bandName===gear.bandName)),valid=CE.validResult(r,level,d)&&GE.testAllowed(prior,gear)&&sameBand,o=valid?prior:(d.options.find(x=>GE.testAllowed(x,gear)&&(!prior?.band||sameBand||!x.band))||d.options.find(x=>GE.testAllowed(x,gear)));
+      return {id,option:o.id,goal:valid?r.goal:CE.goal(level,o,CE.domains.indexOf(d)),setup:valid&&o.band?r.setup:"",changed:!!r&&!valid,rest:rest[id]};
     });
   };
   const verify=(level,items,results)=>{
@@ -267,7 +338,7 @@
   const award=(s,run,now)=>{
     if(!run||!Number.isFinite(now)||!Number.isFinite(run.started)||now<run.started||now-run.started>7200000||run.level>=s.level||run.level<1||!verify(run.level,run.plan,run.results))return false;
     if(s.fullMedals[run.level])return false;
-    s.fullMedals[run.level]={level:run.level,date:new Date(now).toISOString(),duration:Math.floor((now-run.started)/1000),plan:run.plan,results:run.results};return true;
+    s.fullMedals[run.level]={level:run.level,date:new Date(now).toISOString(),duration:Math.floor((now-run.started)/1000),plan:run.plan,results:run.results,equipment:run.gear||null};return true;
   };
   return {order,rest,plan,verify,clean,award};
 }
@@ -287,7 +358,7 @@
     for(let n=s.level-1;n>=Math.max(1,s.level-8);n--)recent.push(n);
     return '<section class="card medal-panel"><div class="eyebrow">MEDAL COLLECTION · HUÂN CHƯƠNG</div><h2>Bộ sưu tập thành tích</h2><p class="muted tiny">Mỗi cấp có hai huân chương độc lập. Hoàn thành từng mục để nhận Bền bỉ và mở khóa cấp tiếp theo. Vượt lại cả 8 bài trong một buổi để nhận Toàn diện.</p><div class="medal-counts"><div><strong>'+(s.level-1)+'</strong><small>Bền bỉ</small></div><div><strong>'+total+'</strong><small>Toàn diện</small></div></div>'+
     '<div class="medal-level"><b>'+CE.name(s.level)+' · hiện tại</b>'+medal("individual",false)+medal("full",false)+'</div>'+
-    recent.map(n=>'<div class="medal-level"><b>'+CE.name(n)+'</b>'+medal("individual",true)+medal("full",!!s.fullMedals[n])+(s.fullMedals[n]?'<small class="muted">Toàn diện: '+safe(isoDay(s.fullMedals[n].date))+'</small>':b("Full Stage Test","start","primary-btn wide",'data-level="'+n+'"'))+'</div>').join("")+
+    recent.map(n=>'<div class="medal-level"><b>'+CE.name(n)+'</b>'+medal("individual",true)+medal("full",!!s.fullMedals[n])+(s.fullMedals[n]?'<small class="muted">Toàn diện: '+safe(isoDay(s.fullMedals[n].date))+'</small><details class="tiny"><summary>Xem bài đã test</summary><p>'+safe(GE.label(s.fullMedals[n].equipment))+'</p><ul>'+s.fullMedals[n].results.map(r=>{const d=CE.domains.find(x=>x.id===r.domain),o=d?.options.find(x=>x.id===r.option);return o?'<li>'+safe(o.name)+' · '+CE.label(o,r.goal)+'</li>':"";}).join("")+'</ul></details>':b("Full Stage Test","start","primary-btn wide",'data-level="'+n+'"'))+'</div>').join("")+
     (s.level>9?'<label class="medal-picker">Chọn cấp cũ (số thứ tự; Endless I = 4)<input id="medalLevel" type="number" min="1" max="'+(s.level-1)+'" value="1" step="1"></label>'+b("Xem / test cấp cũ","older"):"")+
     (s.level===1?'<div class="inline-note">Full Stage Test sẽ mở sau khi nhận huân chương Bền bỉ đầu tiên.</div>':"")+'</section>';
   }
@@ -296,7 +367,7 @@
     const t=run.plan[run.results.length],d=t&&CE.domains.find(x=>x.id===t.id),o=d&&d.options.find(x=>x.id===t.option);
     const top='<section class="card"><div class="eyebrow">FULL STAGE TEST · '+CE.name(run.level)+'</div><h2>Thử thách Toàn diện</h2><p>'+run.results.length+'/8 bài đã kiểm tra · '+run.results.filter(r=>r.passed).length+' bài đạt</p><progress class="cp-progress" max="8" value="'+run.results.length+'"></progress><div class="full-order">'+run.plan.map((x,i)=>'<div class="'+(i===run.results.length?'current':'')+'">'+(i+1)+'. '+safe(CE.domains.find(d=>d.id===x.id).name)+' <b>'+(run.results[i]?(run.results[i].passed?"Đạt":"Chưa đạt"):i===run.results.length?"Tiếp theo":"")+'</b></div>').join("")+'</div></section>';
     const stop=b("Dừng / thoát thử thách","cancel");
-    if(run.phase==="intro")return top+'<section class="card cp-test"><h2>Chuẩn bị</h2><p>Test 8 bài theo thứ tự cố định, dùng đúng biến thể và mục tiêu đã đạt ở Individual Test nếu còn hồ sơ. Không lấy kết quả từ ngày trước. Đạt mốc thì dừng, không thi tối đa. Dùng đúng thông số dây đã ghi.</p><p>Thời gian nghỉ tối thiểu 60–180 giây tùy bài; có thể nghỉ thêm. Đây là thử thách tự ghi nhận, không phải chuẩn thể lực chính thức. Tối đa 120 phút trong cùng phiên; tải lại trang sẽ hủy phiên chưa hoàn thành. Không cần cố làm đủ nếu mệt hoặc đau.</p><label class="cp-check"><input id="fsReady" type="checkbox">Tôi đã khởi động, hồi phục tốt, không đau/chóng mặt và có dụng cụ an toàn.</label><div class="cp-buttons">'+b("Bắt đầu 8 bài","begin","primary-btn")+stop+'</div></section>';
+    if(run.phase==="intro")return top+'<section class="card cp-test"><h2>Chuẩn bị</h2><p>Test 8 bài theo thứ tự cố định. Giữ biến thể đã đạt nếu có dụng cụ; nếu thiếu, thay bài theo danh sách và mốc riêng. Bài thay thế không quy đổi thành sức mạnh tương đương. Không lấy kết quả từ ngày trước. Đạt mốc thì dừng, không thi tối đa. Dùng đúng thông số dây đã ghi.</p><p><b>Dụng cụ:</b> '+safe(GE.label(run.gear))+'</p><ol>'+run.plan.map(t=>{const d=CE.domains.find(x=>x.id===t.id),o=d.options.find(x=>x.id===t.option);return '<li>'+safe(o.name)+' · '+CE.label(o,t.goal)+(t.changed?' (đổi do dụng cụ)':'')+'</li>';}).join("")+'</ol><p>Thời gian nghỉ tối thiểu 60–180 giây tùy bài; có thể nghỉ thêm. Đây là thử thách tự ghi nhận, không phải chuẩn thể lực chính thức. Tối đa 120 phút trong cùng phiên; tải lại trang sẽ hủy phiên chưa hoàn thành. Không cần cố làm đủ nếu mệt hoặc đau.</p><label class="cp-check"><input id="fsReady" type="checkbox">Tôi đã khởi động, hồi phục tốt, không đau/chóng mặt và có dụng cụ an toàn.</label><div class="cp-buttons">'+b("Bắt đầu 8 bài","begin","primary-btn")+stop+'</div></section>';
     if(run.phase==="done")return top+'<section class="card cp-test"><h2>'+(run.earned?"✦ Nhận huân chương Toàn diện!":"Chưa đạt huân chương Toàn diện")+'</h2><p>'+run.results.filter(r=>r.passed).length+'/8 bài đạt trong cùng buổi. '+(run.earned?"Thành tích đã lưu vĩnh viễn trong dữ liệu app.":"Hãy hồi phục rồi thử lại vào buổi khác. Huân chương Bền bỉ vẫn giữ nguyên.")+'</p>'+b("Về bộ sưu tập","finish","primary-btn wide")+'</section>';
     if(run.phase==="rest")return top+'<section class="card cp-test"><div class="eyebrow">RECOVERY · NGHỈ GIỮA BÀI</div><div class="cp-clock"><strong id="fsRest">'+formatTime(Math.max(0,Math.ceil((run.deadline-Date.now())/1000)))+'</strong><p class="muted tiny">Tối thiểu '+run.restMin+' giây. Nghỉ thêm nếu cần.</p></div><p>Tiếp theo: <b>'+safe(o.name)+'</b> · '+CE.label(o,t.goal)+'</p><div class="cp-buttons">'+b("+30 giây","extend")+b("Bài tiếp theo","next","primary-btn",'id="fsNext" disabled')+stop+'</div></section>';
     const inputs=(id,label)=>'<label>'+label+'<input type="number" id="'+id+'" min="0" max="9999" step="1" required inputmode="numeric" placeholder="Kết quả thật"></label>';
@@ -316,12 +387,13 @@
     clearInterval(work.handle);if(copy&&by(work.field))by(work.field).value=String(elapsed);
     if(by("fsClock"))by("fsClock").textContent=formatTime(elapsed);work=null;
   }
-  function start(level){
+  function start(level,gear){
     if(S.active||readiness==="poor"){toast("Hãy hoàn thành buổi đang dở hoặc nghỉ hồi phục trước.");return;}
     const s=campaign();
     if(s.fullMedals[level]){toast("Đã nhận Toàn diện ở "+CE.name(level));return;}
-    const plan=ME.plan(s,level);if(!plan){toast("Cấp độ chưa mở Full Stage Test.");return;}
-    clear();run={level,plan,results:[],phase:"intro",started:null,deadline:0};refresh();
+    if(!gear){askEquipment("Full Stage Test · "+CE.name(level),eq=>start(level,eq));return;}
+    const plan=ME.plan(s,level,gear);if(!plan){toast("Cấp độ chưa mở Full Stage Test.");return;}
+    clear();run={level,plan,gear,results:[],phase:"intro",started:null,deadline:0};refresh();
   }
   function click(e){
     const el=e.target.closest("[data-full]");if(!el||page!=="campaign")return;
@@ -388,9 +460,9 @@
   function config(s){
     const d=CE.domains.find(x=>x.id===draft.domain),di=CE.domains.indexOf(d);
     if(!d||s.passes[d.id]||draft.level!==s.level){clear();return "";}
-    const o=d.options.find(x=>x.id===draft.option)||d.options[0],suggested=CE.goal(s.level,o,di);
+    const options=d.options.filter(x=>GE.testAllowed(x,draft.gear)),o=options.find(x=>x.id===draft.option)||options[0],suggested=CE.goal(s.level,o,di);
     if(draft.phase==="ready"){
-      return '<section class="card cp-test"><div class="eyebrow">CHỌN BÀI KIỂM TRA</div><h2>'+safe(d.name)+'</h2><p class="muted tiny">Chọn một bài phù hợp dụng cụ. Các biến thể là mục tiêu thay thế, không phải quy đổi sức mạnh tương đương.</p><label>Biến thể<select id="cpOption">'+d.options.map(x=>'<option value="'+x.id+'" '+(o.id===x.id?'selected':'')+'>'+safe(x.name)+' · '+CE.label(x,CE.goal(s.level,x,di))+'</option>').join("")+'</select></label><p>'+safe(o.cue)+'</p><label>Mốc '+(s.level<=3?'cố định':'cá nhân (Endless)')+'<input id="cpGoal" type="number" min="'+(s.level<=3?suggested:o.goals[2])+'" max="'+(s.level<=3?suggested:o.cap)+'" step="1" value="'+suggested+'" '+(s.level<=3?'readonly':'')+'></label><p class="muted tiny">'+CE.unit(o)+(o.both?' mỗi bên':'')+' · '+(s.level>3?'Mốc gợi ý '+suggested+'; không thấp hơn chuẩn III của bài. Có thể giữ mốc khi đã chạm giới hạn.':'Đạt mốc rồi dừng, không bắt buộc tập tối đa.')+'</p><label class="cp-check"><input id="cpReady" type="checkbox">Tôi đã khởi động, không đau, không chóng mặt, không mệt bất thường và có dụng cụ/vị trí an toàn.</label><div class="cp-buttons">'+btn("Chốt mục tiêu · Bắt đầu","begin","","primary-btn")+btn("Quay lại","cancel")+'</div></section>';
+      return '<section class="card cp-test"><div class="eyebrow">CHỌN BÀI KIỂM TRA</div><h2>'+safe(d.name)+'</h2><p class="muted tiny">Dụng cụ: '+safe(GE.label(draft.gear))+' · Chọn một bài phù hợp. Các biến thể là mục tiêu thay thế, không phải quy đổi sức mạnh tương đương.</p><label>Biến thể<select id="cpOption">'+options.map(x=>'<option value="'+x.id+'" '+(o.id===x.id?'selected':'')+'>'+safe(x.name)+' · '+CE.label(x,CE.goal(s.level,x,di))+'</option>').join("")+'</select></label><p>'+safe(o.cue)+'</p><label>Mốc '+(s.level<=3?'cố định':'cá nhân (Endless)')+'<input id="cpGoal" type="number" min="'+(s.level<=3?suggested:o.goals[2])+'" max="'+(s.level<=3?suggested:o.cap)+'" step="1" value="'+suggested+'" '+(s.level<=3?'readonly':'')+'></label><p class="muted tiny">'+CE.unit(o)+(o.both?' mỗi bên':'')+' · '+(s.level>3?'Mốc gợi ý '+suggested+'; không thấp hơn chuẩn III của bài. Có thể giữ mốc khi đã chạm giới hạn.':'Đạt mốc rồi dừng, không bắt buộc tập tối đa.')+'</p><label class="cp-check"><input id="cpReady" type="checkbox">Tôi đã khởi động, không đau, không chóng mặt, không mệt bất thường và có dụng cụ/vị trí an toàn.</label><div class="cp-buttons">'+btn("Chốt mục tiêu · Bắt đầu","begin","","primary-btn")+btn("Quay lại","cancel")+'</div></section>';
     }
     const goal=draft.goal;
     const inputs=(id,lab)=>'<label>'+lab+'<input id="'+id+'" type="number" min="0" max="9999" step="1" required inputmode="numeric" placeholder="Nhập kết quả thực tế"></label>';
@@ -430,7 +502,7 @@
       if(S.active){toast("Hãy hoàn thành hoặc kết thúc buổi tập đang dở trước khi test.");return;}
       if(readiness==="poor"){toast("Bạn đang báo phục hồi kém. Nên nghỉ và kiểm tra vào ngày khỏe.");return;}
       const d=CE.domains.find(x=>x.id===b.dataset.domain);if(!d||s.passes[d.id])return;
-      clear();draft={level:s.level,domain:d.id,option:d.options[0].id,phase:"ready"};renderPage();byId("cpOption")?.focus();return;
+      askEquipment("Individual Test · "+d.name,gear=>{const option=d.options.find(x=>GE.testAllowed(x,gear));if(!option){toast("Không có bài phù hợp.");return;}clear();draft={level:s.level,domain:d.id,option:option.id,gear,phase:"ready"};renderPage();byId("cpOption")?.focus();});return;
     }
     if(!draft)return;
     const d=CE.domains.find(x=>x.id===draft.domain),o=d?.options.find(x=>x.id===draft.option);
@@ -449,14 +521,14 @@
     }else if(a==="clock-stop"){stopClock(true);}
   }
   function renderPage(){document.querySelectorAll(".nav-item").forEach(el=>el.classList.toggle("active",el.dataset.page===page));app.innerHTML=render();window.scrollTo(0,0);}
-  function change(e){if(page==="campaign"&&draft?.phase==="ready"&&e.target.id==="cpOption"){const d=CE.domains.find(x=>x.id===draft.domain);if(d?.options.some(x=>x.id===e.target.value)){draft.option=e.target.value;renderPage();}}}
+  function change(e){if(page==="campaign"&&draft?.phase==="ready"&&e.target.id==="cpOption"){const d=CE.domains.find(x=>x.id===draft.domain);if(d?.options.some(x=>x.id===e.target.value&&GE.testAllowed(x,draft.gear))){draft.option=e.target.value;renderPage();}}}
   function submit(e){
     if(e.target.id!=="cpTestForm")return;e.preventDefault();
     if(!draft||draft.phase!=="test"||S.active||readiness==="poor")return;
     if(clock){toast("Hãy dừng đồng hồ trước khi lưu.");return;}
     if(!e.target.reportValidity())return;
     const s=state(),d=CE.domains.find(x=>x.id===draft.domain),o=d?.options.find(x=>x.id===draft.option);if(!o)return;
-    const r={level:draft.level,domain:d.id,option:o.id,goal:draft.goal,a:byId("cpA").valueAsNumber,b:o.both?byId("cpB").valueAsNumber:null,setup:o.band?byId("cpSetup").value.trim():"",form:byId("cpFormOK").checked,date:stamp()};
+    const r={level:draft.level,domain:d.id,option:o.id,goal:draft.goal,a:byId("cpA").valueAsNumber,b:o.both?byId("cpB").valueAsNumber:null,setup:o.band?byId("cpSetup").value.trim():"",form:byId("cpFormOK").checked,equipment:draft.gear,date:stamp()};
     const result=CE.save(s,r);if(!result.accepted){toast("Kết quả không hợp lệ hoặc mục tiêu đã được ghi nhận.");return;}
     S.campaign=result.state;persist();clear();renderPage();
     toast(result.unlocked?"Mở khóa "+CE.name(S.campaign.level)+"!":result.passed?"Đạt mục tiêu!":"Đã lưu kết quả. Hồi phục rồi thử lại.");
@@ -465,7 +537,7 @@
   return {home,render,clear,attach,redraw:renderPage};
 }
   const CP=campaignUI();
-  function defaultData(){return {onboarded:false,schedule:[2,4,6],settings:{restSec:90,workSec:45,sound:true,vibration:false},logs:[],targets:{},swaps:{},bands:{},coachTips:{},campaign:CE.clean(null),active:null};}
+  function defaultData(){return {onboarded:false,schedule:[2,4,6],settings:{restSec:90,workSec:45,sound:true,vibration:false},logs:[],targets:{},swaps:{},bands:{},coachTips:{},campaign:CE.clean(null),lastEquipment:GE.clean(null),active:null};}
   function load(){
     let data=defaultData();
     try{let saved=JSON.parse(localStorage.getItem(KEY)||"null");if(saved&&typeof saved==="object"){data=Object.assign(data,saved);data.settings=Object.assign(defaultData().settings,saved.settings||{});}}
@@ -481,7 +553,7 @@
       data.active.coachVersion=3;data.active.input=null;data.active.rir=null;data.active.quality=null;data.active.effort=null;
       data.active.records=(data.active.records||[]).map(r=>({...r,confirmed:false}));
     }
-    data.campaign=CE.clean(data.campaign);
+    data.campaign=CE.clean(data.campaign);data.lastEquipment=GE.clean(data.lastEquipment);if(data.active?.equipment)data.active.equipment=GE.clean(data.active.equipment);
     return data;
   }
   let S=load(),page=S.active?"workout":(S.onboarded?"home":"setup"),draftDays=S.schedule.slice(),presetCustom=false;
@@ -494,13 +566,16 @@
     let slots=TEMPLATES[mode]||TEMPLATES.strength;
     const a=S.active&&S.active.mode===mode?S.active:null;
     if(a&&!a.templateVersion)slots=slots.slice(0,slots.length-(EXTRA_SLOTS[mode]||[]).length);
+    if(a?.templateVersion>=3&&a.equipment?.rope&&!a.deload&&a.readiness!=="poor")slots=[ROPE_SLOT,...slots];
     return a&&a.deload?slots.map(slot=>[...slot.slice(0,3),Math.max(1,Math.round(slot[3]*.6)),...slot.slice(4)]):slots;
   };
   const slotId=(mode,slot)=>mode+":"+slot[0];
   const ASSIST=new Set(["assistPull","assistChin"]);
   const DELOAD_ALT={squatJump:"squat",tuckJump:"squat",broadJump:"squat",skater:"lunge",pogo:"calf",speedPress:"chest",wallPush:"inclinePush",explosivePush:"inclinePush",clapPush:"inclinePush",speedPunch:"chest",speedRow:"row",speedPulldown:"row",speedChop:"pallof"};
   const getExercise=(mode,slot,act)=>{
-    const ex=EX[(act&&act.swaps&&act.swaps[slot[0]])||S.swaps[slotId(mode,slot)]||slot[1]]||EX[slot[1]];
+    const preferred=(act&&act.swaps&&act.swaps[slot[0]])||S.swaps[slotId(mode,slot)]||slot[1];
+    if(act?.equipment){const allowed=[...new Set([slot[1],...slot[2]])].filter(id=>GE.available(id,act.equipment)&&(!act.deload||!EXPLOSIVE.has(id)));const id=allowed.includes(preferred)?preferred:allowed[0];if(!id)throw Error("No exercise for "+mode+"/"+slot[0]);return EX[id];}
+    const ex=EX[preferred]||EX[slot[1]];
     if(act&&act.deload&&EXPLOSIVE.has(ex.id)){
       const allowed=[slot[1],...slot[2]],id=DELOAD_ALT[ex.id];
       return EX[allowed.includes(id)?id:allowed.find(x=>!EXPLOSIVE.has(x))]||ex;
@@ -509,6 +584,7 @@
   };
   const getBand=(mode,slot,act)=>{
     const ex=getExercise(mode,slot,act);
+    if(act?.equipment){const choices=GE.bands(ex.id,act.equipment);if(!choices.length)return "none";if(choices.length===1)return choices[0];if(act.deload)return ASSIST.has(ex.id)?"heavy":"light";const saved=act.bands?.[slot[0]]||S.bands[slotId(mode,slot)];if(choices.includes(saved))return saved;return "light";}
     if(!/dây|neo/i.test(ex.need))return "none";
     if(act&&act.deload)return ASSIST.has(ex.id)?"heavy":"light";
     if(/nhẹ/i.test(ex.need)||EXPLOSIVE.has(ex.id))return "light";
@@ -517,21 +593,24 @@
     if(ASSIST.has(ex.id))return "heavy";
     return mode==="strength"&&["Chân & mông","Ngực","Lưng","Hông & lưng dưới"].includes(ex.group)?"heavy":"light";
   };
-  const BAND_LABEL={heavy:"Dây nặng",light:"Dây nhẹ",none:"Không dây"};
-  const TIMED_EXERCISES=new Set(["sidePlank","plank","wallSit","hollow","deadHang","suitcase"]);
+  const BAND_LABEL={heavy:"Dây nặng",light:"Dây nhẹ",single:"Dây đang có",none:"Không dây"};
+  const TIMED_EXERCISES=new Set(["sidePlank","plank","wallSit","hollow","deadHang","suitcase","jumpRope","stance"]);
   const getMetric=(mode,slot,act)=>TIMED_EXERCISES.has(getExercise(mode,slot,act).id)?"seconds":"reps";
-  const targetKey=(mode,slot,act)=>slotId(mode,slot)+":"+getExercise(mode,slot,act).id+":"+getMetric(mode,slot,act)+":"+getBand(mode,slot,act);
+  const bandIdentity=(mode,slot,act)=>getBand(mode,slot,act)==="single"?(act?.equipment?.bandName||"single"):"";
+  const targetKey=(mode,slot,act)=>slotId(mode,slot)+":"+getExercise(mode,slot,act).id+":"+getMetric(mode,slot,act)+":"+getBand(mode,slot,act)+(bandIdentity(mode,slot,act)?":"+encodeURIComponent(bandIdentity(mode,slot,act)):"");
   const getBaseTarget=(mode,slot,act)=>{
     const ex=getExercise(mode,slot,act),metric=getMetric(mode,slot,act);let base=slot[5]===metric?slot[4]:metric==="seconds"?40:10;
     if(metric==="seconds"&&["hollow","deadHang","suitcase"].includes(ex.id))base=20;
     if(metric==="reps"){
       if(PULL_IDS.has(ex.id))base=ex.id==="scapPull"?6:3;
+      else if(ex.id==="dip")base=3;
       else if(EXPLOSIVE.has(ex.id))base=4;
       else if(ex.id==="tempoPush")base=mode==="strength"?6:10;
       else if(["bandPush","declinePush","pikePush"].includes(ex.id))base=6;
       else if(ex.id==="fastPush")base=18;
       else if(mode==="balance"&&"pushup inclinePush row singleRow seatedRow squat split lunge calf singleCalf bentCalf tibRaise crunch bicycle".split(" ").includes(ex.id))base=15;
     }
+    if(ex.id==="jumpRope")return 30;
     const value=Math.max(1,Number(S.targets[targetKey(mode,slot,act)])||base);
     return metric==="reps"&&EXPLOSIVE.has(ex.id)?Math.min(5,value):value;
   };
@@ -650,7 +729,7 @@
   function renderCoachTip(a,slot,ex,band){
     if(a.deload||a.setIndex!==0||a.phase!=="ready")return "";
     const t=S.coachTips[slotId(a.mode,slot)];
-    if(!t||t.exerciseId!==ex.id||t.band!==band)return "";
+    if(!t||t.exerciseId!==ex.id||t.band!==band||(t.bandIdentity||"")!==bandIdentity(a.mode,slot,a)||(t.nextExercise&&!GE.available(t.nextExercise,a.equipment))||(t.nextBand&&a.equipment&&!GE.bands(ex.id,a.equipment).includes(t.nextBand)))return "";
     return '<div class="inline-note coach-tip"><strong>Progressive Overload · Tăng tải</strong><p>'+esc(t.reason)+'</p>'+(t.nextBand||t.nextExercise?'<button class="secondary-btn wide" data-action="apply-tip">Áp dụng đề xuất</button>':'<p class="tiny muted">Chỉ tăng tải khi kiểm soát tốt kỹ thuật; có thể giữ nguyên.</p>')+'<button class="link-btn" data-action="dismiss-tip">Bỏ qua đề xuất</button></div>';
   }
   function renderWorkout(){
@@ -670,7 +749,7 @@
     } else {
       body='<div class="exercise-card"><div class="set-meta"><span>ĐỘNG TÁC '+(a.index+1)+' / '+getTemplate(a.mode).length+'</span><strong>HIỆP '+(a.setIndex+1)+' / '+s[3]+'</strong></div>'+
         '<div class="exercise-name">'+esc(ex.en)+'</div><div class="exercise-vn">'+esc(ex.vi)+'</div><div class="ex-tags"><span class="pill">'+esc(ex.group)+'</span><span class="pill muted">'+esc(ex.need)+'</span></div>'+
-        '<div class="band-select"><span>'+(ex.id==="assistPull"||ex.id==="assistChin"?"Dây trợ lực (dây mạnh hơn = dễ hơn):":"Loại dây đang dùng:")+'</span>'+(band==="none"?'<span class="pill muted">Không cần dây</span>':['light','heavy'].map(b=>'<button class="band-choice '+(band===b?'selected':'')+'" data-action="set-band" data-band="'+b+'">'+BAND_LABEL[b]+'</button>').join(''))+'</div>'+        '<ol class="exercise-instructions">'+ex.steps.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ol>'+
+        '<div class="band-select"><span>'+(ex.id==="assistPull"||ex.id==="assistChin"?"Dây trợ lực (dây mạnh hơn = dễ hơn):":"Loại dây đang dùng:")+'</span>'+(band==="none"?'<span class="pill muted">Không cần dây</span>':(a.equipment?GE.bands(ex.id,a.equipment):['light','heavy']).map(b=>'<button class="band-choice '+(band===b?'selected':'')+'" data-action="set-band" data-band="'+b+'">'+BAND_LABEL[b]+'</button>').join(''))+'</div>'+        '<ol class="exercise-instructions">'+ex.steps.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ol>'+
         '<div class="tips">Lưu ý: '+esc(ex.tip)+'</div>'+renderCoachTip(a,s,ex,band)+
         '<div class="exercise-tool-row"><button class="ghost-btn" data-action="swap">⇄ Đổi bài tương tự</button><button class="ghost-btn" data-action="skip-exercise">Bỏ qua bài</button></div>'+
         '<div class="timer-wrap"><div class="timer-ring" id="timerRing" style="--pct:'+pct+'"><div class="timer-inner"><div class="timer-number" id="timerNum">'+formatTime(remaining)+'</div><div class="timer-label">'+(a.phase==="review"?"XÁC NHẬN KẾT QUẢ":a.phase==="ready"?"SẴN SÀNG":a.phase==="paused"?"TẠM DỪNG":"ĐANG TẬP")+'</div></div></div></div>'+
@@ -681,7 +760,7 @@
         '<div class="timer-button-row">'+(a.phase==="ready"?'<button class="primary-btn" data-action="start-set">▶ Bắt đầu đếm giờ</button>':a.phase==="paused"?'<button class="primary-btn" data-action="resume-set">▶ Tiếp tục</button>':a.phase==="work"?'<button class="secondary-btn" data-action="pause-set">Ⅱ Tạm dừng</button>':'')+
         '<button class="ghost-btn" data-action="reset-set">↺ Đếm lại</button><button class="primary-btn" data-action="finish-set">✓ Xác nhận kết quả / Nghỉ</button></div></div>';
     }
-    return '<div class="workout-top"><div><div class="eyebrow">'+m.tag+' · '+DAYNAME[a.day]+'</div><h2 style="font-size:23px;margin:6px 0">'+m.title+'</h2>'+(a.deload?'<span class="pill orange">DELOAD · GIẢM TẢI</span>':'')+'</div><button class="ghost-btn" data-action="exit-workout">Thoát tạm</button></div><button class="secondary-btn wide" data-action="reset-workout">↺ Reset buổi tập</button>'+
+    return '<div class="workout-top"><div><div class="eyebrow">'+m.tag+' · '+DAYNAME[a.day]+'</div><h2 style="font-size:23px;margin:6px 0">'+m.title+'</h2><p class="tiny muted">'+esc(GE.label(a.equipment))+'</p>'+(a.deload?'<span class="pill orange">DELOAD · GIẢM TẢI</span>':'')+'</div><button class="ghost-btn" data-action="exit-workout">Thoát tạm</button></div><button class="secondary-btn wide" data-action="reset-workout">↺ Reset buổi tập</button>'+
       '<div class="set-meta"><span>ĐÃ HOÀN THÀNH '+st.done+' / '+st.total+' HIỆP</span><span>'+st.pct+'%</span></div><div class="progress-track"><div class="progress-fill" style="width:'+st.pct+'%"></div></div>'+body;
   }
   function renderSummary(){
@@ -725,16 +804,24 @@
   function startWorkout(mode,day,override){
     if(S.active){page="workout";render();return;}
     if(!TEMPLATES[mode])return;
+    if(!override?.equipment){askEquipment("Buổi "+MODES[mode].title,eq=>startWorkout(mode,day,{...(override||{}),equipment:eq}));return;}
     const reason=deloadReason(mode);
-    const useDeload=override?override.deload:(deloadChoice==="light"||(deloadChoice==="auto"&&!!reason&&confirm(reason+" Bắt đầu buổi giảm tải? OK = giảm tải; Hủy = buổi bình thường.")));
-    const a={templateVersion:2,coachVersion:3,deload:!!useDeload,readiness:override?override.readiness:readiness,mode:mode,day:day,index:0,setIndex:0,phase:"ready",records:[],startedAt:stamp(),swaps:{},bands:{},input:null,rir:null,quality:null,effort:null,remaining:0,deadline:0,restTotal:0};
+    const useDeload=typeof override?.deload==="boolean"?override.deload:(deloadChoice==="light"||(deloadChoice==="auto"&&!!reason&&confirm(reason+" Bắt đầu buổi giảm tải? OK = giảm tải; Hủy = buổi bình thường.")));
+    const a={templateVersion:3,coachVersion:3,equipment:GE.clean(override.equipment),deload:!!useDeload,readiness:override.readiness||readiness,mode:mode,day:day,index:0,setIndex:0,phase:"ready",records:[],startedAt:stamp(),swaps:{},bands:{},input:null,rir:null,quality:null,effort:null,remaining:0,deadline:0,restTotal:0};
     readiness="unknown";deloadChoice="auto";
-    S.active=a;initSet(a);persist();page="workout";render();window.scrollTo(0,0);
+    S.active=a;for(const slot of getTemplate(mode)){const preferred=S.swaps[slotId(mode,slot)];const allowed=[slot[1],...slot[2]].filter(id=>GE.available(id,a.equipment)&&(!a.deload||!EXPLOSIVE.has(id)));if(!allowed.length){S.active=null;toast("Thiếu bài phù hợp: "+slot[0]);return;}let id=allowed.includes(preferred)?preferred:allowed[0];if(!allowed.includes(preferred)){
+      const bodyDefault={leg:mode==="strength"?"bodySquat":mode==="balance"?"bodySplit":"bodyLunge",push:"pushup",pull:"selfRow",verticalPull:"proneW",hip:"bridge",upperBack:"reverseSnow",biceps:"selfCurl",triceps:"closePush",calf:"bodyCalf",speedPull:"selfRow"};
+      if(a.equipment.band==="none"&&allowed.includes(bodyDefault[slot[0]]))id=bodyDefault[slot[0]];
+      if(a.equipment.pull&&slot[0]==="verticalPull"&&allowed.includes("pullup"))id="pullup";
+      if(a.equipment.pull&&slot[0]==="pull"&&a.equipment.band==="none"&&allowed.includes(mode==="strength"?"chinup":"pullup"))id=mode==="strength"?"chinup":"pullup";
+      if(a.equipment.dip&&a.equipment.band==="none"&&slot[0]==="triceps"&&mode==="strength"&&!a.deload&&allowed.includes("dip"))id="dip";
+      if(Object.values(a.swaps).includes(id)){const other=allowed.find(x=>!Object.values(a.swaps).includes(x)&&(!POWER_SLOTS.has(slot[0])||EXPLOSIVE.has(x)===EXPLOSIVE.has(id)));if(other)id=other;}
+    }a.swaps[slot[0]]=id;}initSet(a);persist();page="workout";render();window.scrollTo(0,0);
   }
   function resetWorkout(){
     const a=S.active;if(!a)return;
     if(!confirm("Bắt đầu lại từ động tác 1, hiệp 1? Các hiệp chưa lưu của buổi này sẽ bị bỏ. Lịch sử, cài đặt và bài đã chọn vẫn được giữ."))return;
-    const mode=a.mode,day=a.day;S.active=null;lastRestBeep=false;lastSummary=null;startWorkout(mode,day,{deload:!!a.deload,readiness:a.readiness});toast("Đã reset buổi tập");
+    const mode=a.mode,day=a.day;S.active=null;lastRestBeep=false;lastSummary=null;startWorkout(mode,day,{deload:!!a.deload,readiness:a.readiness,equipment:a.equipment||GE.clean(S.lastEquipment)});toast("Đã reset buổi tập");
   }
   function initSet(a){const slot=getTemplate(a.mode)[a.index];a.input=null;a.rir=null;a.quality=null;a.effort=null;a.remaining=workSeconds(a,slot);a.phase="ready";a.deadline=0;}
   function startSet(){
@@ -766,7 +853,7 @@
     if(a.input===null||a.input===""||!Number.isInteger(Number(a.input))||Number(a.input)<0||Number(a.input)>999){toast("Nhập số lần/giây thực tế, kể cả 0");return;}
     if(EXPLOSIVE.has(ex.id)?!a.quality:metric==="seconds"?!a.effort:a.rir===null||a.rir===undefined){toast("Chọn đánh giá sau hiệp hoặc Chưa rõ");return;}
     const target=getTarget(a.mode,slot,a),actual=Number(a.input);
-    a.records.push({slot:slot[0],exerciseId:ex.id,set:a.setIndex+1,target,actual,metric,band:getBand(a.mode,slot,a),effort:a.effort,rir:metric==="reps"&&!EXPLOSIVE.has(ex.id)&&a.rir!=="unknown"?Number(a.rir):null,quality:EXPLOSIVE.has(ex.id)?a.quality:null,confirmed:true,auto:false});
+    a.records.push({slot:slot[0],exerciseId:ex.id,set:a.setIndex+1,target,actual,metric,band:getBand(a.mode,slot,a),bandIdentity:bandIdentity(a.mode,slot,a),effort:a.effort,rir:metric==="reps"&&!EXPLOSIVE.has(ex.id)&&a.rir!=="unknown"?Number(a.rir):null,quality:EXPLOSIVE.has(ex.id)?a.quality:null,confirmed:true,auto:false});
     if(a.index===getTemplate(a.mode).length-1 && a.setIndex===slot[3]-1){finishWorkout();return;}
     a.phase="rest";a.restTotal=Math.max(minmax(S.settings.restSec,15,300),(EXPLOSIVE.has(ex.id)||(a.mode==="strength"&&["leg","push","pull","verticalPull","shoulder","hip"].includes(slot[0])))?120:15);a.deadline=Date.now()+a.restTotal*1000;a.remaining=a.restTotal;lastRestBeep=false;persist();render();
   }
@@ -792,9 +879,9 @@
     return a.mode==="strength"?8:a.mode==="balance"?20:12;
   }
   function loadTip(a,slot,ex,band){
-    const key=slotId(a.mode,slot),allowed=[slot[1],...slot[2]],base={mode:a.mode,slot:slot[0],exerciseId:ex.id,band};
-    if(ASSIST.has(ex.id)&&band==="heavy")return {...base,nextBand:"light",reason:"Hai buổi cùng bài đạt mục tiêu, còn ít nhất 3 lần dự trữ. Có thể dùng dây trợ lực nhẹ hơn (khó hơn)."};
-    if(!ASSIST.has(ex.id)&&band==="light"&&!/nhẹ/i.test(ex.need)&&!EXPLOSIVE.has(ex.id))return {...base,nextBand:"heavy",reason:"Hai buổi cùng bài đạt mục tiêu, còn ít nhất 3 lần dự trữ. Thử dây nặng hơn; nếu khó quá, đổi lại dây nhẹ."};
+    const key=slotId(a.mode,slot),allowed=[slot[1],...slot[2]].filter(id=>GE.available(id,a.equipment)),base={mode:a.mode,slot:slot[0],exerciseId:ex.id,band,bandIdentity:bandIdentity(a.mode,slot,a)};
+    if(ASSIST.has(ex.id)&&band==="heavy"&&GE.bands(ex.id,a.equipment).includes("light"))return {...base,nextBand:"light",reason:"Hai buổi cùng bài đạt mục tiêu, còn ít nhất 3 lần dự trữ. Có thể dùng dây trợ lực nhẹ hơn (khó hơn)."};
+    if(!ASSIST.has(ex.id)&&band==="light"&&!/nhẹ/i.test(ex.need)&&!EXPLOSIVE.has(ex.id)&&GE.bands(ex.id,a.equipment).includes("heavy"))return {...base,nextBand:"heavy",reason:"Hai buổi cùng bài đạt mục tiêu, còn ít nhất 3 lần dự trữ. Thử dây nặng hơn; nếu khó quá, đổi lại dây nhẹ."};
     const next=(VARIANTS[ex.id]||[]).find(id=>allowed.includes(id)&&id!==ex.id);
     if(next)return {...base,nextExercise:next,reason:"Đã thích nghi ở mức hiện tại. Thử "+EX[next].en+"; bắt đầu với ít lần và kiểm soát kỹ thuật."};
     return {...base,reason:"Đã đạt ngưỡng số lần và còn dự trữ tốt. Nếu có tải phù hợp hơn, tăng độ khó từng bước; nếu không, giữ nguyên và ưu tiên kỹ thuật."};
@@ -802,7 +889,7 @@
   function applyTip(){
     const a=S.active;if(!a||a.deload||a.phase!=="ready"||a.setIndex!==0)return;
     const slot=getTemplate(a.mode)[a.index],ex=getExercise(a.mode,slot,a),band=getBand(a.mode,slot,a),key=slotId(a.mode,slot),t=S.coachTips[key];
-    if(!t||t.exerciseId!==ex.id||t.band!==band)return;
+    if(!t||t.exerciseId!==ex.id||t.band!==band||(t.bandIdentity||"")!==bandIdentity(a.mode,slot,a)||(t.nextExercise&&!GE.available(t.nextExercise,a.equipment))||(t.nextBand&&a.equipment&&!GE.bands(ex.id,a.equipment).includes(t.nextBand)))return;
     if(t.nextExercise&&![slot[1],...slot[2]].includes(t.nextExercise))return;
     if(t.nextBand&&!["light","heavy"].includes(t.nextBand))return;
     if(!confirm("Áp dụng mức khó hơn cho bài này? Nếu kỹ thuật giảm, hãy đổi lại trước khi tập."))return;
@@ -821,7 +908,7 @@
     for(const [slotKey,rs] of Object.entries(grouped)){
       const slot=getTemplate(a.mode).find(x=>x[0]===slotKey);if(!slot)continue;
       const ex=getExercise(a.mode,slot,a),band=getBand(a.mode,slot,a),metric=getMetric(a.mode,slot,a),key=slotId(a.mode,slot);
-      if(rs.length!==slot[3]||rs.some(r=>r.exerciseId!==ex.id||r.band!==band||r.metric!==metric))continue;
+      if(ex.id==="jumpRope"||rs.length!==slot[3]||rs.some(r=>r.exerciseId!==ex.id||r.band!==band||(r.bandIdentity||"")!==bandIdentity(a.mode,slot,a)||r.metric!==metric))continue;
       delete S.coachTips[key];
       const before=getBaseTarget(a.mode,slot,a),ratio=verifiedRatio(rs),timed=metric==="seconds";
       const floor=timed?5:1,step=timed?5:1;
@@ -832,8 +919,8 @@
         next=Math.max(floor,before-step);reason="Chưa đạt mục tiêu hoặc thường xuyên hết sức; giảm nhẹ để giữ kỹ thuật.";
       }else{
         const ready=arr=>arr.length===slot[3]&&arr.every(r=>r.confirmed===true&&r.actual>=r.target&&(timed?r.effort==="easy":Number.isInteger(r.rir)&&r.rir>=3));
-        const previous=S.logs.slice().reverse().find(l=>l.mode===a.mode&&!l.deload&&l.coachVersion===3&&confirmedRecords(l).some(r=>r.slot===slotKey&&r.exerciseId===ex.id&&r.band===band&&r.metric===metric));
-        const prev=previous?confirmedRecords(previous).filter(r=>r.slot===slotKey&&r.exerciseId===ex.id&&r.band===band&&r.metric===metric):[];
+        const previous=S.logs.slice().reverse().find(l=>l.mode===a.mode&&!l.deload&&l.coachVersion===3&&confirmedRecords(l).some(r=>r.slot===slotKey&&r.exerciseId===ex.id&&r.band===band&&(r.bandIdentity||"")===bandIdentity(a.mode,slot,a)&&r.metric===metric));
+        const prev=previous?confirmedRecords(previous).filter(r=>r.slot===slotKey&&r.exerciseId===ex.id&&r.band===band&&(r.bandIdentity||"")===bandIdentity(a.mode,slot,a)&&r.metric===metric):[];
         if(a.readiness!=="poor"&&ready(rs)&&ready(prev)&&prev.every(r=>r.target===before)&&rs.every(r=>r.target===before)){
           const cap=capFor(a,ex,metric);
           if(before<cap){next=Math.min(cap,before+step);reason="Hai buổi cùng bài, cùng tải và mục tiêu đều hoàn thành dễ; tăng nhẹ số lần/giây.";}
@@ -849,7 +936,7 @@
     const upd=updateTargets(a);
     const minutes=Math.max(1,Math.round((Date.now()-new Date(a.startedAt).getTime())/60000));
     const plannedSets=getTemplate(a.mode).reduce((n,s)=>n+s[3],0);
-    const log={date:stamp(),coachVersion:3,deload:!!a.deload,readiness:a.readiness||"unknown",mode:a.mode,day:a.day,records:a.records.slice(),plannedSets:plannedSets,minutes:minutes,ratio:upd.overall===null?null:Math.round(upd.overall*100),volume:upd.totalActual,adjustments:upd.changes};
+    const log={date:stamp(),coachVersion:3,deload:!!a.deload,readiness:a.readiness||"unknown",mode:a.mode,day:a.day,equipment:a.equipment||null,records:a.records.slice(),plannedSets:plannedSets,minutes:minutes,ratio:upd.overall===null?null:Math.round(upd.overall*100),volume:upd.totalActual,adjustments:upd.changes};
     S.logs.push(log);if(S.logs.length>250)S.logs=S.logs.slice(-250);
     lastSummary=log;S.active=null;persist();page="summary";render();alertEnd();window.scrollTo(0,0);
   }
@@ -857,7 +944,7 @@
     const a=S.active;if(!a||a.phase==="rest")return;
     if(!["ready"].includes(a.phase)){toast("Chỉ đổi bài khi sẵn sàng, trước khi bắt đầu hiệp");return;}
     if(a.setIndex>0){toast("Đổi bài trước hiệp đầu tiên của động tác");return;}
-    const slot=getTemplate(a.mode)[a.index],ids=[...new Set([slot[1],...slot[2]])].filter(id=>!a.deload||!EXPLOSIVE.has(id)),selected=getExercise(a.mode,slot,a).id;
+    const slot=getTemplate(a.mode)[a.index],ids=[...new Set([slot[1],...slot[2]])].filter(id=>(!a.deload||!EXPLOSIVE.has(id))&&GE.available(id,a.equipment)),selected=getExercise(a.mode,slot,a).id;
     document.getElementById("swapList").innerHTML=ids.map(id=>{
       const ex=EX[id];return '<button class="swap-option '+(id===selected?"selected":"")+'" data-action="choose-swap" data-id="'+id+'"><span class="swap-radio">'+(id===selected?"●":"○")+'</span><span><strong>'+esc(ex.en)+'</strong><p>'+esc(ex.vi)+' · '+esc(ex.need)+(a.mode==='power'&&POWER_SLOTS.has(slot[0])&&!EXPLOSIVE.has(id)?' · Bổ trợ, không phải bộc phát':'')+'</p><p>'+esc(ex.steps[0])+'</p></span></button>';
     }).join("");
@@ -867,6 +954,7 @@
     const a=S.active;if(!a)return;
     const slot=getTemplate(a.mode)[a.index];
     if(a.phase!=="ready"||a.setIndex!==0||![slot[1],...slot[2]].includes(id))return;
+    if(!GE.available(id,a.equipment)){toast("Thiếu dụng cụ cho bài này");return;}
     if(a.deload&&EXPLOSIVE.has(id)){toast("Buổi giảm tải không chọn bài bộc phá");return;}
     a.swaps[slot[0]]=id;if(!a.deload)S.swaps[slotId(a.mode,slot)]=id;initSet(a);persist();
     document.getElementById("swapDialog").close();render();toast("Đã đổi sang "+EX[id].en);
@@ -890,7 +978,7 @@
     }else refreshTickDisplay();
   }
   function exportData(){
-    const blob=new Blob([JSON.stringify({app:"BandFit",version:4,exportedAt:stamp(),data:{onboarded:S.onboarded,schedule:S.schedule,settings:S.settings,logs:S.logs,targets:S.targets,swaps:S.swaps,bands:S.bands,coachTips:S.coachTips,campaign:S.campaign}},null,2)],{type:"application/json"});
+    const blob=new Blob([JSON.stringify({app:"BandFit",version:5,exportedAt:stamp(),data:{onboarded:S.onboarded,schedule:S.schedule,settings:S.settings,logs:S.logs,targets:S.targets,swaps:S.swaps,bands:S.bands,coachTips:S.coachTips,campaign:S.campaign,lastEquipment:S.lastEquipment}},null,2)],{type:"application/json"});
     const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="bandfit-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
   }
   async function importData(file){
@@ -899,7 +987,7 @@
       if(!obj||obj.app!=="BandFit"||!obj.data||!Array.isArray(obj.data.logs)||!Array.isArray(obj.data.schedule))throw Error("Sai định dạng bản sao lưu BandFit");
       if(!confirm("Nhập dữ liệu sẽ thay lịch sử, số rep đã học và cài đặt hiện tại. Tiếp tục?"))return;
       const x=obj.data;
-      S={onboarded:!!x.onboarded,schedule:sortDays(x.schedule.filter(d=>ORDER.includes(d))).slice(0,4),settings:Object.assign(defaultData().settings,x.settings||{}),logs:x.logs.slice(-250),targets:x.targets||{},swaps:x.swaps||{},bands:x.bands||{},coachTips:x.coachTips&&typeof x.coachTips==="object"&&!Array.isArray(x.coachTips)?x.coachTips:{},campaign:CE.clean(x.campaign),active:null};
+      S={onboarded:!!x.onboarded,schedule:sortDays(x.schedule.filter(d=>ORDER.includes(d))).slice(0,4),settings:Object.assign(defaultData().settings,x.settings||{}),logs:x.logs.slice(-250),targets:x.targets||{},swaps:x.swaps||{},bands:x.bands||{},coachTips:x.coachTips&&typeof x.coachTips==="object"&&!Array.isArray(x.coachTips)?x.coachTips:{},campaign:CE.clean(x.campaign),lastEquipment:GE.clean(x.lastEquipment),active:null};
       if(S.schedule.length<3)S.schedule=[2,4,6];
       persist();goHome();toast("Đã khôi phục bản sao lưu");
     }catch(e){toast("Không nhập được: "+e.message);}
@@ -937,8 +1025,8 @@
     else if(action==="set-band"){
       const a=S.active;if(!a)return;
       if(a.phase!=="ready"||a.setIndex>0||a.deload){toast(a.deload?"Buổi giảm tải tự chọn mức dây nhẹ hoặc trợ lực":"Hãy đổi dây trước hiệp đầu tiên của bài");return;}
-      const b=target.dataset.band;if(!["light","heavy"].includes(b))return;
-      const currentEx=getExercise(a.mode,getTemplate(a.mode)[a.index],a);if(b==="heavy"&&(/nhẹ/i.test(currentEx.need)||EXPLOSIVE.has(currentEx.id))){toast("Bài này dùng dây nhẹ để giữ kỹ thuật và tốc độ");return;}
+      const b=target.dataset.band;if(!["light","heavy","single"].includes(b))return;
+      const currentEx=getExercise(a.mode,getTemplate(a.mode)[a.index],a);if(a.equipment&&!GE.bands(currentEx.id,a.equipment).includes(b))return;if(b==="heavy"&&(/nhẹ/i.test(currentEx.need)||EXPLOSIVE.has(currentEx.id))){toast("Bài này dùng dây nhẹ để giữ kỹ thuật và tốc độ");return;}
       const slot=getTemplate(a.mode)[a.index];a.bands[slot[0]]=b;S.bands[slotId(a.mode,slot)]=b;
       initSet(a);persist();render();toast("Đã chọn "+BAND_LABEL[b]);
     }
